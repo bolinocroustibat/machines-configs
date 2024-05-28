@@ -1,6 +1,6 @@
 # dotfiles
 
-Forked from (https://github.com/gjunkie/dotfiles-starter-kit)[https://github.com/gjunkie/dotfiles-starter-kit], a boilerplate for setting up your dotfiles that can be easily synced across your systems.
+Forked from [https://github.com/gjunkie/dotfiles-starter-kit](https://github.com/gjunkie/dotfiles-starter-kit), a boilerplate for setting up your dotfiles that can be easily synced across your systems.
 
 ### Setup
 
