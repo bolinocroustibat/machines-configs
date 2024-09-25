@@ -18,8 +18,14 @@ uv sync
 
 ## Usage
 
+Dry run:
 ```bash
-uv run ansible-playbook playbooks/main.yml
+uv run ansible-playbook playbooks/install-local-macos.yaml --check
+```
+
+Run:
+```bash
+uv run ansible-playbook playbooks/install-distant-debian.yaml
 ```
 
 ## Lint
