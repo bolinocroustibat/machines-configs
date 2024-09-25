@@ -1,0 +1,19 @@
+[DEFAULT]
+
+# "bantime" is the number of seconds that a host is banned.
+bantime  = 1d
+
+# A host is banned if it has generated "maxretry" during the last "findtime"
+# seconds.
+findtime  = 1d
+
+# "maxretry" is the number of failures before a host get banned.
+maxretry = 4
+
+
+# Destination email address used solely for the interpolations in
+# jail.{conf,local,d/*} configuration files.
+destemail = {{ user_email }}
+
+# Sender email address used solely for some actions
+sender = {{ fail2ban__sender_email}}

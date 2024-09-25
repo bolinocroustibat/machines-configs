@@ -7,5 +7,8 @@ venv/
 __pycache__/
 __pypackages__/
 
-# secret
-inventory.ini
+# secrets
+/inventory.*
+secrets.*
+**/sites-available/*
+/roles/cron/templates/root.j2

@@ -1,36 +1,50 @@
 ---
 
-- name: Install apt
+- name: Update apt
   hosts: distant
   tasks:
-    - include_role:
-        name: apt
-        tasks_from: main
+    - name: Update apt
+      apt:
+        update_cache: yes
 
-- name: Install zsh and oh-my-zsh
+- name: Install and configure zsh and oh-my-zsh
   hosts: distant
   tasks:
     - include_role:
         name: zsh
         tasks_from: main
 
-- name: Install Micro
+- name: Install and configure Micro
   hosts: distant
   tasks:
     - include_role:
         name: micro
         tasks_from: main
 
-- name: Install uv
-  hosts: distant
-  tasks:
-    - include_role:
-        name: uv
-        tasks_from: main
-
-- name: Install fail2ban
+- name: Install and configure fail2ban
   hosts: distant
   tasks:
     - include_role:
         name: fail2ban
+        tasks_from: main
+
+- name: Install and configure ufw
+  hosts: distant
+  tasks:
+    - include_role:
+        name: ufw
+        tasks_from: main
+
+- name: Install and configure Nginx
+  hosts: distant
+  tasks:
+    - include_role:
+        name: nginx
+        tasks_from: main
+
+- name: Install and configure uv
+  hosts: distant
+  tasks:
+    - include_role:
+        name: uv
         tasks_from: main

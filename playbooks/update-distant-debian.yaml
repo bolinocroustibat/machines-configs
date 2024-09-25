@@ -1,4 +1,5 @@
 ---
+
 - name: Perform Debian system updates on all distant servers
   hosts: distant
   tasks:

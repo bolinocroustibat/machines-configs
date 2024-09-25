@@ -4,4 +4,3 @@
   homebrew:
     name: pnpm
     state: latest
-  when: ansible_os_family == "Darwin"

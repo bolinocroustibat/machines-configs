@@ -1,0 +1,16 @@
+---
+
+- name: Add vhosts
+  template:
+    src: sites-available/{{ item.name }}.j2
+    dest: /etc/nginx/sites-available/{{ item.name }}
+  with_items: "{{ vhosts }}"
+  notify: Reload Nginx
+
+- name: Enable vhosts
+  file:
+    src: /etc/nginx/sites-available/{{ item.name }}
+    dest: /etc/nginx/sites-enabled/{{ item.name }}
+    state: link
+  with_items: "{{ vhosts }}"
+  notify: Reload Nginx

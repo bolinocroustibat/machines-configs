@@ -1,11 +1,18 @@
 ---
+
 - name: Install direnv with homebrew
   homebrew:
     name: direnv
     state: latest
   when: ansible_os_family == "Darwin"
 
+- name: Install direnv with apt
+  apt:
+    name: direnv
+    state: latest
+  when: ansible_os_family == "Debian"
+
 - name: Configure direnv for taking .env files into account
   copy:
-    src: direnv.j2
-    dest: "{{ user.home }}/.config/direnv/direnv.toml
+    src: direnv.toml.j2
+    dest: "{{ user_home_path }}/.config/direnv/direnv.toml

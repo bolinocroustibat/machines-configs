@@ -1,9 +1,19 @@
+{{ ansible_managed | comment }}
+
 # Prompt - user - if elevated privileges show red text, green otherwise
 PROMPT="%{%(!.$fg_bold[red].$fg_bold[green])%}$USER"
 PROMPT+="%{$fg_bold[white]%}@"
 
 # Prompt - machine
+{% if host == 'bolino-macbook' %}
 PROMPT+='%{$fg_bold[cyan]%}%d%{$reset_color%} $(git_prompt_info)'
+{% endif %}
+{% if host == 'web-bolino' %}
+PROMPT+='%{$fg_bold[red]%}%M%d%{$reset_color%} $(git_prompt_info)'
+{% endif %}
+{% if host == 'data-bolino' %}
+PROMPT+='%{$fg_bold[yellow]%}%M%d%{$reset_color%} $(git_prompt_info)'
+{% endif %}
 
 # Prompt - prompt
 PROMPT+="%(?:%{$fg_bold[green]%}➜%{$reset_color%} :%{$fg_bold[red]%}➜%{$reset_color%} )"

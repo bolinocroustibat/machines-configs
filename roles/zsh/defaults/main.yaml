@@ -63,7 +63,6 @@ oh_my_zsh_plugins:
   - zsh-django
   - zsh-autosuggestions
   - zsh-syntax-highlighting
-)
 
 oh_my_zsh_plugins_append: []
 

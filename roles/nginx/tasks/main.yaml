@@ -1,0 +1,24 @@
+---
+
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+  notify: Reload Nginx
+
+- name: Stop Nginx
+  service:
+    name: nginx
+    state: stopped
+
+- name: Download latest homemade build of Nginx
+  get_url:
+    url: https://github.com/bolinocroustibat/nginx-http3/releases/latest/download/nginx
+    dest: /usr/sbin/nginx
+    mode: 0755
+
+- name: Start Nginx
+  service:
+    name: nginx
+    state: started
+  notify: Reload Nginx

@@ -3,9 +3,9 @@
 ### $PATH ####
 export PATH="/opt/homebrew/bin" # New Homebrew path
 export PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
-export PATH="$PATH:{{ ansible_user_home_path }}/Library/Android/sdk/platform-tools" # Android Studio
-export PATH="$PATH:{{ ansible_user_home_path }}/flutter/bin" # Flutter
-export ANDROID_HOME={{ ansible_user_home_path }}/Library/Android/sdk
+export PATH="$PATH:{{ user_home_path }}/Library/Android/sdk/platform-tools" # Android Studio
+export PATH="$PATH:{{ user_home_path }}/flutter/bin" # Flutter
+export ANDROID_HOME={{ user_home_path }}/Library/Android/sdk
 
 # Homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -15,10 +15,10 @@ export VISUAL=micro
 export EDITOR="$VISUAL"
 
 # SSH key path
-export SSH_KEY_PATH="{{ ansible_user_home_path }}/.ssh/id_ed25519"
+export SSH_KEY_PATH="{{ user_home_path }}/.ssh/id_ed25519"
 
 # Path to your oh-my-zsh installation
-export ZSH="{{ ansible_user_home_path }}/.oh-my-zsh"
+export ZSH="{{ user_home_path }}/.oh-my-zsh"
 
 ### ZSH + ZSH syntax highlighting ###
 
@@ -30,7 +30,7 @@ ZSH_THEME="{{ user.oh_my_zsh_theme | default(oh_my_zsh_theme) }}"
 HYPHEN_INSENSITIVE="true"
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
-HIST_STAMPS="yyyy-mm-dd"
+HIST_STAMPS="{{ oh_my_zsh_hist_stamps }}"
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
@@ -72,18 +72,18 @@ source ~/.iterm2_shell_integration.zsh
 eval "$(direnv hook zsh)"
 
 # pnpm
-export PNPM_HOME="{{ ansible_user_home_path }}/Library/pnpm"
-export PNPM_HOME="{{ ansible_user_home_path }}/Library/pnpm"
+export PNPM_HOME="{{ user_home_path }}/Library/pnpm"
+export PNPM_HOME="{{ user_home_path }}/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 
 # bun
-export BUN_INSTALL="/User/bolino/.bun"
+export BUN_INSTALL="{{ user_home_path }}/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 # bun completions
-[ -s "{{ ansible_user_home_path }}/.bun/_bun" ] && source "{{ ansible_user_home_path }}/.bun/_bun"
+[ -s "{{ user_home_path }}/.bun/_bun" ] && source "{{ user_home_path }}/.bun/_bun"
 
 # NVM
 source $(brew --prefix nvm)/nvm.sh

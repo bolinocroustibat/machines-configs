@@ -1,11 +1,18 @@
 ---
 
-- name: Install Homebrew
+- name: Install and update Homebrew
   hosts: local
   tasks:
     - include_role:
         name: homebrew
         tasks_from: main
+
+- name: Updating Ruby gems
+  hosts: local
+  tasks:
+    - name: Updating Ruby gems
+      command: gem update --system
+      become: false
 
 - name: Install zsh and oh-my-zsh
   hosts: local

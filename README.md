@@ -28,6 +28,10 @@ Run a playbook:
 uv run ansible-playbook playbooks/install-local-macos.yaml
 ```
 
+**Notes:**
+- No need to add `-i inventory.yaml` as it is already configured in `ansible.cfg`.
+- No need to add `--diff` as it is already configured in `ansible.cfg`.
+
 ## Lint
 
 Lint Ansible playbooks with [ansible-lint](https://docs.astral.sh/ansible-lint/):
