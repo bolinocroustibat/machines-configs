@@ -1,0 +1,76 @@
+---
+# Set PATH
+oh_my_zsh_path: "$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
+
+# Set name of the theme to load. If set to "random", it will
+# load a random theme each time oh-my-zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
+oh_my_zsh_theme: "bolino"
+
+# Set case-sensitive completion.
+oh_my_zsh_case_sensitive: false
+
+# Set hyphen-insensitive completion.
+oh_my_zsh_hyphen_insensitive: false
+
+# Set auto-update behavior. Possible values are:
+#     disabled    to disable automatic updates
+#     auto        to update automatically without asking
+#     reminder    to remind you to update when it's time
+oh_my_zsh_auto_update_behavior: "reminder"
+
+# Set how often to auto-update (in days).
+oh_my_zsh_auto_update_days: 14
+
+# Set to true if pasting URLs and other text is messed up.
+oh_my_zsh_disable_magic_functions: false
+
+# Disable colors in ls.
+oh_my_zsh_disable_ls_colors: true
+
+# Disable auto-setting terminal title.
+oh_my_zsh_disable_auto_title: false
+
+# Enable auto-correction.
+oh_my_zsh_enable_correction: true
+
+# Enable display red dots whilst waiting for completion.
+oh_my_zsh_completion_waiting_dots: false
+
+# Disable marking untracked files under VCS as dirty.
+oh_my_zsh_disable_untracked_files_dirty: true
+
+# Change the command execution time stamp shown in the history command output.
+oh_my_zsh_hist_stamps: "yyyy-mm-dd"
+
+# Set which plugins you'd like to load.
+# Standard plugins can be found in ~/.oh-my-zsh/plugins/*
+# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+oh_my_zsh_plugins:
+  - colored-man-pages
+  - colorize
+  - command-not-found
+  - direnv
+  - docker-compose
+  - docker
+  - git
+  - iterm2
+  - last-working-dir
+  - pip
+  - zsh-django
+  - zsh-autosuggestions
+  - zsh-syntax-highlighting
+)
+
+oh_my_zsh_plugins_append: []
+
+# Extra
+
+# Install the zsh-autosuggestions plugin
+oh_my_zsh_install_zsh_autosuggestions: true
+
+# Install the zsh-syntax-highlighting plugin
+oh_my_zsh_install_zsh_syntax_highlighting: true

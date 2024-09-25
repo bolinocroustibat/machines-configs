@@ -1,0 +1,21 @@
+---
+- name: Download uv installation script
+  ansible.builtin.uri:
+    url: https://astral.sh/uv/install.sh
+    dest: /tmp/uv_install.sh
+    mode: "0700"
+
+- name: Define UV_INSTALL_DIR for uv installation for multi-users
+  ansible.builtin.set_fact:
+    UV_INSTALL_DIR: "/usr/local/bin/uv"
+  when: uv_multi_users
+
+- name: Install uv installation script
+  command: sh /tmp/uv_install.sh
+  register: uv_result
+  failed_when: "'FAILED' in uv_result.stderr"
+
+- name: Remove the temporary installation script
+  ansible.builtin.file:
+    path: /tmp/uv_install.sh
+    state: absent

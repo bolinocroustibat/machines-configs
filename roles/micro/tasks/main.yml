@@ -1,0 +1,13 @@
+- name: Install Micro text editor with homebrew
+  homebrew:
+    name: micro
+    state: latest
+  when: ansible_os_family == "Darwin"
+
+- name: Install Micro text editor with apt
+  apt:
+    name: micro
+    state: latest
+    update_cache: yes
+  become: true
+  when: ansible_os_family == "Debian"

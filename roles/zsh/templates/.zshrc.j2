@@ -1,3 +1,5 @@
+{{ ansible_managed | comment }}
+
 ### $PATH ####
 export PATH="/opt/homebrew/bin" # New Homebrew path
 export PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
@@ -24,7 +26,7 @@ export ZSH="/Users/bolino/.oh-my-zsh"
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="bolino"
+ZSH_THEME="{{ user.oh_my_zsh_theme | default(oh_my_zsh_theme) }}"
 
 HYPHEN_INSENSITIVE="true"
 ENABLE_CORRECTION="true"
@@ -37,19 +39,8 @@ HIST_STAMPS="yyyy-mm-dd"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   # autoswitch_virtualenv # not working properly
-  colored-man-pages
-  colorize
-  command-not-found
-  direnv
-  docker-compose
-  docker
-  git
-  iterm2
-  last-working-dir
-  pip
-  zsh-django
-  zsh-autosuggestions
-  zsh-syntax-highlighting
+  {{ user.oh_my_zsh_plugins | default(oh_my_zsh_plugins) | join("\n    ") }}
+  {{ user.oh_my_zsh_plugins_append | default(oh_my_zsh_plugins_append) | join("\n    ") }}
 )
 
 source $ZSH/oh-my-zsh.sh
