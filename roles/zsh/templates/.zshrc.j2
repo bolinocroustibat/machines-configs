@@ -3,10 +3,9 @@
 ### $PATH ####
 export PATH="/opt/homebrew/bin" # New Homebrew path
 export PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
-export PATH="$PATH:/Users/bolino/Library/Android/sdk/platform-tools" # Android Studio
-export PATH="$PATH:/Users/bolino/flutter/bin" # Flutter
-#export PATH="$PATH:/usr/local/lib/pnpm-global" # pnpm
-export ANDROID_HOME=/Users/bolino/Library/Android/sdk
+export PATH="$PATH:{{ ansible_user_home_path }}/Library/Android/sdk/platform-tools" # Android Studio
+export PATH="$PATH:{{ ansible_user_home_path }}/flutter/bin" # Flutter
+export ANDROID_HOME={{ ansible_user_home_path }}/Library/Android/sdk
 
 # Homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -16,10 +15,10 @@ export VISUAL=micro
 export EDITOR="$VISUAL"
 
 # SSH key path
-export SSH_KEY_PATH="~/.ssh/id_ed25519"
+export SSH_KEY_PATH="{{ ansible_user_home_path }}/.ssh/id_ed25519"
 
 # Path to your oh-my-zsh installation
-export ZSH="/Users/bolino/.oh-my-zsh"
+export ZSH="{{ ansible_user_home_path }}/.oh-my-zsh"
 
 ### ZSH + ZSH syntax highlighting ###
 
@@ -73,8 +72,8 @@ source ~/.iterm2_shell_integration.zsh
 eval "$(direnv hook zsh)"
 
 # pnpm
-export PNPM_HOME="/Users/bolino/Library/pnpm"
-export PNPM_HOME="/Users/bolino/Library/pnpm"
+export PNPM_HOME="{{ ansible_user_home_path }}/Library/pnpm"
+export PNPM_HOME="{{ ansible_user_home_path }}/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
@@ -84,7 +83,7 @@ esac
 export BUN_INSTALL="/User/bolino/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 # bun completions
-[ -s "/Users/bolino/.bun/_bun" ] && source "/Users/bolino/.bun/_bun"
+[ -s "{{ ansible_user_home_path }}/.bun/_bun" ] && source "{{ ansible_user_home_path }}/.bun/_bun"
 
 # NVM
 source $(brew --prefix nvm)/nvm.sh

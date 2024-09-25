@@ -63,6 +63,12 @@
         state: absent
       when: oh_my_zsh_install_script.path is defined
 
+    - name: Install custom theme from template
+      template:
+        src: bolino.zsh-theme.j2
+        dest: "{{ user.oh_my_zsh_custom_folder | default(oh_my_zsh_custom_folder) }}/themes/bolino.zsh-theme"
+        mode: u=rw,g=r,o=r
+
   when: not oh_my_zsh_installed.stat.exists
 
 - name: Backup existing zshrc if it exists

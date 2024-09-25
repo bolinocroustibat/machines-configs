@@ -1,0 +1,7 @@
+---
+
+- name: Install NVM
+  homebrew:
+    name: nvm
+    state: latest
+  when: ansible_os_family == "Darwin"

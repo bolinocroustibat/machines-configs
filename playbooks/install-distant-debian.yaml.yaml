@@ -1,0 +1,38 @@
+---
+
+- name: Install apt
+  hosts: distant
+  tasks:
+    - include_role:
+        name: apt
+        tasks_from: main
+  when: ansible_os_family == 'Debian'
+
+- name: Install zsh and oh-my-zsh
+  hosts: local
+  tasks:
+    - include_role:
+        name: zsh
+        tasks_from: main
+
+- name: Install Micro
+  hosts: local
+  tasks:
+    - include_role:
+        name: micro
+        tasks_from: main
+
+- name: Install uv
+  hosts: local
+  tasks:
+    - include_role:
+        name: uv
+        tasks_from: main
+
+- name: Install fail2ban
+  hosts: distant
+  tasks:
+    - include_role:
+        name: fail2ban
+        tasks_from: main
+  when: ansible_os_family == 'Debian'

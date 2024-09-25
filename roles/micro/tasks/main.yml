@@ -11,3 +11,8 @@
     update_cache: yes
   become: true
   when: ansible_os_family == "Debian"
+
+- name: Copy config file
+  copy:
+    src: settings.j2
+    dest: "{{ user.home }}/.config/micro/settings.json
