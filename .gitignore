@@ -1,0 +1,11 @@
+# venv
+.venv/
+venv/
+
+# Python packaging
+.python-version
+__pycache__/
+__pypackages__/
+
+# secret
+inventory.ini

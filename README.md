@@ -1,16 +1,23 @@
 # dotfiles
 
-Forked from [https://github.com/gjunkie/dotfiles-starter-kit](https://github.com/gjunkie/dotfiles-starter-kit), a boilerplate for setting up your dotfiles that can be easily synced across your systems.
+Ansible playbooks for setting up local and remote machines.
 
-### Setup
+## Dependencies
 
-- Open up the [install](https://github.com/gjunkie/dotfiles-starter-kit/blob/main/install_dotfiles.sh) script and change the `GITHUB_USER` variable to your username.
-- Update the [files](https://github.com/gjunkie/dotfiles-starter-kit/blob/main/opt/files) that you want to keep synced between your systems.
+- Python >= 3.10
+- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 
-### One-line Install
+## Installation
 
-Make sure to update the username in the command below with your GitHub username.
+Use [uv](https://docs.astral.sh/uv/) to install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 
+```bash
+cd dotfiles
+uv sync
 ```
-$ bash -c "$(curl -#fL raw.github.com/gjunkie/dotfiles-starter-kit/main/install_dotfiles.sh)"
+
+## Usage
+
+```bash
+uv run ansible-playbook playbooks/main.yml
 ```

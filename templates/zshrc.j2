@@ -1,0 +1,105 @@
+### $PATH ####
+export PATH="/opt/homebrew/bin" # New Homebrew path
+export PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
+export PATH="$PATH:/Users/bolino/Library/Android/sdk/platform-tools" # Android Studio
+export PATH="$PATH:/Users/bolino/flutter/bin" # Flutter
+#export PATH="$PATH:/usr/local/lib/pnpm-global" # pnpm
+export ANDROID_HOME=/Users/bolino/Library/Android/sdk
+
+# Homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Set the default text editor, set the standardized VISUAL and EDITOR environment variables
+export VISUAL=micro
+export EDITOR="$VISUAL"
+
+# SSH key path
+export SSH_KEY_PATH="~/.ssh/id_ed25519"
+
+# Path to your oh-my-zsh installation
+export ZSH="/Users/bolino/.oh-my-zsh"
+
+### ZSH + ZSH syntax highlighting ###
+
+# Set name of the theme to load. Optionally, if you set this to "random"
+# it'll load a random theme each time that oh-my-zsh is loaded.
+# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
+ZSH_THEME="bolino"
+
+HYPHEN_INSENSITIVE="true"
+ENABLE_CORRECTION="true"
+COMPLETION_WAITING_DOTS="true"
+HIST_STAMPS="yyyy-mm-dd"
+
+# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
+# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(
+  # autoswitch_virtualenv # not working properly
+  colored-man-pages
+  colorize
+  command-not-found
+  direnv
+  docker-compose
+  docker
+  git
+  iterm2
+  last-working-dir
+  pip
+  zsh-django
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+)
+
+source $ZSH/oh-my-zsh.sh
+
+### User configuration ##
+
+# export MANPATH="/usr/local/man:$MANPATH"
+
+# You may need to manually set your language environment
+export LANG=en_US.UTF-8 # Global setting, does not overrides anything
+#export LC_ALL=en_US.UTF-8 # Overrides all locale settings
+
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
+
+# Aliases
+alias ll='ls -alFh'
+alias l='ls -lFh'
+alias docker psa='docker ps --format "table {{.Names}}\t{{.Ports}}\t{{.Status}}"'
+alias git force pull='git fetch --all & git reset --hard origin/main && git pull'
+alias biomecheck='npx @biomejs/biome check --apply .'
+alias ruffcheck='ruff check --fix && ruff format'
+#alias cat='ccat'
+
+# iTerm2 shell integration
+# test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+source ~/.iterm2_shell_integration.zsh
+
+# Direnv - to load and unload environment variables depending on the current directory - see https://direnv.net/
+eval "$(direnv hook zsh)"
+
+# pnpm
+export PNPM_HOME="/Users/bolino/Library/pnpm"
+export PNPM_HOME="/Users/bolino/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
+# bun
+export BUN_INSTALL="/User/bolino/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+# bun completions
+[ -s "/Users/bolino/.bun/_bun" ] && source "/Users/bolino/.bun/_bun"
+
+# NVM
+source $(brew --prefix nvm)/nvm.sh
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+# uv
+. "$HOME/.cargo/env"

@@ -1,0 +1,30 @@
+---
+- name: Install ZSH
+  homebrew:
+    name: zsh
+    state: latest
+
+- name: Change current user shell
+  user:
+    name: "{{ ansible_ssh_user }}"
+    shell: /bin/zsh
+  become: yes
+
+- name: Fetch oh-my-zsh
+  get_url:
+    url: https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh
+    dest: /tmp/install-oh-my-zsh.sh
+    mode: 0755
+
+- name: Install oh-my-zsh
+  command: sh /tmp/install-oh-my-zsh.sh
+
+- name: Backup existing zshrc if it exists
+  copy:
+    src: "/Users/{{ ansible_ssh_user }}/.zshrc"
+    dest: "/Users/{{ ansible_ssh_user }}/.zshrc-backup.{{ ansible_date_time.epoch }}"
+
+- name: Render zshrc
+  template:
+    src: zshrc.j2
+    dest: "/Users/{{ ansible_ssh_user }}/.zshrc"
