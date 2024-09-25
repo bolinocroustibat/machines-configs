@@ -1,6 +1,6 @@
 # dotfiles
 
-Ansible playbooks for setting up local and remote machines.
+Ansible playbooks for setting up local development and remote machines.
 
 ## Dependencies
 
