@@ -1,0 +1,20 @@
+---
+
+- name: Backup existing sources list
+  copy:
+    src: /etc/apt/sources.list
+    dest: /etc/apt/sources.list.backup_{{ ansible_date_time.iso8601 }}
+  when: ansible_os_family == 'Debian'
+
+- name: Update apt sources list from template
+  template:
+    src: sources.list.j2
+    dest: /etc/apt/sources.list
+  when: ansible_os_family == 'Debian'
+
+- name: Add custom sources lists from templates
+  template:
+    src: sources.list.d/{{ item.name }}.j2
+    dest: /etc/apt/sources.list.d/{{ item.name }}
+  with_items: "{{ sources }}"
+  when: ansible_os_family == 'Debian'

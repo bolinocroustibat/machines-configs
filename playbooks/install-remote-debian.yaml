@@ -1,49 +1,49 @@
 ---
 
-- name: Update apt
-  hosts: distant
+- name: Update apt and upgrade packages
+  hosts: remote
   tasks:
-    - name: Update apt
-      apt:
-        update_cache: yes
+    - include_role:
+        name: apt
+        tasks_from: upgrade
 
 - name: Install and configure zsh and oh-my-zsh
-  hosts: distant
+  hosts: remote
   tasks:
     - include_role:
         name: zsh
         tasks_from: main
 
 - name: Install and configure Micro
-  hosts: distant
+  hosts: remote
   tasks:
     - include_role:
         name: micro
         tasks_from: main
 
 - name: Install and configure fail2ban
-  hosts: distant
+  hosts: remote
   tasks:
     - include_role:
         name: fail2ban
         tasks_from: main
 
 - name: Install and configure ufw
-  hosts: distant
+  hosts: remote
   tasks:
     - include_role:
         name: ufw
         tasks_from: main
 
 - name: Install and configure Nginx
-  hosts: distant
+  hosts: remote
   tasks:
     - include_role:
         name: nginx
         tasks_from: main
 
 - name: Install and configure uv
-  hosts: distant
+  hosts: remote
   tasks:
     - include_role:
         name: uv

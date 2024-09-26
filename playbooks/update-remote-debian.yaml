@@ -1,0 +1,15 @@
+---
+
+- name: Update apt and upgrade packages
+  hosts: remote
+  tasks:
+    - include_role:
+        name: apt
+        tasks_from: upgrade
+
+- name: Update uv
+  hosts: remote
+  tasks:
+    - include_role:
+        name: uv
+        tasks_from: main

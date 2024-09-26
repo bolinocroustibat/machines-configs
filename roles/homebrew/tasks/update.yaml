@@ -1,0 +1,16 @@
+---
+
+- name: Update Homebrew
+  command: brew update
+
+- name: Updating Homebrew Formulae
+  command: brew upgrade
+
+- name: Cleanup Homebrew
+  command: brew cleanup -s
+
+- name: Check Homebrew for issues
+  command: brew doctor
+
+- name: Updating Homebrew Cask
+  command: brew upgrade --cask

@@ -5,7 +5,7 @@
   tasks:
     - include_role:
         name: homebrew
-        tasks_from: main
+        tasks_from: [install, update]
 
 - name: Updating Ruby gems
   hosts: local
