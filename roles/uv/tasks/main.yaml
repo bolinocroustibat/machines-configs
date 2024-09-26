@@ -1,28 +1,32 @@
 ---
 
 - name: Download uv installation script
-  get_url:
-    url: https://astral.sh/uv/install.sh
-    dest: /tmp/uv_install.sh
+  uri:
+    url: 'https://astral.sh/uv/install.sh'
+    method: GET
+    follow_redirects: safe
+    # force: yes
+    dest: "/tmp/uv_install.sh"
     mode: 0700
 
-- name: Define UV_INSTALL_DIR for uv installation for multi-users
+- name: Define uv install dir path
+  set_fact:
+    uv_install_dir: "{{ '/usr/local/bin/uv' if uv_multi_users else '{{ user_home_path }}/.cargo' }}"
+
+- name: Set UV_INSTALL_DIR env var for multi-users uv installation
   ansible.builtin.set_fact:
-    UV_INSTALL_DIR: "/usr/local/bin/uv"
+    UV_INSTALL_DIR: "{{ uv_install_dir }}"
   when: uv_multi_users
 
 - name: Execute uv installation script
-  command: sh /tmp/uv_install.sh
+  command: "sh /tmp/uv_install.sh"
   register: uv_result
   failed_when: "'FAILED' in uv_result.stderr"
 
 - name: Remove the temporary installation script
   ansible.builtin.file:
-    path: /tmp/uv_install.sh
+    path: "/tmp/uv_install.sh"
     state: absent
 
-- name: Relaunch zsh shell
-  shell: "source {{ user_home_path }}/.zshrc"
-
 - name: Install Python 3.12 with uv
-  command: uv install python 3.12
+  command: "{{ uv_install_dir }}/bin/uv python install 3.12"
