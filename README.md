@@ -6,6 +6,7 @@ Ansible playbooks for setting up local development and remote machines.
 
 - Python >= 3.10 (automatically installed via [uv](https://docs.astral.sh/uv/))
 - [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (automatically installed via [uv](https://docs.astral.sh/uv/))
+- [git-crypt](https://www.agwa.name/projects/git-crypt/)
 
 ## Installation
 
@@ -33,6 +34,21 @@ uv run ansible-playbook playbooks/install-local-macos.yaml
 - No need to add `--diff` as it is already configured in `ansible.cfg`.
 
 ## Encrypt and decrypt secrets
+
+### git-crypt
+
+This repo uses exclusively [git-crypt](https://www.agwa.name/projects/git-crypt/) to encrypt and decrypt secrets.
+
+Encrypted files are defined in `.gitattributes` files.
+
+To get the git-crypt status:
+```bash
+git-crypt status
+```
+
+### ansible-vault
+
+As said, this repo uses exclusively [git-crypt](https://www.agwa.name/projects/git-crypt/) to encrypt and decrypt secrets. However, we could also use [ansible-vault](https://docs.astral.sh/ansible-vault/) to encrypt and decrypt secrets:
 
 Decrypt secret files with:
 ```bash
