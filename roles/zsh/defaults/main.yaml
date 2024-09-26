@@ -50,21 +50,19 @@ oh_my_zsh_hist_stamps: "yyyy-mm-dd"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 oh_my_zsh_plugins:
-  - colored-man-pages
-  - colorize
-  - command-not-found
-  - direnv
-  - docker-compose
-  - docker
-  - git
-  - iterm2
-  - last-working-dir
-  - pip
-  - zsh-django
-  - zsh-autosuggestions
-  - zsh-syntax-highlighting
-
-oh_my_zsh_plugins_append: []
+- colored-man-pages
+- colorize
+- command-not-found
+- direnv
+- docker-compose
+- docker
+- git
+- iterm2
+- last-working-dir
+- pip
+- zsh-django
+- zsh-autosuggestions
+- zsh-syntax-highlighting
 
 # Extra
 

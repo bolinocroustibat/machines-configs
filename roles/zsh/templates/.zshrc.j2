@@ -1,8 +1,8 @@
 {{ ansible_managed | comment }}
 
 ### $PATH ####
-export PATH="/opt/homebrew/bin" # New Homebrew path
 export PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
+export PATH="/opt/homebrew/bin" # New Homebrew path
 export PATH="$PATH:{{ user_home_path }}/Library/Android/sdk/platform-tools" # Android Studio
 export PATH="$PATH:{{ user_home_path }}/flutter/bin" # Flutter
 export ANDROID_HOME={{ user_home_path }}/Library/Android/sdk
@@ -36,14 +36,11 @@ HIST_STAMPS="{{ oh_my_zsh_hist_stamps }}"
 plugins=(
   # autoswitch_virtualenv # not working properly
   {{ user.oh_my_zsh_plugins | default(oh_my_zsh_plugins) | join("\n    ") }}
-  {{ user.oh_my_zsh_plugins_append | default(oh_my_zsh_plugins_append) | join("\n    ") }}
 )
 
 source $ZSH/oh-my-zsh.sh
 
 ### User configuration ##
-
-# export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8 # Global setting, does not overrides anything
@@ -57,11 +54,11 @@ alias ll='ls -alFh'
 alias l='ls -lFh'
 alias git force pull='git fetch --all & git reset --hard origin/main && git pull'
 alias ruffcheck='ruff check --fix && ruff format'
+#alias cat='ccat'
 {% if type == 'local-development' %}
 alias docker psa='docker ps --format "table {{ '{{' }}.Names{{ '}}' }}\t{{ '{{' }}.Ports{{ '}}' }}\t{{ '{{' }}.Status{{ '}}' }}"'
 alias biomecheck='npx @biomejs/biome check --apply .'
 {% endif %}
-#alias cat='ccat'
 
 # iTerm2 shell integration
 # test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
