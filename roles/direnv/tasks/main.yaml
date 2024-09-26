@@ -13,6 +13,6 @@
   when: ansible_os_family == "Debian"
 
 - name: Configure direnv for taking .env files into account
-  copy:
+  template:
     src: direnv.toml.j2
-    dest: "{{ user_home_path }}/.config/direnv/direnv.toml
+    dest: "{{ user_home_path }}/.config/direnv/direnv.toml"

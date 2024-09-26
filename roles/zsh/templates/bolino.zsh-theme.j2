@@ -2,16 +2,16 @@
 
 # Prompt - user - if elevated privileges show red text, green otherwise
 PROMPT="%{%(!.$fg_bold[red].$fg_bold[green])%}$USER"
-PROMPT+="%{$fg_bold[white]%}@"
+APROMPT+="%{$fg_bold[white]%}@"
 
 # Prompt - machine
-{% if host == 'bolino-macbook' %}
+{% if type == 'local-development' %}
 PROMPT+='%{$fg_bold[cyan]%}%d%{$reset_color%} $(git_prompt_info)'
 {% endif %}
-{% if host == 'web-bolino' %}
+{% if type == 'remote-web' %}
 PROMPT+='%{$fg_bold[red]%}%M%d%{$reset_color%} $(git_prompt_info)'
 {% endif %}
-{% if host == 'data-bolino' %}
+{% if type == 'remote-data' %}
 PROMPT+='%{$fg_bold[yellow]%}%M%d%{$reset_color%} $(git_prompt_info)'
 {% endif %}
 

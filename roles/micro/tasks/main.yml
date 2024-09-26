@@ -14,10 +14,10 @@
 
 - name: Backup existing config file if it exists
   copy:
-    src: "{{ user_home_path }}.config/micro/settings.json"
-    dest: "{{ user_home_path }}.config/micro/settings.json.backup_{{ ansible_date_time.iso8601 }}"
+    src: "{{ user_home_path }}/.config/micro/settings.json"
+    dest: "{{ user_home_path }}/.config/micro/settings.json.backup_{{ ansible_date_time.iso8601 }}"
 
 - name: Copy config file
-  copy:
+  template:
     src: settings.json.j2
-    dest: "{{ user_home_path }}/.config/micro/settings.json
+    dest: "{{ user_home_path }}/.config/micro/settings.json"
