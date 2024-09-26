@@ -1,0 +1,42 @@
+---
+
+- name: Check if ZSH is installed
+  block:
+    - name: Check if ZSH is installed with homebrew
+      homebrew:
+        name: zsh
+        state: present
+      register: zsh_installed
+      when: ansible_os_family == "Darwin"
+
+    - name: Check if ZSH is installed with apt
+      apt:
+        name: zsh
+        state: present
+        update_cache: yes
+      become: true
+      register: zsh_installed
+      when: ansible_os_family == "Debian"
+
+- name: Install ZSH
+  block:
+    - name: Install ZSH with homebrew
+      homebrew:
+        name: zsh
+        state: latest
+      when: ansible_os_family == "Darwin"
+
+    - name: Install ZSH with apt
+      apt:
+        name: zsh
+        state: latest
+        update_cache: yes
+      become: true
+      when: ansible_os_family == "Debian"
+
+  when: not zsh_installed.stat.exists
+
+- name: Change current user shell to ZSH
+  user:
+    name: "{{ ansible_user }}"
+    shell: /bin/zsh

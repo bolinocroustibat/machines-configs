@@ -5,14 +5,14 @@
   tasks:
     - include_role:
         name: apt
-        tasks_from: upgrade
+        tasks_from: [upgrade, install_sources]
 
 - name: Install and configure zsh and oh-my-zsh
   hosts: remote
   tasks:
     - include_role:
         name: zsh
-        tasks_from: main
+        tasks_from: [zsh, oh_my_zsh]
 
 - name: Install and configure Micro
   hosts: remote

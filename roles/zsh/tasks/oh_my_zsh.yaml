@@ -1,43 +1,5 @@
 ---
 
-- name: Install ZSH with homebrew
-  homebrew:
-    name: zsh
-    state: latest
-  when: ansible_os_family == "Darwin"
-
-- name: Install ZSH with apt
-  apt:
-    name: zsh
-    state: latest
-    update_cache: yes
-  become: true
-  when: ansible_os_family == "Debian"
-
-- name: Ensure ZSH is installed
-  homebrew:
-    name: zsh
-    state: present
-  when: ansible_os_family == "Darwin"
-
-- name: Ensure ZSH is installed
-  apt:
-    name: zsh
-    state: present
-    update_cache: yes
-  become: true
-  when: ansible_os_family == "Debian"
-
-- name: Change current user shell to ZSH
-  user:
-    name: "{{ ansible_user }}"
-    shell: /bin/zsh
-
-- name: Ensure ZSH is the default shell
-  user:
-    name: "{{ ansible_user }}"
-    shell: "/usr/bin/zsh"
-
 - name: Check if Oh-My-ZSH is installed
   become_user: "{{ ansible_user }}"
   ansible.builtin.stat:
@@ -69,6 +31,24 @@
         state: absent
       when: oh_my_zsh_install_script.path is defined
 
+    - name: Clone zsh-autosuggestions
+      become_user: "{{ ansible_user }}"
+      ansible.builtin.git:
+        repo: https://github.com/zsh-users/zsh-autosuggestions
+        dest: "{{ user_home_path }}/.oh-my-zsh/plugins/zsh-autosuggestions"
+        version: master
+        force: true
+      when: user.oh_my_zsh_install_zsh_autosuggestions | default(oh_my_zsh_install_zsh_autosuggestions)
+
+    - name: Clone zsh-syntax-highlighting
+      become_user: "{{ ansible_user }}"
+      ansible.builtin.git:
+        repo: https://github.com/zsh-users/zsh-syntax-highlighting
+        dest: "{{ user_home_path }}/.oh-my-zsh/plugins/zsh-syntax-highlighting"
+        version: master
+        force: true
+      when: user.oh_my_zsh_install_zsh_syntax_highlighting | default(oh_my_zsh_install_zsh_syntax_highlighting)
+
     - name: Install custom theme from template
       template:
         src: bolino.zsh-theme.j2
@@ -76,24 +56,6 @@
         mode: u=rw,g=r,o=r
 
   when: not oh_my_zsh_installed.stat.exists
-
-- name: Clone zsh-autosuggestions
-  become_user: "{{ ansible_user }}"
-  ansible.builtin.git:
-    repo: https://github.com/zsh-users/zsh-autosuggestions
-    dest: "{{ user_home_path }}/.oh-my-zsh/plugins/zsh-autosuggestions"
-    version: master
-    force: true
-  when: user.oh_my_zsh_install_zsh_autosuggestions | default(oh_my_zsh_install_zsh_autosuggestions)
-
-- name: Clone zsh-syntax-highlighting
-  become_user: "{{ ansible_user }}"
-  ansible.builtin.git:
-    repo: https://github.com/zsh-users/zsh-syntax-highlighting
-    dest: "{{ user_home_path }}/.oh-my-zsh/plugins/zsh-syntax-highlighting"
-    version: master
-    force: true
-  when: user.oh_my_zsh_install_zsh_syntax_highlighting | default(oh_my_zsh_install_zsh_syntax_highlighting)
 
 - name: Backup existing zshrc if it exists
   copy:
