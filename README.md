@@ -32,6 +32,18 @@ uv run ansible-playbook playbooks/install-local-macos.yaml
 - No need to add `-i inventory.yaml` as it is already configured in `ansible.cfg`.
 - No need to add `--diff` as it is already configured in `ansible.cfg`.
 
+## Encrypt and decrypt secrets
+
+Decrypt secret files with:
+```bash
+uv run ansible-vault decrypt roles/myrole/templates/secret.j2 roles/myrole2/templates/*
+```
+
+Encrypt secret files with:
+```bash
+uv run ansible-vault encrypt roles/myrole/templates/secret.j2 roles/myrole2/templates/*
+```
+
 ## Lint
 
 Lint Ansible playbooks with [ansible-lint](https://docs.astral.sh/ansible-lint/):

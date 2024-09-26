@@ -52,6 +52,8 @@ export LANG=en_US.UTF-8 # Global setting, does not overrides anything
 # Aliases
 alias ll='ls -alFh'
 alias l='ls -lFh'
+alias df='df -h'                  # disk free with human reading
+alias du='du -hd1 | sort -h'      # disk usage with human reading, only first level
 alias git force pull='git fetch --all & git reset --hard origin/main && git pull'
 alias ruffcheck='ruff check --fix && ruff format'
 #alias cat='ccat'

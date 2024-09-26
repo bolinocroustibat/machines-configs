@@ -1,0 +1,29 @@
+---
+
+- name: Install git
+  ansible.builtin.package:
+    name: git
+    state: present
+  when: user.install_git | default(install_git)
+
+- name: Configure git
+  blocks:
+    - name: Set Git user name
+      ansible.builtin.command: git config --global user.name "{{ user.git_user_name }}"
+      when: user.git_user_name is defined
+      changed_when: false
+
+    - name: Set Git user email
+      ansible.builtin.command: git config --global user.email "{{ user.git_user_email }}"
+      when: user.git_user_email is defined
+      changed_when: false
+
+    - name: Set Git user signing key
+      ansible.builtin.command: git config --global user.signingkey "{{ user_home_path }}/.ssh/id_ed25519.pub"
+
+    - name: Set Git user GPG key
+      ansible.builtin.command: git config --global user.gpgsign true
+
+    - name: Set Git user editor
+      ansible.builtin.command: git config --global core.editor micro
+      changed_when: false
