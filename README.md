@@ -17,6 +17,11 @@ cd dotfiles
 uv sync
 ```
 
+*You might need to install the [homebrew Ansible module](https://docs.ansible.com/ansible/latest/collections/community/general/homebrew_module.html) only if you use ansible-core instead of ansible:*
+```bash
+uv run ansible-galaxy collection install community.general
+```
+
 ## Usage
 
 Dry run a playbook:

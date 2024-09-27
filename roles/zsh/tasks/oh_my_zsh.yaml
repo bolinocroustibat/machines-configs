@@ -3,7 +3,7 @@
 - name: Check if Oh-My-ZSH is installed
   become_user: "{{ ansible_user }}"
   ansible.builtin.stat:
-    path: "{{ user_home_path }}/.oh-my-zsh"
+    path: "{{ user_home }}/.oh-my-zsh"
   register: oh_my_zsh_installed
 
 - name: Install Oh-My-ZSH
@@ -35,7 +35,7 @@
       become_user: "{{ ansible_user }}"
       ansible.builtin.git:
         repo: https://github.com/zsh-users/zsh-autosuggestions
-        dest: "{{ user_home_path }}/.oh-my-zsh/plugins/zsh-autosuggestions"
+        dest: "{{ user_home }}/.oh-my-zsh/plugins/zsh-autosuggestions"
         version: master
         force: true
       when: user.oh_my_zsh_install_zsh_autosuggestions | default(oh_my_zsh_install_zsh_autosuggestions)
@@ -44,7 +44,7 @@
       become_user: "{{ ansible_user }}"
       ansible.builtin.git:
         repo: https://github.com/zsh-users/zsh-syntax-highlighting
-        dest: "{{ user_home_path }}/.oh-my-zsh/plugins/zsh-syntax-highlighting"
+        dest: "{{ user_home }}/.oh-my-zsh/plugins/zsh-syntax-highlighting"
         version: master
         force: true
       when: user.oh_my_zsh_install_zsh_syntax_highlighting | default(oh_my_zsh_install_zsh_syntax_highlighting)
@@ -52,18 +52,18 @@
     - name: Install custom theme from template
       template:
         src: bolino.zsh-theme.j2
-        dest: "{{ user_home_path }}/.oh-my-zsh/custom/themes/bolino.zsh-theme"
+        dest: "{{ user_home }}/.oh-my-zsh/custom/themes/bolino.zsh-theme"
         mode: u=rw,g=r,o=r
 
   when: not oh_my_zsh_installed.stat.exists
 
 - name: Backup existing zshrc if it exists
   copy:
-    src: "{{ user_home_path }}/.zshrc"
-    dest: "{{ user_home_path }}/.zshrc.backup_{{ ansible_date_time.iso8601 }}"
+    src: "{{ user_home }}/.zshrc"
+    dest: "{{ user_home }}/.zshrc.backup_{{ ansible_date_time.iso8601 }}"
 
 - name: Write .zshrc
   template:
     src: .zshrc.j2
-    dest: "{{ user_home_path }}/.zshrc"
+    dest: "{{ user_home }}/.zshrc"
     mode: "u=rw,go=r"

@@ -3,10 +3,10 @@
 - name: Git clone wireguard installation script
   git:
     repo: git@github.com:Nyr/wireguard-install.git
-    dest: "{{ user_home_path }}/wireguard-install"
+    dest: "{{ user_home }}/wireguard-install"
     update: yes
 
 - name: Execute wireguard installation script
-  command: sh "{{ user_home_path }}/wireguard-install/wireguard-install.sh"
+  command: sh "{{ user_home }}/wireguard-install/wireguard-install.sh"
   register: wireguard_result
   failed_when: "'FAILED' in wireguard_result.stderr"

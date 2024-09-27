@@ -3,19 +3,19 @@
 ### $PATH ####
 export PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
 export PATH="/opt/homebrew/bin" # New Homebrew path
-export PATH="$PATH:{{ user_home_path }}/Library/Android/sdk/platform-tools" # Android Studio
-export PATH="$PATH:{{ user_home_path }}/flutter/bin" # Flutter
-export ANDROID_HOME={{ user_home_path }}/Library/Android/sdk
+export PATH="$PATH:{{ user_home }}/Library/Android/sdk/platform-tools" # Android Studio
+export PATH="$PATH:{{ user_home }}/flutter/bin" # Flutter
+export ANDROID_HOME={{ user_home }}/Library/Android/sdk
 
 # Set the default text editor, set the standardized VISUAL and EDITOR environment variables
 export VISUAL=micro
 export EDITOR="$VISUAL"
 
 # SSH key path
-export SSH_KEY_PATH="{{ user_home_path }}/.ssh/id_ed25519"
+export SSH_KEY_PATH="{{ user_home }}/.ssh/id_ed25519"
 
 # Path to your oh-my-zsh installation
-export ZSH="{{ user_home_path }}/.oh-my-zsh"
+export ZSH="{{ user_home }}/.oh-my-zsh"
 
 ### ZSH + ZSH syntax highlighting ###
 
@@ -83,16 +83,16 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 # pnpm
-export PNPM_HOME="{{ user_home_path }}/Library/pnpm"
-export PNPM_HOME="{{ user_home_path }}/Library/pnpm"
+export PNPM_HOME="{{ user_home }}/Library/pnpm"
+export PNPM_HOME="{{ user_home }}/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 
 # bun
-export BUN_INSTALL="{{ user_home_path }}/.bun"
+export BUN_INSTALL="{{ user_home }}/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 # bun completions
-[ -s "{{ user_home_path }}/.bun/_bun" ] && source "{{ user_home_path }}/.bun/_bun"
+[ -s "{{ user_home }}/.bun/_bun" ] && source "{{ user_home }}/.bun/_bun"
 {% endif %}

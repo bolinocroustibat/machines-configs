@@ -1,3 +1,5 @@
+{{ ansible_managed | comment }}
+
 user www-data;
 worker_processes auto;
 pid /run/nginx.pid;
@@ -18,7 +20,7 @@ http {
 	sendfile on;
 	tcp_nopush on;
 	types_hash_max_size 2048;
-	# server_tokens off; # Used to display Nginx, PHP versions numbers in response header. Useful but can slightly impact security.
+	server_tokens on; # On by default. If off, hides the Nginx, PHP versions numbers in response header. If on, useful but can slightly impact security.
 
 	# server_names_hash_bucket_size 64;
 	# server_name_in_redirect off;
@@ -30,23 +32,31 @@ http {
 	# SSL Settings
 	##
 
-	# ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
 	ssl_protocols TLSv1.2 TLSv1.3;
 	ssl_prefer_server_ciphers on;
 	# Enabling QUIC 0-RTT
 	ssl_early_data on;
+	# Perfect Forward Secrecy(PFS) is frequently compromised without this
+	ssl_prefer_server_ciphers on;
+
+	##
+	# HTTP/2
+	##
+
+	# http2: "off" by default according to https://nginx.org/en/docs/http/ngx_http_v2_module.html
+	http2 on;
 
 	##
 	# HTTP/3
 	##
 
-	# http2: "off" by default according to https://nginx.org/en/docs/http/ngx_http_v2_module.html
-	http2 on;
 	# http3: Already "on" by default according to https://nginx.org/en/docs/http/ngx_http_v3_module.html
 	http3 on;
+	http3_hq on;
+	quic_retry on;
 
 	# Add Alt-Svc header to negotiate HTTP/3
-	add_header Alt-Svc	'h3=":$server_port"; ma=86400';
+	add_header Alt-Svc		'h3=":$server_port"; ma=86400';
 	# add_header Alt-Svc	'h3=":$server_port"; ma=3600, h2=":$server_port"; ma=3600';
 	# add_header Alt-Svc	'h2=":$server_port"; ma=2592000; persist=1';
 	# add_header Alt-Svc	'h2=":$server_port"; ma=2592000;';
@@ -73,21 +83,27 @@ http {
 		application/atom+xml
 		application/geo+json
 		application/javascript
-		application/x-javascript
 		application/json
 		application/ld+json
 		application/manifest+json
 		application/rdf+xml
 		application/rss+xml
+		application/x-font-ttf
+		application/x-javascript
+		application/x-web-app-manifest+json
 		application/xhtml+xml
 		application/xml
+		application/xml+rss
 		font/eot
+		font/opentype
 		font/otf
 		font/ttf
 		image/svg+xml
 		text/css
+		text/csv
 		text/javascript
 		text/plain
+		text/x-component
 		text/xml;
 
 	##

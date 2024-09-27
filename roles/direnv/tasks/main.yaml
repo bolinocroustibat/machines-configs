@@ -15,4 +15,4 @@
 - name: Configure direnv for taking .env files into account
   template:
     src: direnv.toml.j2
-    dest: "{{ user_home_path }}/.config/direnv/direnv.toml"
+    dest: "{{ user_home }}/.config/direnv/direnv.toml"

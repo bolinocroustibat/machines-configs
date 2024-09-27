@@ -11,7 +11,7 @@
 
 - name: Define uv install dir path
   set_fact:
-    uv_install_dir: "{{ '/usr/local/bin/uv' if uv_multi_users else '{{ user_home_path }}/.cargo' }}"
+    uv_install_dir: "{{ '/usr/local/bin/uv' if uv_multi_users else '{{ user_home }}/.cargo' }}"
 
 - name: Set UV_INSTALL_DIR env var for multi-users uv installation
   ansible.builtin.set_fact:

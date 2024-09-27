@@ -11,6 +11,5 @@ __pypackages__/
 /inventory.*
 secrets.*
 **/sites-available/*
-/roles/cron/templates/root.j2
-/roles/ssh/templates/config.j2
-/roles/ssh/templates/config.d/*
+/roles/cron/templates/*
+/roles/ssh/templates/*
