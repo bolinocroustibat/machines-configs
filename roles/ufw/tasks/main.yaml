@@ -1,28 +1,28 @@
 ---
 
 - name: Install ufw
-  ansible.builtin.apt:
+  apt:
     name: ufw
     state: latest
     update_cache: true
   become: true
 
 - name: Allow SSH
-  ansible.builtin.command: ufw allow ssh
+  command: ufw allow ssh
   become: true
 
 - name: Allow Nginx HTTP
-  ansible.builtin.command: ufw allow 'Nginx HTTP'
+  command: ufw allow 'Nginx HTTP'
   become: true
 
 - name: Allow Nginx HTTPS
-  ansible.builtin.command: ufw allow 'Nginx HTTPS'
+  command: ufw allow 'Nginx HTTPS'
   become: true
 
 - name: Reload ufw
-  ansible.builtin.command: ufw reload
+  command: ufw reload
   become: true
 
 - name: Enable ufw
-  ansible.builtin.command: ufw enable
+  command: ufw enable
   become: true

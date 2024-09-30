@@ -1,7 +1,7 @@
 ---
 
 - name: Install fail2ban
-  ansible.builtin.apt:
+  apt:
     name: fail2ban
     state: present
     update_cache: true
@@ -9,7 +9,7 @@
   become: true
 
 - name: Add jail.local file
-  ansible.builtin.template:
+  template:
     src: jail.local.j2
     dest: /etc/fail2ban/jail.local
     owner: root
@@ -19,7 +19,7 @@
   when: ansible_os_family == 'Debian'
 
 - name: Add jail.d files
-  ansible.builtin.copy:
+  copy:
     src: "{{ item }}"
     dest: /etc/fail2ban/jail.d/
     owner: root

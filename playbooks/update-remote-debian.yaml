@@ -3,13 +3,13 @@
 - name: Update apt and upgrade packages
   hosts: remote
   tasks:
-    - ansible.builtin.include_role:
+    - include_role:
         name: apt
         tasks_from: upgrade
 
 - name: Update uv
   hosts: remote
   tasks:
-    - ansible.builtin.include_role:
+    - include_role:
         name: uv
         tasks_from: update

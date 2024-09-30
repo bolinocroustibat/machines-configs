@@ -8,6 +8,6 @@
 
 
 - name: Install/select node version with NVM
-  ansible.builtin.command: nvm install {{ node_version }}
+  command: nvm install {{ node_version }}
   become: true
   when: ansible_os_family == "Darwin"

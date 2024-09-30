@@ -3,7 +3,7 @@
 # apt update && apt upgrade && apt autoremove && apt autoclean
 
 - name: Update APT cache
-  ansible.builtin.apt:
+  apt:
     update_cache: true
     force_apt_get: true
   become: true
@@ -20,7 +20,7 @@
 #   when: (ansible_os_family == 'Debian' and updates.stdout_lines)
 
 - name: Upgrade packages
-  ansible.builtin.apt:
+  apt:
     upgrade: true
   become: true
   when: ansible_os_family == 'Debian'
@@ -38,13 +38,13 @@
 #   when: (ansible_os_family == 'Debian' and services.stdout_lines)
 
 - name: Remove unused packages
-  ansible.builtin.apt:
+  apt:
     autoremove: true
   become: true
   when: ansible_os_family == "Debian"
 
 - name: Clean up
-  ansible.builtin.apt:
+  apt:
     autoclean: true
   become: true
   when: ansible_os_family == "Debian"

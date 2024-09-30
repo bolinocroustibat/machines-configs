@@ -9,7 +9,7 @@
     mode: "0700"
 
 - name: Download SSH public key
-  ansible.builtin.uri:
+  uri:
     url: http://adriencarpentier.com/id_ed25519.pub
     dest: "{{ user_home }}/.ssh/id_ed25519.pub"
     owner: "{{ ansible_user }}"

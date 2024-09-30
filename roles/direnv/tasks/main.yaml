@@ -7,7 +7,7 @@
   when: ansible_os_family == "Darwin"
 
 - name: Install direnv with apt
-  ansible.builtin.apt:
+  apt:
     name: direnv
     state: latest
   when: ansible_os_family == "Debian"

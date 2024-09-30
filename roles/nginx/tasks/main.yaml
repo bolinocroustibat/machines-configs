@@ -1,7 +1,7 @@
 ---
 
 - name: Install Nginx
-  ansible.builtin.apt:
+  apt:
     name: nginx
     state: present
   notify: Reload Nginx
@@ -12,7 +12,7 @@
     state: stopped
 
 - name: Download latest homemade build of Nginx
-  ansible.builtin.get_url:
+  get_url:
     url: https://github.com/bolinocroustibat/nginx-http3/releases/latest/download/nginx
     dest: /usr/sbin/nginx
     mode: "0755"

@@ -10,7 +10,7 @@
       when: ansible_os_family == "Darwin"
 
     - name: Check if ZSH is installed with apt
-      ansible.builtin.apt:
+      apt:
         name: zsh
         state: present
         update_cache: true
@@ -28,7 +28,7 @@
       when: ansible_os_family == "Darwin"
 
     - name: Install ZSH with apt
-      ansible.builtin.apt:
+      apt:
         name: zsh
         state: latest
         update_cache: true
@@ -36,6 +36,6 @@
       when: ansible_os_family == "Debian"
 
 - name: Change current user shell to ZSH
-  usansible.builtin.user:
+  user:
     name: "{{ ansible_user }}"
     shell: /bin/zsh
