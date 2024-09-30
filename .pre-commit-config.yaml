@@ -9,7 +9,7 @@ repos:
       - id: check-added-large-files
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.7 # Ruff version
+    rev: v0.6.8 # Ruff version
     hooks:
       # Run the linter
       - id: ruff
@@ -18,7 +18,7 @@ repos:
       - id: ruff-format
 
   - repo: https://github.com/ansible/ansible-lint.git
-    rev: v24.9.2
+    rev: v24.9.2 # Ansible-lint version
     hooks:
       - id: ansible-lint
         files: \.(yaml|yml)$
