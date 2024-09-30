@@ -1,16 +1,16 @@
 ---
 
 - name: Update Homebrew
-  command: brew update
+  ansible.builtin.command: brew update
 
 - name: Updating Homebrew Formulae
-  command: brew upgrade
+  ansible.builtin.command: brew upgrade
 
 - name: Cleanup Homebrew
-  command: brew cleanup -s
+  ansible.builtin.command: brew cleanup -s
 
 - name: Check Homebrew for issues
-  command: brew doctor
+  ansible.builtin.command: brew doctor
 
 - name: Updating Homebrew Cask
-  command: brew upgrade --cask
+  ansible.builtin.command: brew upgrade --cask

@@ -1,4 +1,4 @@
 ---
 
 - name: Update pnpm
-  command: pnpm update --global
+  ansible.builtin.command: pnpm update --global

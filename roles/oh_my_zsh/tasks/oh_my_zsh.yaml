@@ -1,13 +1,12 @@
 ---
 
 - name: Check if Oh-My-ZSH is installed
-  become_user: "{{ ansible_user }}"
   ansible.builtin.stat:
     path: "{{ user_home }}/.oh-my-zsh"
   register: oh_my_zsh_installed
 
 - name: Install Oh-My-ZSH
-  become_user: "{{ ansible_user }}"
+  when: not oh_my_zsh_installed.stat.exists
   block:
     - name: Create temporary file
       ansible.builtin.tempfile:
@@ -18,10 +17,10 @@
       ansible.builtin.get_url:
         url: https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh
         dest: /tmp/install_ohmyzsh.sh
-        mode: 0700
+        mode: "0700"
 
     - name: Install Oh-My-ZSH installation script
-      command: sh /tmp/install_ohmyzsh.sh --unattended
+      ansible.builtin.command: sh /tmp/install_ohmyzsh.sh --unattended
       register: ohmyzsh_result
       failed_when: "'FAILED' in ohmyzsh_result.stderr"
 
@@ -32,7 +31,6 @@
       when: oh_my_zsh_install_script.path is defined
 
     - name: Clone zsh-autosuggestions
-      become_user: "{{ ansible_user }}"
       ansible.builtin.git:
         repo: https://github.com/zsh-users/zsh-autosuggestions
         dest: "{{ user_home }}/.oh-my-zsh/plugins/zsh-autosuggestions"
@@ -41,7 +39,6 @@
       when: user.oh_my_zsh_install_zsh_autosuggestions | default(oh_my_zsh_install_zsh_autosuggestions)
 
     - name: Clone zsh-syntax-highlighting
-      become_user: "{{ ansible_user }}"
       ansible.builtin.git:
         repo: https://github.com/zsh-users/zsh-syntax-highlighting
         dest: "{{ user_home }}/.oh-my-zsh/plugins/zsh-syntax-highlighting"
@@ -50,20 +47,18 @@
       when: user.oh_my_zsh_install_zsh_syntax_highlighting | default(oh_my_zsh_install_zsh_syntax_highlighting)
 
     - name: Install custom theme from template
-      template:
+      ansible.builtin.template:
         src: bolino.zsh-theme.j2
         dest: "{{ user_home }}/.oh-my-zsh/custom/themes/bolino.zsh-theme"
         mode: u=rw,g=r,o=r
 
-  when: not oh_my_zsh_installed.stat.exists
-
 - name: Backup existing zshrc if it exists
-  copy:
+  ansible.builtin.copy:
     src: "{{ user_home }}/.zshrc"
     dest: "{{ user_home }}/.zshrc.backup_{{ ansible_date_time.iso8601 }}"
 
 - name: Write .zshrc
-  template:
+  ansible.builtin.template:
     src: .zshrc.j2
     dest: "{{ user_home }}/.zshrc"
     mode: "u=rw,go=r"

@@ -7,6 +7,6 @@
     update: yes
 
 - name: Execute wireguard installation script
-  command: sh "{{ user_home }}/wireguard-install/wireguard-install.sh"
+  ansible.builtin.command: sh "{{ user_home }}/wireguard-install/wireguard-install.sh"
   register: wireguard_result
   failed_when: "'FAILED' in wireguard_result.stderr"

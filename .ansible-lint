@@ -2,7 +2,7 @@
 # Profiles gradually increase the strictness of rules as your Ansible content lifecycle.
 # We set it to "production" in order to ensure that content meets requirements for inclusion in Ansible Automation Platform (AAP) as validated or certified content.
 # Possible values are "min", "basic", "moderate", "safety", "shared", "production" (see https://ansible.readthedocs.io/projects/lint/profiles/)
-profile: min
+profile: moderate
 
 # exclude_paths included in this file are parsed relative to this file's location and not relative to the CWD of execution.
 exclude_paths:

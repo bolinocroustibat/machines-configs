@@ -3,10 +3,10 @@
 - name: Install and update Homebrew
   hosts: local
   tasks:
-    - include_role:
+    - ansible.builtin.include_role:
         name: homebrew
         tasks_from: install
-    - include_role:
+    - ansible.builtin.include_role:
         name: homebrew
         tasks_from: update
 
@@ -19,44 +19,44 @@
 - name: Install zsh and oh-my-zsh
   hosts: local
   tasks:
-    - include_role:
-        name: zsh
+    - ansible.builtin.include_role:
+        name: oh_my_zsh
         tasks_from: zsh
-    - include_role:
-        name: zsh
+    - ansible.builtin.include_role:
+        name: oh_my_zsh
         tasks_from: oh_my_zsh
 
 - name: Install direnv
   hosts: local
   tasks:
-    - include_role:
+    - ansible.builtin.include_role:
         name: direnv
         tasks_from: main
 
 - name: Install Micro
   hosts: local
   tasks:
-    - include_role:
+    - ansible.builtin.include_role:
         name: micro
         tasks_from: main
 
 - name: Install uv
   hosts: local
   tasks:
-    - include_role:
+    - ansible.builtin.include_role:
         name: uv
         tasks_from: install
 
 - name: Install NVM
   hosts: local
   tasks:
-    - include_role:
+    - ansible.builtin.include_role:
         name: nvm
         tasks_from: main
 
 - name: Install pnpm
   hosts: local
   tasks:
-    - include_role:
+    - ansible.builtin.include_role:
         name: pnpm
         tasks_from: main

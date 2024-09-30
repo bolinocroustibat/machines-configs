@@ -3,48 +3,54 @@
 - name: Update apt and upgrade packages
   hosts: remote
   tasks:
-    - include_role:
+    - ansible.builtin.include_role:
         name: apt
-        tasks_from: [upgrade, install_sources]
+        tasks_from: upgrade
+    - ansible.builtin.include_role:
+        name: apt
+        tasks_from: install_sources
 
 - name: Install and configure zsh and oh-my-zsh
   hosts: remote
   tasks:
-    - include_role:
-        name: zsh
-        tasks_from: [zsh, oh_my_zsh]
+    - ansible.builtin.include_role:
+        name: oh_my_zsh
+        tasks_from: zsh
+    - ansible.builtin.include_role:
+        name: oh_my_zsh
+        tasks_from: oh_my_zsh
 
 - name: Install and configure Micro
   hosts: remote
   tasks:
-    - include_role:
+    - ansible.builtin.include_role:
         name: micro
         tasks_from: main
 
 - name: Install and configure fail2ban
   hosts: remote
   tasks:
-    - include_role:
+    - ansible.builtin.include_role:
         name: fail2ban
         tasks_from: main
 
 - name: Install and configure ufw
   hosts: remote
   tasks:
-    - include_role:
+    - ansible.builtin.include_role:
         name: ufw
         tasks_from: main
 
 - name: Install and configure Nginx
   hosts: remote
   tasks:
-    - include_role:
+    - ansible.builtin.include_role:
         name: nginx
         tasks_from: main
 
 - name: Install and configure uv
   hosts: remote
   tasks:
-    - include_role:
+    - ansible.builtin.include_role:
         name: uv
         tasks_from: install
