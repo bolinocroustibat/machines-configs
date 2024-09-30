@@ -1,5 +1,3 @@
----
-
 - name: Install and update Homebrew
   hosts: local
   tasks:

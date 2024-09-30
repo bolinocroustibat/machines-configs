@@ -1,5 +1,3 @@
----
-
 - name: Update apt and upgrade packages
   hosts: remote
   tasks:

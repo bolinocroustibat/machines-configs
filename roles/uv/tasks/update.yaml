@@ -1,5 +1,3 @@
----
-
 - name: Update uv
   command: "uv self update"
   register: uv_result

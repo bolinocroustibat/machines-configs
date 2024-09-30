@@ -1,5 +1,3 @@
----
-
 - name: Download uv installation script
   uri:
     url: 'https://astral.sh/uv/install.sh'

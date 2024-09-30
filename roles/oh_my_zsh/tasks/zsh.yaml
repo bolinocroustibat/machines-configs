@@ -1,5 +1,3 @@
----
-
 - name: Check if ZSH is installed
   block:
     - name: Check if ZSH is installed with homebrew

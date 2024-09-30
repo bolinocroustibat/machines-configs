@@ -1,16 +1,15 @@
 - name: Install Micro text editor with homebrew
+  when: ansible_os_family == "Darwin"
   homebrew:
     name: micro
     state: latest
-  when: ansible_os_family == "Darwin"
 
 - name: Install Micro text editor with apt
+  when: ansible_os_family == "Debian"
   apt:
     name: micro
     state: latest
     update_cache: true
-  become: true
-  when: ansible_os_family == "Debian"
 
 - name: Backup existing config file if it exists
   copy:

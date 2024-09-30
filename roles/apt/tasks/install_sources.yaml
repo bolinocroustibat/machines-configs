@@ -1,5 +1,3 @@
----
-
 - name: Backup existing sources list
   copy:
     src: /etc/apt/sources.list

@@ -1,28 +1,20 @@
----
-
 - name: Install ufw
   apt:
     name: ufw
     state: latest
     update_cache: true
-  become: true
 
 - name: Allow SSH
   command: ufw allow ssh
-  become: true
 
 - name: Allow Nginx HTTP
   command: ufw allow 'Nginx HTTP'
-  become: true
 
 - name: Allow Nginx HTTPS
   command: ufw allow 'Nginx HTTPS'
-  become: true
 
 - name: Reload ufw
   command: ufw reload
-  become: true
 
 - name: Enable ufw
   command: ufw enable
-  become: true
