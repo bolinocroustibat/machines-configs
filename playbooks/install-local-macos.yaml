@@ -5,7 +5,10 @@
   tasks:
     - include_role:
         name: homebrew
-        tasks_from: [install, update]
+        tasks_from: install
+    - include_role:
+        name: homebrew
+        tasks_from: update
 
 - name: Updating Ruby gems
   hosts: local
@@ -18,7 +21,10 @@
   tasks:
     - include_role:
         name: zsh
-        tasks_from: [zsh, oh_my_zsh]
+        tasks_from: zsh
+    - include_role:
+        name: zsh
+        tasks_from: oh_my_zsh
 
 - name: Install direnv
   hosts: local
