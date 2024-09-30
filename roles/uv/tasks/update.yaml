@@ -1,0 +1,6 @@
+---
+
+- name: Update uv
+  command: "uv self update"
+  register: uv_result
+  failed_when: "'FAILED' in uv_result.stderr"

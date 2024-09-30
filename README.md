@@ -19,19 +19,19 @@ uv sync
 
 *You might need to install the [homebrew Ansible module](https://docs.ansible.com/ansible/latest/collections/community/general/homebrew_module.html) only if you use ansible-core instead of ansible:*
 ```bash
-uv run ansible-galaxy collection install community.general
+uvx ansible-galaxy collection install community.general
 ```
 
 ## Usage
 
 Dry run a playbook:
 ```bash
-uv run ansible-playbook playbooks/install-local-macos.yaml --check
+uvx ansible-playbook playbooks/install-local-macos.yaml --check
 ```
 
 Run a playbook:
 ```bash
-uv run ansible-playbook playbooks/install-local-macos.yaml
+uvx ansible-playbook playbooks/install-local-macos.yaml
 ```
 
 **Notes:**
@@ -57,24 +57,29 @@ As said, this repo uses exclusively [git-crypt](https://www.agwa.name/projects/g
 
 Decrypt secret files with:
 ```bash
-uv run ansible-vault decrypt roles/myrole/templates/secret.j2 roles/myrole2/templates/*
+uvx ansible-vault decrypt roles/myrole/templates/secret.j2 roles/myrole2/templates/*
 ```
 
 Encrypt secret files with:
 ```bash
-uv run ansible-vault encrypt roles/myrole/templates/secret.j2 roles/myrole2/templates/*
+uvx ansible-vault encrypt roles/myrole/templates/secret.j2 roles/myrole2/templates/*
 ```
 
 ## Lint
 
+Lint Ansible roles with [ansible-lint](https://docs.astral.sh/ansible-lint/):
+```bash
+uvx ansible-lint roles/myrole
+```
+
 Lint Ansible playbooks with [ansible-lint](https://docs.astral.sh/ansible-lint/):
 ```bash
-uv run ansible-lint playbooks/main.yml -v --force-color
+uvx ansible-lint playbooks/main.yml -v --force-color
 ```
 
 Lint and format Python code with [Ruff](https://docs.astral.sh/ruff/):
 ```bash
-uv run ruff check && uv run ruff format
+uvx ruff check && uvx ruff format
 ```
 
 ## Pre-commit
@@ -82,5 +87,5 @@ uv run ruff check && uv run ruff format
 This repository uses [pre-commit](https://pre-commit.com/) to lint and format code before committing.
 Please install pre-commit hooks with the following command:
 ```bash
-uv run pre-commit install
+uvx pre-commit install
 ```

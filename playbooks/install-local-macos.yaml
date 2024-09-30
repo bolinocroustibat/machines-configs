@@ -12,7 +12,6 @@
   tasks:
     - name: Updating Ruby gems
       command: gem update --system
-      become: false
 
 - name: Install zsh and oh-my-zsh
   hosts: local
@@ -40,7 +39,7 @@
   tasks:
     - include_role:
         name: uv
-        tasks_from: main
+        tasks_from: install
 
 - name: Install NVM
   hosts: local

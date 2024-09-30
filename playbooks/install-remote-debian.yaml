@@ -47,4 +47,4 @@
   tasks:
     - include_role:
         name: uv
-        tasks_from: main
+        tasks_from: install
