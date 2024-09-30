@@ -1,8 +1,58 @@
+- name: Ensure Nginx is installed
+  apt:
+    pkg: nginx
+    state: present
+    default_release: latest
+  register: nginx_installed
+
 - name: Install Nginx
+  when: not nginx_installed.stat.exists
   apt:
     name: nginx
-    state: present
+    state: latest
   notify: Reload Nginx
+
+- include_tasks: logrotate.yml
+  tags: [logrotate]
+
+- name: Ensure openssl is installed
+  apt:
+    pkg: openssl
+    state: latest
+  when: nginx_ssl
+  tags:
+    - system
+    - install
+
+- name: Ensure all folders exists
+  file:
+    path: "/etc/nginx/{{ item }}"
+    state: directory
+  with_items:
+    - modules-available
+    - modules-enabled
+    - sites-available
+    - sites-enabled
+    - conf.d
+
+- name: Ensure configuration is set
+  template:
+    src: "{{ item.src }}"
+    dest: /etc/nginx/{{ item.path }}
+    mode: u=rw,g=r,o=r # 0644
+  when: item.state == 'file'
+  loop_control:
+      label: "{{ item.path }}"
+  notify: restart nginx
+  tags:
+    - config
+
+- name: Ensure cache dir exists
+  file:
+    path: "{{ nginx_cache_dir }}"
+    state: directory
+    owner: "{{ nginx_user }}"
+    mode: u=rwx,g=,o= # 700 (only the user can read, write and execute)
 
 - name: Stop Nginx
   service:
@@ -20,3 +70,8 @@
     name: nginx
     state: started
   notify: Reload Nginx
+
+- name: Ensure service is started at boot
+  service:
+    name: nginx
+    enabled: yes

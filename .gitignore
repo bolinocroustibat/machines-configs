@@ -16,3 +16,4 @@ secrets.*
 **/sites-available/*
 /roles/cron/templates/*
 /roles/ssh/templates/*
+/roles/systemd/templates/*
