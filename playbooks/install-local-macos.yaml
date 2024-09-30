@@ -13,6 +13,8 @@
   tasks:
     - name: Updating Ruby gems
       command: gem update --system
+      register: ruby_result
+      changed_when: ruby_result.find("Latest version already installed") == -1
 
 - name: Install zsh and oh-my-zsh
   hosts: local

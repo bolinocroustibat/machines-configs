@@ -10,7 +10,7 @@
     dest: /etc/fail2ban/jail.local
     owner: root
     group: root
-    mode: "0644"
+    mode: u=rw,g=r,o=r # 644
   notify: restart fail2ban
 
 - name: Add jail.d files
@@ -19,7 +19,7 @@
     dest: /etc/fail2ban/jail.d/
     owner: root
     group: root
-    mode: "0644"
+    mode: u=rw,g=r,o=r # 644
   with_fileglob:
     - files/jail.d/*
   notify: restart fail2ban

@@ -1,4 +1,4 @@
 - name: Update uv
   command: "uv self update"
   register: uv_result
-  failed_when: "'FAILED' in uv_result.stderr"
+  changed_when: uv_result.find("You're on the latest version of uv") == -1

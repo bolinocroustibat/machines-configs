@@ -1,2 +1,4 @@
 - name: Update pnpm
   command: pnpm update --global
+  register: pnpm_update
+  changed_when: pnpm_update.find('Already up to date') == -1

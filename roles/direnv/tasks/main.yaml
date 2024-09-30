@@ -14,3 +14,4 @@
   template:
     src: direnv.toml.j2
     dest: "{{ user_home }}/.config/direnv/direnv.toml"
+    mode: u=rw,g=r,o=r

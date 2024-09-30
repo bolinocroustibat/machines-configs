@@ -13,7 +13,7 @@
   get_url:
     url: https://github.com/bolinocroustibat/nginx-http3/releases/latest/download/nginx
     dest: /usr/sbin/nginx
-    mode: "0755"
+    mode: u=rwx,g=rx,o=rx
 
 - name: Start Nginx
   service:

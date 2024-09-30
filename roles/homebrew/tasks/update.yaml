@@ -1,14 +1,27 @@
 - name: Update Homebrew
   command: brew update
+  register: brew_update_result
+  changed_when: brew_update_result.stdout.find("Already up-to-date") == -1
 
 - name: Updating Homebrew Formulae
   command: brew upgrade
+  register: brew_upgrade_result
+  changed_when: brew_upgrade_result.stdout.find("Upgrading") == 1
 
 - name: Cleanup Homebrew
   command: brew cleanup -s
+  register: brew_cleanup_result
+  changed_when: brew_cleanup_result.stdout.find("Pruned") == 1
 
 - name: Check Homebrew for issues
   command: brew doctor
+  register: brew_doctor_result
+  changed_when: brew_doctor_result.stdout.find("Your system is ready to brew") == -1
 
 - name: Updating Homebrew Cask
   command: brew upgrade --cask
+  register: brew_upgrade_cask_result
+  changed_when: brew_upgrade_cask_result.stdout.find("Downloading") == 1
+
+# - name: Remove homebrew cache
+#   command: rm -rf "$(brew --cache)"

@@ -1,7 +1,10 @@
 - name: Add vhosts
+  # become: true
+  # become_user: 'www-data'
   template:
     src: sites-available/{{ item.name }}.j2
     dest: /etc/nginx/sites-available/{{ item.name }}
+    mode: u=rw,g=r,o=r # 644
   with_items: "{{ vhosts }}"
   notify: Reload Nginx
 

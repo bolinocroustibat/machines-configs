@@ -1,20 +1,23 @@
-- name: Install ufw
+- name: Install UFW
   apt:
     name: ufw
     state: latest
     update_cache: true
 
+- name: Set logging
+  community.general.ufw:
+    logging: 'on'
+
 - name: Allow SSH
-  command: ufw allow ssh
+  community.general.ufw:
+    rule: allow
+    name: ssh
 
-- name: Allow Nginx HTTP
-  command: ufw allow 'Nginx HTTP'
+- name: Allow HTTP
+  community.general.ufw:
+    rule: allow
+    name: http
 
-- name: Allow Nginx HTTPS
-  command: ufw allow 'Nginx HTTPS'
-
-- name: Reload ufw
-  command: ufw reload
-
-- name: Enable ufw
-  command: ufw enable
+- name: Enable UFW
+  community.general.ufw:
+    state: enabled

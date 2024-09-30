@@ -69,7 +69,7 @@ uvx ansible-vault encrypt roles/myrole/templates/secret.j2 roles/myrole2/templat
 
 Lint Ansible file with [ansible-lint](https://docs.astral.sh/ansible-lint/):
 ```bash
-uvx ansible-lint playbooks/main.yaml
+uvx ansible-lint playbooks/myplaybook.yaml
 ```
 
 Lint and format Python code with [Ruff](https://docs.astral.sh/ruff/):

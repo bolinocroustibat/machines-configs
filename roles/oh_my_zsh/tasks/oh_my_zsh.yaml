@@ -7,7 +7,7 @@
   when: not oh_my_zsh_installed.stat.exists
   block:
     - name: Create temporary file
-      ansible.builtin.tempfile:
+      tempfile:
         state: file
       register: oh_my_zsh_install_script
 
@@ -15,12 +15,13 @@
       get_url:
         url: https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh
         dest: /tmp/install_ohmyzsh.sh
-        mode: "0700"
+        mode: u=rwx,g=rx,o=rx
 
     - name: Install Oh-My-ZSH installation script
       command: sh /tmp/install_ohmyzsh.sh --unattended
       register: ohmyzsh_result
       failed_when: "'FAILED' in ohmyzsh_result.stderr"
+      changed_when: ohmyzsh_result.find('The $ZSH folder already exists') == -1
 
     - name: Remove the temporary file
       file::
@@ -54,6 +55,7 @@
   copy:
     src: "{{ user_home }}/.zshrc"
     dest: "{{ user_home }}/.zshrc.backup_{{ ansible_date_time.iso8601 }}"
+    mode: preserve # Preserve the file permissions of the original file
 
 - name: Write .zshrc
   template:
