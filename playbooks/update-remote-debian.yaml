@@ -5,6 +5,13 @@
         name: apt
         tasks_from: upgrade
 
+- name: Update Oh-My-ZSH
+  hosts: remote
+  tasks:
+    - include_role:
+        name: oh_my_zsh
+        tasks_from: update
+
 - name: Update uv
   hosts: remote
   tasks:

@@ -24,7 +24,7 @@
         tasks_from: zsh
     - include_role:
         name: oh_my_zsh
-        tasks_from: oh_my_zsh
+        tasks_from: install
 
 - name: Install direnv
   hosts: local

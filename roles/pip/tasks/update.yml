@@ -1,4 +1,5 @@
 - name: Update global pip
   command: "python3 -m pip install --upgrade pip"
   register: pip_update_result
-  # TODO: Check if the version of pip has been updated
+  changed_when: "'Successfully installed pip-' in pip_update_result.stdout"
+  failed_when: "'error' in pip_update_result.stderr"

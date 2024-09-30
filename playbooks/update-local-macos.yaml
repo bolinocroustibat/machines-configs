@@ -5,6 +5,13 @@
         name: homebrew
         tasks_from: update
 
+- name: Update Oh-My-ZSH
+  hosts: remote
+  tasks:
+    - include_role:
+        name: oh_my_zsh
+        tasks_from: update
+
 - name: Update Ruby gems
   hosts: local
   tasks:
@@ -12,6 +19,8 @@
       command: gem update --system
       register: ruby_result
       changed_when: "'Latest version already installed' not in ruby_result.stdout"
+      failed_when: "'ERROR' in ruby_result.stderr"
+      ignore_errors: true
 
 - name: Update global pnpm
   hosts: local
@@ -20,12 +29,13 @@
         name: pnpm
         tasks_from: update
 
-# - name: Update global pip
-#   hosts: local
-#   tasks:
-#     - include_role:
-#         name: pip
-#         tasks_from: update
+- name: Update global pip
+  hosts: local
+  tasks:
+    - include_role:
+        name: pip
+        tasks_from: update
+      ignore_errors: true
 
 - name: Update uv
   hosts: local
