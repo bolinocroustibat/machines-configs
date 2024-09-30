@@ -1,0 +1,4 @@
+- name: Update global pip
+  command: "python3 -m pip install --upgrade pip"
+  register: pip_update_result
+  # TODO: Check if the version of pip has been updated
