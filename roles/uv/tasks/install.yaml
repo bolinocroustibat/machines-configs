@@ -27,4 +27,4 @@
 - name: Install Python 3.12 with uv
   command: "{{ uv_install_dir }}/bin/uv python install 3.12"
   register: uv_python_result
-  changed_when: uv_python_result.find("Installed Python 3.12") == 1
+  changed_when: "'Installed Python 3.12' in uv_python_result.stdout"

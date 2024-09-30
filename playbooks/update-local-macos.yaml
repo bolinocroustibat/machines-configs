@@ -1,0 +1,28 @@
+- name: Update Homebrew
+  hosts: local
+  tasks:
+    - include_role:
+        name: homebrew
+        tasks_from: update
+
+- name: Update Ruby gems
+  hosts: local
+  tasks:
+    - name: Updating Ruby gems
+      command: gem update --system
+      register: ruby_result
+      changed_when: ruby_result.stdout.find("Latest version already installed") == -1
+
+- name: Update global pnpm
+  hosts: local
+  tasks:
+    - include_role:
+        name: pnpm
+        tasks_from: update
+
+- name: Update uv
+  hosts: local
+  tasks:
+    - include_role:
+        name: uv
+        tasks_from: update
