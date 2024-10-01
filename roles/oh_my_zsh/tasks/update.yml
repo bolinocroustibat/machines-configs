@@ -1,5 +1,5 @@
 - name: Update Oh-My-ZSH
-  command: "omz update"
+  command: "zsh -i -c 'omz update'"
   register: oh_my_zsh_update_result
   changed_when: "'Updated Oh My Zsh' in oh_my_zsh_update_result.stdout"
-  failed_when: "'error' in oh_my_zsh_update_result.stderr"
+  failed_when: "'Err' in oh_my_zsh_update_result.msg"

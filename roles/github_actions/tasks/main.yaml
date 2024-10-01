@@ -1,0 +1,30 @@
+- name: Add the GitHub Actions user with a specific uid and add it to the 'www-data' group
+  user:
+    name: "{{ github_user_name }}"
+    comment: user used by GitHub Actions runner for deploying tasks
+    create_home: true
+    uid: 1002
+    groups: www-data
+    append: yes
+
+- name: Add '.ssh' directory
+  file:
+    path: "/home/github/.ssh"
+    state: directory
+    owner: "{{ github_user_name }}"
+    group: "{{ github_user_name }}"
+    mode: u=rwx,g=,o= # 700 (only the user can read, write and execute)
+
+- name: Add the GitHub Actions user public key to '.ssh' directory
+  copy:
+    src: id_rsa.pub
+    dest: "/home/{{ github_user_name }}/.ssh/id_rsa.pub"
+    owner: "{{ github_user_name }}"
+    group: "{{ github_user_name }}"
+    mode: u=rw,g=,o= # 600 (only the user can read and write)
+
+- name: Add the GitHub Actions user public key to 'authorized_keys' file
+  authorized_key:
+    user: "{{ github_user_name }}"
+    state: present
+    key: "{{ lookup('file', '/home/github/.ssh/id_rsa.pub') }}"

@@ -29,6 +29,13 @@
         name: oh_my_zsh
         tasks_from: install
 
+- name: Add the GitHub Actions user
+  hosts: local
+  tasks:
+    - include_role:
+        name: github_actions
+        tasks_from: main
+
 - name: Install and configure Micro
   hosts: remote
   tasks:

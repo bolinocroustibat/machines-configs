@@ -36,6 +36,13 @@
         name: micro
         tasks_from: main
 
+- name: Configure Git
+  hosts: local
+  tasks:
+    - include_role:
+        name: git
+        tasks_from: main
+
 - name: Install uv
   hosts: local
   tasks:

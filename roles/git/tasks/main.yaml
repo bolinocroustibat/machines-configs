@@ -7,13 +7,13 @@
 - name: Configure git
   blocks:
     - name: Set Git user name
-      command: git config --global user.name "{{ user.git_user_name }}"
       when: user.git_user_name is defined
+      command: git config --global user.name "{{ user.git_user_name }}"
       changed_when: false
 
     - name: Set Git user email
-      command: git config --global user.email "{{ user.git_user_email }}"
       when: user.git_user_email is defined
+      command: git config --global user.email "{{ user.git_user_email }}"
       changed_when: false
 
     - name: Set Git user signing key
