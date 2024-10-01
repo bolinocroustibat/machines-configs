@@ -5,7 +5,7 @@
     default_release: latest
   register: nginx_installed
 
-- name: Install Nginx
+- name: Install Nginx if not installed
   when: not nginx_installed.stat.exists
   apt:
     name: nginx
@@ -41,15 +41,15 @@
   when: item.state == 'file'
   loop_control:
     label: "{{ item.path }}"
-  notify: restart nginx
-  tags:
-    - config
+  notify:
+    - reload nginx
+    - restart nginx
 
 - name: Ensure cache dir exists
   file:
     path: "{{ nginx_cache_dir }}"
     state: directory
-    owner: "{{ nginx_user }}"
+    owner: www-data
     mode: u=rwx,g=,o= # 700 (only the user can read, write and execute)
 
 - name: Stop Nginx
@@ -72,14 +72,23 @@
     url: https://github.com/bolinocroustibat/nginx-http3/releases/latest/download/nginx
     dest: /usr/sbin/nginx
     mode: u=rwx,g=rx,o=rx
+  notify:
+    - restart nginx
 
-- name: Start Nginx
+- name: Ensure service is started and enabled at boot
   service:
     name: nginx
     state: started
-  notify: Reload Nginx
-
-- name: Ensure service is started at boot
-  service:
-    name: nginx
     enabled: true
+
+- name: Ensure www-data user exists
+  user:
+    name: www-data
+    state: present
+    system: true
+
+- name: Ensure user www-data is in the www-data group
+  user:
+    name: www-data
+    groups: www-data
+    append: yes

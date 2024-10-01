@@ -1,21 +1,23 @@
 - name: Backup existing sources list
-  copy:
-    src: /etc/apt/sources.list
-    dest: /etc/apt/sources.list_{{ ansible_date_time.iso8601 }}.bak
-    mode: preserve
   when: ansible_os_family == 'Debian'
+  copy:
+    remote_src: true
+    src: "/etc/apt/sources.list"
+    dest: "/etc/apt/sources.list_{{ ansible_date_time.iso8601 }}.bak"
+    mode: preserve
 
 - name: Update apt sources list from template
-  template:
-    src: sources.list.j2
-    dest: /etc/apt/sources.list
-    mode: u=rw,g=r,o=r # 644
   when: ansible_os_family == 'Debian'
+  template:
+    src: "sources.list.j2"
+    dest: "/etc/apt/sources.list"
+    mode: u=rw,g=r,o=r # 644
 
 - name: Add custom sources lists from templates
-  template:
-    src: sources.list.d/{{ item.name }}.j2
-    dest: /etc/apt/sources.list.d/{{ item.name }}
-    mode: u=rw,g=r,o=r # 644
-  with_items: "{{ sources }}"
   when: ansible_os_family == 'Debian'
+  template:
+    src: "{{ item }}"
+    dest: "/etc/apt/sources.list.d/{{ item | basename }}"
+    mode: u=rw,g=r,o=r # 644
+  with_fileglob:
+    - ../templates/sources.list.d/*

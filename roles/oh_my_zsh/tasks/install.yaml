@@ -1,15 +1,15 @@
 - name: Check if Oh-My-ZSH is installed
   ansible.builtin.stat:
     path: "{{ user_home }}/.oh-my-zsh"
-  register: oh_my_zsh_installed
+  register: oh_my_zsh__installed
 
 - name: Install Oh-My-ZSH
-  when: not oh_my_zsh_installed.stat.exists
+  when: not oh_my_zsh__installed.stat.exists
   block:
     - name: Create temporary file
       tempfile:
         state: file
-      register: oh_my_zsh_install_script
+      register: oh_my_zsh__install_script
 
     - name: Download Oh-My-ZSH installation script
       get_url:
@@ -27,7 +27,7 @@
       file::
         path: /tmp/install_ohmyzsh.sh
         state: absent
-      when: oh_my_zsh_install_script.path is defined
+      when: oh_my_zsh__install_script.path is defined
 
     - name: Clone zsh-autosuggestions
       git:
@@ -35,7 +35,7 @@
         dest: "{{ user_home }}/.oh-my-zsh/plugins/zsh-autosuggestions"
         version: master
         force: true
-      when: user.oh_my_zsh_install_zsh_autosuggestions | default(oh_my_zsh_install_zsh_autosuggestions)
+      when: user.oh_my_zsh__install_zsh_autosuggestions | default(oh_my_zsh__install_zsh_autosuggestions)
 
     - name: Clone zsh-syntax-highlighting
       git:
@@ -43,7 +43,7 @@
         dest: "{{ user_home }}/.oh-my-zsh/plugins/zsh-syntax-highlighting"
         version: master
         force: true
-      when: user.oh_my_zsh_install_zsh_syntax_highlighting | default(oh_my_zsh_install_zsh_syntax_highlighting)
+      when: user.oh_my_zsh__install_zsh_syntax_highlighting | default(oh_my_zsh__install_zsh_syntax_highlighting)
 
     - name: Install custom theme from template
       template:

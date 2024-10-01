@@ -1,8 +1,8 @@
 {{ ansible_managed | comment }}
 
-Alias /owncloud "{{ owncloud_path }}"
+Alias /owncloud "{{ owncloud__path }}"
 
-<Directory {{ owncloud_path }}/>
+<Directory {{ owncloud__path }}/>
 Options +FollowSymlinks
 AllowOverride All
 Options -Indexes
@@ -11,7 +11,7 @@ Options -Indexes
 	Dav off
 </IfModule>
 
-SetEnv HOME {{ owncloud_path }}
-SetEnv HTTP_HOME {{ owncloud_path }}
+SetEnv HOME {{ owncloud__path }}
+SetEnv HTTP_HOME {{ owncloud__path }}
 
 </Directory>

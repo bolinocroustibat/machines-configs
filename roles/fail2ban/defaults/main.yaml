@@ -1,0 +1,2 @@
+fail2ban__user_email: me@adriencarpentier.com
+fail2ban__sender_email: fail2ban@110.vm.arancloud.com

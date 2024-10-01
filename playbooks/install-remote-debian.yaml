@@ -3,10 +3,10 @@
   tasks:
     - include_role:
         name: apt
-        tasks_from: upgrade
+        tasks_from: install_sources
     - include_role:
         name: apt
-        tasks_from: install_sources
+        tasks_from: upgrade
 
 - name: Configure .bashrc
   hosts: remote

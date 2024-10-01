@@ -6,7 +6,7 @@
     dest: /etc/nginx/sites-available/{{ item.name }}
     mode: u=rw,g=r,o=r # 644
   with_items: "{{ vhosts }}"
-  notify: Reload Nginx
+  notify: reload Nginx
 
 - name: Enable vhosts
   file:
@@ -14,4 +14,4 @@
     dest: /etc/nginx/sites-enabled/{{ item.name }}
     state: link
   with_items: "{{ vhosts }}"
-  notify: Reload Nginx
+  notify: reload Nginx

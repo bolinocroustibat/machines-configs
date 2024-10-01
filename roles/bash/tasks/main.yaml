@@ -1,4 +1,9 @@
+- name: Get .bashrc file stat to be able to perform next task
+  stat: "path={{ user_home }}/.bashrc"
+  register: bashrc
+
 - name: Backup existing .bashrc if it exists
+  when: bashrc.stat.exists
   copy:
     src: "{{ user_home }}/.bashrc"
     dest: "{{ user_home }}/.bashrc_{{ ansible_date_time.iso8601 }}.bak"
