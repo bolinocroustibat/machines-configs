@@ -1,4 +1,4 @@
-# dotfiles
+# Machines configs and dotfiles
 
 Ansible playbooks for setting up local development and remote machines.
 
