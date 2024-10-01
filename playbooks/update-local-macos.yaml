@@ -6,7 +6,7 @@
         tasks_from: update
 
 - name: Update Oh-My-ZSH
-  hosts: remote
+  hosts: local
   tasks:
     - include_role:
         name: oh_my_zsh

@@ -9,14 +9,14 @@
         tasks_from: update
 
 - name: Install zsh
-  hosts: remote
+  hosts: local
   tasks:
     - include_role:
         name: zsh
         tasks_from: main
 
 - name: Install and configure oh-my-zsh
-  hosts: remote
+  hosts: local
   tasks:
     - include_role:
         name: oh_my_zsh

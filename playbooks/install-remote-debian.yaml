@@ -30,7 +30,7 @@
         tasks_from: install
 
 - name: Add the GitHub Actions user
-  hosts: local
+  hosts: remote
   tasks:
     - include_role:
         name: github_actions

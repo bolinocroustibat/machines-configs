@@ -1,8 +1,7 @@
-- name: Install git
+- name: Install git package
   ansible.builtin.package:
     name: git
     state: present
-  when: user.install_git | default(install_git)
 
 - name: Configure git
   blocks:
