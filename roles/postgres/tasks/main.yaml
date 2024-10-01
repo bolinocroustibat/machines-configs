@@ -1,0 +1,11 @@
+- name: Install Postgres
+  apt:
+    name: postgresql
+    state: present
+
+- name: Change local user user password
+  become: true
+  become_method: sudo
+  become_user: "{{ postgres__local_user }}"
+  postgresql_user:
+    password: "{{ postgres__local_user_password }}"

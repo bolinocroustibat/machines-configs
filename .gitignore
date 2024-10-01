@@ -18,3 +18,5 @@ secrets.*
 /roles/ssh/templates/*
 /roles/WEBSITES/*
 /hosts_vars/*
+/roles/databases-backup-over-scp/defaults/main.yaml
+/roles/postgres/defaults/main.yaml

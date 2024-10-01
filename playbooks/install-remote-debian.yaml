@@ -70,3 +70,17 @@
     - include_role:
         name: uv
         tasks_from: install
+
+- name: Install Postgres
+  hosts: remote
+  tasks:
+    - include_role:
+        name: postgres
+        tasks_from: main
+
+- name: Install databases-remote-backup-scripts
+  hosts: remote
+  tasks:
+    - include_role:
+        name: databases-remote-backup-scripts
+        tasks_from: main

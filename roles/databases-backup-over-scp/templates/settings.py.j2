@@ -1,0 +1,21 @@
+{{ ansible_managed | comment }}
+
+# PostgreSQL database details to which backup to be done.
+POSTGRES_DB_NAMES = [{% for db in dabatase_backup_over_scp__postgres_databases %}"{{ db }}",{% endfor %}]  # PostgreSQL databases names to backup.
+POSTGRES_SYSTEM_USER = "{{ postgres__local_user }}"  # make sure this system user has enough privileges to take all databases backup.
+POSTGRES_PASSWD = "{{ postgres__local_user_password }}"
+POSTGRES_PORT = 5432
+
+# MySQL database details to which backup to be done.
+MYSQL_DB_NAMES = [{% for db in dabatase_backup_over_scp__mysql_databases %}"{{ db }}",{% endfor %}]  # MySQL databases to backup
+MYSQL_USER = "{{ mysql__local_user }}"  # make sure this MySQL user has enough privileges to take all databases backup.
+MYSQL_USER_PASSWORD = "{{ mysql__local_user_password }}"
+
+# Local setting
+LOCAL_PATH = "{{ dabatase_backup_over_scp__local_backup_path }}"  # full local path where dumps will be saved, with trailing slash.
+LOGFILE = "{{ user_home }}/databases-backup-script-over-scp/log-last-script.log"  # full path to log file.
+
+# Remote settings
+REMOTE_HOST = "{{ dabatase_backup_over_scp__remote_host }}"  # leave blank if you don't want to save remotely
+REMOTE_USER = "{{ dabatase_backup_over_scp__remote_user }}"  # you need to be authorized on remote with your user SSH keys.
+REMOTE_PATH = "{{ dabatase_backup_over_scp__remote_backup_path }}"  # full remote path where dumps will be saved.

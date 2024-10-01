@@ -1,0 +1,35 @@
+- name: Git clone databases backup script
+  git:
+    repo: git@github.com:bolinocroustibat/databases-backup-over-scp.git
+    dest: "{{ user_home }}/"
+    update: yes
+
+- name: Create virtualenv and install requirements
+  command: "uv sync"
+
+- name: Add settings
+  template:
+    src: settings.py.j2
+    dest: "{{ user_home }}/databases-backup-over-scp/settings.py"
+
+- name: Make the user postgres the owner of the local backup folder
+  command: "chown -R postgres:postgres /root/dumps/"
+
+- name: Make the main script executable by current user
+  command: "chmod +x {{ user_home }}/databases-backup-over-scp/main.py"
+
+- name: Add cron job to execute the backup script
+  cron:
+    name: "Backup SQL every month 1st at 2h00"
+    minute: "0"
+    hour: "2"
+    day: "1"
+    job: "{{ user_home }}/databases-backup-over-scp/.venv/bin/python {{ user_home }}/databases-backup-over-scp/main.py >> {{ user_home }}/databases-backup-over-scp/log_last_cron.log"
+
+- name: Add cron job to delete old backups
+  cron:
+    name: "Delete old backups every month 1st at 3h00"
+    minute: "0"
+    hour: "3"
+    day: "1"
+    job: 'find {{ dabatase_backup_over_scp__local_backup_path }} -type f -mtime +30 -exec rm -f {} \; >> {{ user_home }}/databases-backup-over-scp/log_last_cron.log'
