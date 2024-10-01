@@ -54,12 +54,12 @@ alias ll='ls -alFh'
 alias l='ls -lFh'
 alias dfh='df -h'                  # disk free with human reading
 alias duh='du -hd1 | sort -h'      # disk usage with human reading, only first level
-alias git force pull='git fetch --all & git reset --hard origin/main && git pull'
+alias git_force_pull='git fetch --all & git reset --hard origin/main && git pull'
 alias ruffcheck='ruff check --fix && ruff format'
 #alias cat='ccat'
 {% if type == 'local-development' %}
-alias docker psa='docker ps --format "table {{ '{{' }}.Names{{ '}}' }}\t{{ '{{' }}.Ports{{ '}}' }}\t{{ '{{' }}.Status{{ '}}' }}"'
-alias biomecheck='npx @biomejs/biome check --apply .'
+alias docker_psa='docker ps --format "table {{ '{{' }}.Names{{ '}}' }}\t{{ '{{' }}.Ports{{ '}}' }}\t{{ '{{' }}.Status{{ '}}' }}"'
+alias biomecheck='biome check --write .'
 {% endif %}
 
 # iTerm2 shell integration

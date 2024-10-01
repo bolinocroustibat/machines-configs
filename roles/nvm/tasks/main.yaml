@@ -4,9 +4,8 @@
     name: nvm
     state: latest
 
-
 - name: Install/select node version with NVM
   when: ansible_os_family == "Darwin"
-  command: nvm install {{ node_version }}
+  command: nvm install {{ nvm_default_node_version }}
   register: nvm_install
   changed_when: nvm_install.find('already installed') == -1
