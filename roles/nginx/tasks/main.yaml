@@ -57,6 +57,16 @@
     name: nginx
     state: stopped
 
+- name: Get Nginx version
+  command: /usr/sbin/nginx -v
+  register: nginx_version
+
+- name: Copy previous Nginx binary
+  copy:
+    src: /usr/sbin/nginx
+    dest: /usr/sbin/{{ nginx_version }}.bak_{{ ansible_date_time.iso8601 }}
+  when: nginx_installed.stat.exists
+
 - name: Download latest homemade build of Nginx
   get_url:
     url: https://github.com/bolinocroustibat/nginx-http3/releases/latest/download/nginx
