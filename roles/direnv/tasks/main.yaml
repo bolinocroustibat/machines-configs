@@ -13,7 +13,7 @@
 - name: Backup existing config file if it exists
   copy:
     src: "{{ user_home }}/.config/direnv/direnv.toml"
-    dest: "{{ user_home }}/.config/direnv/direnv.toml.bak_{{ ansible_date_time.iso8601 }}"
+    dest: "{{ user_home }}/.config/direnv/direnv.toml_{{ ansible_date_time.iso8601 }}.bak"
     mode: preserve # Preserve the file permissions of the original file
 
 - name: Configure direnv for taking .env files into account
