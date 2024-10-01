@@ -22,4 +22,5 @@ warn_list:
 skip_list:
   - 'name[missing]' # Seems it raises an issue also when task have no capital letter
   - 'package-latest' # We want to use latest version of packages
+  - 'fqcn[action]' # We don't want to use full qualified class name for action plugins
   - 'fqcn[action-core]' # We don't want to use full qualified class name for action plugins

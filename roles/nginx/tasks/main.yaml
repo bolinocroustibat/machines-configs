@@ -12,9 +12,6 @@
     state: latest
   notify: Reload Nginx
 
-- include_tasks: logrotate.yml
-  tags: [logrotate]
-
 - name: Ensure openssl is installed
   apt:
     pkg: openssl
@@ -28,6 +25,7 @@
   file:
     path: "/etc/nginx/{{ item }}"
     state: directory
+    mode: u=rwx,g=rx,o=rx # 755
   with_items:
     - modules-available
     - modules-enabled
@@ -42,7 +40,7 @@
     mode: u=rw,g=r,o=r # 0644
   when: item.state == 'file'
   loop_control:
-      label: "{{ item.path }}"
+    label: "{{ item.path }}"
   notify: restart nginx
   tags:
     - config
@@ -74,4 +72,4 @@
 - name: Ensure service is started at boot
   service:
     name: nginx
-    enabled: yes
+    enabled: true

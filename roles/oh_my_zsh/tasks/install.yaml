@@ -51,10 +51,10 @@
         dest: "{{ user_home }}/.oh-my-zsh/custom/themes/bolino.zsh-theme"
         mode: u=rw,g=r,o=r
 
-- name: Backup existing zshrc if it exists
+- name: Backup existing .zshrc if it exists
   copy:
     src: "{{ user_home }}/.zshrc"
-    dest: "{{ user_home }}/.zshrc.backup_{{ ansible_date_time.iso8601 }}"
+    dest: "{{ user_home }}/.zshrc.bak_{{ ansible_date_time.iso8601 }}"
     mode: preserve # Preserve the file permissions of the original file
 
 - name: Write .zshrc

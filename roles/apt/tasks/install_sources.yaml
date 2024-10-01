@@ -1,7 +1,7 @@
 - name: Backup existing sources list
   copy:
     src: /etc/apt/sources.list
-    dest: /etc/apt/sources.list.backup_{{ ansible_date_time.iso8601 }}
+    dest: /etc/apt/sources.list.bak_{{ ansible_date_time.iso8601 }}
     mode: preserve
   when: ansible_os_family == 'Debian'
 

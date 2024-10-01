@@ -8,15 +8,26 @@
         name: apt
         tasks_from: install_sources
 
-- name: Install and configure zsh and oh-my-zsh
+- name: Configure .bashrc
+  hosts: remote
+  tasks:
+    - include_role:
+        name: bash
+        tasks_from: main
+
+- name: Install zsh
+  hosts: remote
+  tasks:
+    - include_role:
+        name: zsh
+        tasks_from: main
+
+- name: Install and configure oh-my-zsh
   hosts: remote
   tasks:
     - include_role:
         name: oh_my_zsh
-        tasks_from: zsh
-    - include_role:
-        name: oh_my_zsh
-        tasks_from: oh_my_zsh
+        tasks_from: install
 
 - name: Install and configure Micro
   hosts: remote

@@ -1,20 +1,20 @@
 - name: Check if ZSH is installed
   block:
     - name: Check if ZSH is installed with homebrew
+      when: ansible_os_family == "Darwin"
       homebrew:
         name: zsh
         state: present
       register: zsh_installed
-      when: ansible_os_family == "Darwin"
 
     - name: Check if ZSH is installed with apt
+      when: ansible_os_family == "Debian"
       apt:
         name: zsh
         state: present
         update_cache: true
       become: true
       register: zsh_installed
-      when: ansible_os_family == "Debian"
 
 - name: Install ZSH
   when: not zsh_installed.stat.exists

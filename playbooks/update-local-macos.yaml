@@ -35,7 +35,7 @@
     - include_role:
         name: pip
         tasks_from: update
-      ignore_errors: true
+      ignore_errors: true # pip may be managed by uv, so we don't want to fail if it is
 
 - name: Update uv
   hosts: local

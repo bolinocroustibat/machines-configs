@@ -1,0 +1,11 @@
+- name: "Install Biome"
+  homebrew:
+    name: biome
+    state: present
+    update_homebrew: true
+
+- name: "Set Biome configuration"
+  template:
+    src: biome.json
+    dest: "{{ user_home }}/code/perso/biome.json"
+    mode: u=rw,g=r,o=r

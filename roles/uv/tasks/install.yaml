@@ -7,10 +7,6 @@
     dest: "/tmp/uv_install.sh"
     mode: u=rwx,g=rx,o=rx # 755 (make the file executable)
 
-- name: Define uv install dir path
-  set_fact:
-    uv_install_dir: "{{ '/usr/local/bin/uv' if uv_multi_users else '{{ user_home }}/.cargo' }}"
-
 - name: Execute uv installation script
   command: "sh /tmp/uv_install.sh"
   environment:

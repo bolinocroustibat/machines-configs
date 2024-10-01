@@ -8,20 +8,16 @@
         name: homebrew
         tasks_from: update
 
-- name: Updating Ruby gems
-  hosts: local
-  tasks:
-    - name: Updating Ruby gems
-      command: gem update --system
-      register: ruby_result
-      changed_when: ruby_result.find("Latest version already installed") == -1
-
-- name: Install zsh and oh-my-zsh
-  hosts: local
+- name: Install zsh
+  hosts: remote
   tasks:
     - include_role:
-        name: oh_my_zsh
-        tasks_from: zsh
+        name: zsh
+        tasks_from: main
+
+- name: Install and configure oh-my-zsh
+  hosts: remote
+  tasks:
     - include_role:
         name: oh_my_zsh
         tasks_from: install
@@ -60,3 +56,18 @@
     - include_role:
         name: pnpm
         tasks_from: main
+
+- name: Install Biome
+  hosts: local
+  tasks:
+    - include_role:
+        name: biome
+        tasks_from: install
+
+- name: Updating Ruby gems
+  hosts: local
+  tasks:
+    - name: Updating Ruby gems
+      command: gem update --system
+      register: ruby_result
+      changed_when: ruby_result.find("Latest version already installed") == -1

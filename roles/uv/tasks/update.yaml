@@ -1,8 +1,5 @@
-- name: Define uv install dir path
-  set_fact:
-    uv_install_dir: "{{ '/usr/local/bin/uv' if uv_multi_users else '{{ user_home }}/.cargo' }}"
-
 - name: Update uv
   command: "{{ uv_install_dir }}/bin/uv self update"
   register: uv_result
   changed_when: "'on the latest version of uv' not in uv_result.stderr"
+  failed_when: "'Err' in uv_result.msg"
