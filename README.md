@@ -84,3 +84,14 @@ Please install pre-commit hooks with the following command:
 ```bash
 uvx pre-commit install
 ```
+
+## Precedence of Ansible variables
+
+Ansible variables have the following precedence:
+
+1. Vars set on the command line, e.g.: `-e foo=set_on_cmd_line`
+2. Vars set in the vars_files: block in the play
+3. Vars set in the vars: block in the play
+4. Vars set in `host_vars/`
+5. Vars set in `group_vars/`
+6. Role default vars e.g. `roles/.../defaults/main.yml`
