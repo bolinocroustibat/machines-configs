@@ -4,7 +4,7 @@
     state: present
 
 - name: Configure git
-  blocks:
+  block:
     - name: Set Git user name
       when: user.git_user_name is defined
       command: git config --global user.name "{{ user.git_user_name }}"

@@ -10,6 +10,12 @@
     state: latest
   when: ansible_os_family == "Debian"
 
+- name: Backup existing config file if it exists
+  copy:
+    src: "{{ user_home }}/.config/direnv/direnv.toml"
+    dest: "{{ user_home }}/.config/direnv/direnv.toml.bak_{{ ansible_date_time.iso8601 }}"
+    mode: preserve # Preserve the file permissions of the original file
+
 - name: Configure direnv for taking .env files into account
   template:
     src: direnv.toml.j2

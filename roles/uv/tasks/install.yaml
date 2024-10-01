@@ -16,7 +16,7 @@
   changed_when: "'everything's installed!' in uv_result.stdout"
 
 - name: Remove the temporary installation script
-  file::
+  file:
     path: "/tmp/uv_install.sh"
     state: absent
 

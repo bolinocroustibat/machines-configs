@@ -1,4 +1,4 @@
 - name: Install Homebrew
-  command: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  command: "/bin/bash -c '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'"
   register: brew_install_result
   changed_when: brew_install_result.stdout.find("Homebrew is already installed") == -1
