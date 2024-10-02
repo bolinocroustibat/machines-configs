@@ -24,7 +24,7 @@
       changed_when: ohmyzsh_result.find('The $ZSH folder already exists') == -1
 
     - name: Remove the temporary file
-      file::
+      file:
         path: /tmp/install_ohmyzsh.sh
         state: absent
       when: oh_my_zsh__install_script.path is defined
