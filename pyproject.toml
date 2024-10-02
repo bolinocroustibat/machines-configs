@@ -10,6 +10,11 @@ dependencies = [
     "ansible>=10.4.0",
 ]
 
+# Ignore flat-layout
+# (important to be able to install dependencies with pip from pyproject.toml)
+[tool.setuptools]
+py-modules = []
+
 [tool.ruff]
 line-length = 100
 lint = { extend-select = ["I"] }
