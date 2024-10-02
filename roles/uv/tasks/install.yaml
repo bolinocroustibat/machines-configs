@@ -13,7 +13,7 @@
     UV_INSTALL_DIR: "{{ uv_install_dir }}"
   register: uv_result
   failed_when: "'FAILED' in uv_result.stderr"
-  changed_when: "'everything's installed!' in uv_result.stdout"
+  changed_when: "'installed!' in uv_result.stdout"
 
 - name: Remove the temporary installation script
   file:

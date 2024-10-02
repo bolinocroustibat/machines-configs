@@ -2,4 +2,5 @@
   command: "zsh -i -c 'omz update'"
   register: oh_my_zsh_update_result
   changed_when: "'Updated Oh My Zsh' in oh_my_zsh_update_result.stdout"
+  # changed_when: "'Oh My Zsh is already at the latest version' not in oh_my_zsh_update_result.stdout"
   failed_when: "'Err' in oh_my_zsh_update_result.msg"

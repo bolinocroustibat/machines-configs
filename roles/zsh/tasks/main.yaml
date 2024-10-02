@@ -17,21 +17,21 @@
       register: zsh_installed
 
 - name: Install ZSH
-  when: not zsh_installed.stat.exists
+  when: not zsh_installed.changed
   block:
     - name: Install ZSH with homebrew
+      when: ansible_os_family == "Darwin"
       homebrew:
         name: zsh
         state: latest
-      when: ansible_os_family == "Darwin"
 
     - name: Install ZSH with apt
+      when: ansible_os_family == "Debian"
       apt:
         name: zsh
         state: latest
         update_cache: true
       become: true
-      when: ansible_os_family == "Debian"
 
 - name: Change current user shell to ZSH
   user:
