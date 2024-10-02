@@ -87,3 +87,10 @@
     - include_role:
         name: databases-remote-backup-scripts
         tasks_from: main
+
+- name: Install websites
+  hosts: web-servers
+  tasks:
+    - include_role:
+        name: WEBSITES
+        tasks_from: main.yaml
