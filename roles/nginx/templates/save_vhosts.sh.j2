@@ -1,0 +1,8 @@
+{{ ansible_managed | comment }}
+
+#!/bin/bash
+
+now=$(date +"%Y-%m-%d_%H-%M")
+backup_file="vhosts_nginx_{{ nginx__save_script_local_machine_name }}_${now}.zip"
+zip /home/${backup_file} /etc/nginx/sites-enabled/* /etc/nginx/sites-available/* /etc/nginx/nginx.conf
+scp /home/${backup_file} {{ nginx__save_script_remote_machine_name }}:/home/save/vhosts/

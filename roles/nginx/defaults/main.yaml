@@ -1,0 +1,2 @@
+nginx__save_script_local_machine_name: "web-bolino"
+nginx__save_script_remote_machine_name: "data-bolino"
