@@ -1,6 +1,7 @@
 {{ ansible_managed | comment }}
 
 ### $PATH ####
+
 export PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
 export PATH="/opt/homebrew/bin" # New Homebrew path
 export PATH="$PATH:{{ user_home }}/Library/Android/sdk/platform-tools" # Android Studio
@@ -22,25 +23,23 @@ export ZSH="{{ user_home }}/.oh-my-zsh"
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="{{ user.oh_my_zsh_theme | default(oh_my_zsh_theme) }}"
+ZSH_THEME="{{ oh_my_zsh__theme }}"
 
-HYPHEN_INSENSITIVE="true"
 ENABLE_CORRECTION="true"
-COMPLETION_WAITING_DOTS="true"
-HIST_STAMPS="{{ oh_my_zsh_hist_stamps }}"
+HIST_STAMPS="yyyy-mm-dd"
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-  # autoswitch_virtualenv # not working properly
-  {{ user.oh_my_zsh_plugins | default(oh_my_zsh_plugins) | join("\n    ") }}
+	# autoswitch_virtualenv # not working properly
+	{{ oh_my_zsh__plugins | join("\n    ") }}
 )
 
 source $ZSH/oh-my-zsh.sh
 
-### User configuration ##
+### User configuration ###
 
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8 # Global setting, does not overrides anything
@@ -52,21 +51,26 @@ export LANG=en_US.UTF-8 # Global setting, does not overrides anything
 # Aliases
 alias l='ls -alFh'
 alias ll='ls -lFh'
-alias dfh='df -h'                  # disk free with human reading
-alias duh='du -hd1 | sort -h'      # disk usage with human reading, only first level
+alias dfh='df -h'				# disk free with human reading
+alias duh='du -hd1 | sort -h'	# disk usage with human reading, only first level
+{% if ansible_os_family == 'Debian' %}
+alias start='systemctl start'
+alias restart='systemctl restart'
+alias stop='systemctl stop'
+alias status='systemctl status'
+{% endif %}
 alias git_force_pull='git fetch --all & git reset --hard origin/main && git pull'
 alias ruffcheck='ruff check --fix && ruff format'
 #alias cat='ccat'
-{% if type == 'local-development' %}
+{% if ansible_os_family == 'Darwin' %}
 alias docker_psa='docker ps --format "table {{ '{{' }}.Names{{ '}}' }}\t{{ '{{' }}.Ports{{ '}}' }}\t{{ '{{' }}.Status{{ '}}' }}"'
 alias biomecheck='biome check --write .'
 {% endif %}
 
 # iTerm2 shell integration
-# test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-source ~/.iterm2_shell_integration.zsh
+source $HOME/.iterm2_shell_integration.zsh
 
-{% if type == 'local-development' %}
+{% if ansible_os_family == 'Darwin' %}
 # Homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
@@ -86,8 +90,8 @@ export NVM_DIR="$HOME/.nvm"
 export PNPM_HOME="{{ user_home }}/Library/pnpm"
 export PNPM_HOME="{{ user_home }}/Library/pnpm"
 case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+	*":$PNPM_HOME:"*) ;;
+	*) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 
 # bun

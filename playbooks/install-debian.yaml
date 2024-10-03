@@ -29,20 +29,6 @@
         name: oh_my_zsh
         tasks_from: install
 
-- name: Add the GitHub Actions user
-  hosts: web-servers
-  tasks:
-    - include_role:
-        name: github_actions
-        tasks_from: main
-
-- name: Install and configure Micro
-  hosts: remote
-  tasks:
-    - include_role:
-        name: micro
-        tasks_from: main
-
 - name: Install and configure fail2ban
   hosts: remote
   tasks:
@@ -57,6 +43,27 @@
         name: ufw
         tasks_from: main
 
+- name: Install and configure Micro
+  hosts: remote
+  tasks:
+    - include_role:
+        name: micro
+        tasks_from: main
+
+- name: Install and configure uv
+  hosts: remote
+  tasks:
+    - include_role:
+        name: uv
+        tasks_from: install
+
+- name: Add the GitHub Actions user
+  hosts: web-servers
+  tasks:
+    - include_role:
+        name: github_actions
+        tasks_from: main
+
 - name: Install and configure Nginx
   hosts: web-servers
   tasks:
@@ -66,13 +73,6 @@
     - include_role:
         name: nginx
         tasks_from: backup_vhosts
-
-- name: Install and configure uv
-  hosts: remote
-  tasks:
-    - include_role:
-        name: uv
-        tasks_from: install
 
 - name: Install Postgres
   hosts: web-servers

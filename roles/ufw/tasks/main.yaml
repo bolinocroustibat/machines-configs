@@ -13,10 +13,10 @@
     rule: allow
     name: ssh
 
-- name: Allow HTTP
+- name: Allow Nginx HTTP and HTTPS
   community.general.ufw:
     rule: allow
-    name: http
+    name: Nginx Full
 
 - name: Enable UFW
   community.general.ufw:

@@ -35,7 +35,6 @@
         dest: "{{ user_home }}/.oh-my-zsh/plugins/zsh-autosuggestions"
         version: master
         force: true
-      when: user.oh_my_zsh__install_zsh_autosuggestions | default(oh_my_zsh__install_zsh_autosuggestions)
 
     - name: Clone zsh-syntax-highlighting
       git:
@@ -43,7 +42,6 @@
         dest: "{{ user_home }}/.oh-my-zsh/plugins/zsh-syntax-highlighting"
         version: master
         force: true
-      when: user.oh_my_zsh__install_zsh_syntax_highlighting | default(oh_my_zsh__install_zsh_syntax_highlighting)
 
     - name: Install custom theme from template
       template:
@@ -62,4 +60,4 @@
   template:
     src: .zshrc.j2
     dest: "{{ user_home }}/.zshrc"
-    mode: "u=rw,go=r"
+    mode: "u=rw,g=r,o=r" # 644 (read and write access for the owner of the file and read access for group and others)

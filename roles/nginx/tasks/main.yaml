@@ -1,27 +1,19 @@
-- name: Ensure Nginx is installed
-  apt:
-    pkg: nginx
-    state: present
-    default_release: latest
-  register: nginx_installed
+- name: Gather package facts
+  package_facts:
+    manager: apt
 
 - name: Install Nginx if not installed
-  when: not nginx_installed.stat.exists
+  when: '"nginx" not in ansible_facts.packages'
   apt:
     name: nginx
     state: latest
-  notify: Reload Nginx
 
 - name: Ensure openssl is installed
   apt:
     pkg: openssl
     state: latest
-  when: nginx_ssl
-  tags:
-    - system
-    - install
 
-- name: Ensure all folders exists
+- name: Ensure all folders exist
   file:
     path: "/etc/nginx/{{ item }}"
     state: directory
@@ -37,13 +29,12 @@
   template:
     src: "{{ item.src }}"
     dest: /etc/nginx/{{ item.path }}
-    mode: u=rw,g=r,o=r # 0644
+    mode: u=rw,g=r,o=r # 644
   when: item.state == 'file'
   loop_control:
     label: "{{ item.path }}"
   notify:
-    - reload nginx
-    - restart nginx
+    - reload nginx config
 
 - name: Ensure cache dir exists
   file:

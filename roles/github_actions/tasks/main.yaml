@@ -1,6 +1,7 @@
 - name: Add the GitHub Actions user with a specific uid and add it to the 'www-data' group
   user:
     name: "{{ github_actions__user_name }}"
+    state: present
     comment: user used by GitHub Actions runner for deploying tasks
     create_home: true
     uid: 1002
@@ -13,18 +14,18 @@
     state: directory
     owner: "{{ github_actions__user_name }}"
     group: "{{ github_actions__user_name }}"
-    mode: u=rwx,g=,o= # 700 (only the user can read, write and execute)
+    mode: u=rwx,g=rx,o=rx # 755 (read and execute access for everyone and also write access for the owner of the file)
 
 - name: Add the GitHub Actions user public key to '.ssh' directory
-  copy:
+  template:
     src: id_rsa.pub
     dest: "/home/{{ github_actions__user_name }}/.ssh/id_rsa.pub"
     owner: "{{ github_actions__user_name }}"
     group: "{{ github_actions__user_name }}"
-    mode: u=rw,g=,o= # 600 (only the user can read and write)
+    mode: u=rw,g=rx,o=rx # 755 (read and execute access for everyone and also write access for the owner of the file)
 
 - name: Add the GitHub Actions user public key to 'authorized_keys' file
   authorized_key:
     user: "{{ github_actions__user_name }}"
     state: present
-    key: "{{ lookup('file', '/home/github/.ssh/id_rsa.pub') }}"
+    key: "{{ lookup('file', '/home/{{ github_actions__user_name }}/.ssh/id_rsa.pub') }}"

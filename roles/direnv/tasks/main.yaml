@@ -12,6 +12,7 @@
 
 - name: Backup existing config file if it exists
   copy:
+    remote_src: true
     src: "{{ user_home }}/.config/direnv/direnv.toml"
     dest: "{{ user_home }}/.config/direnv/direnv.toml_{{ ansible_date_time.iso8601 }}.bak"
     mode: preserve # Preserve the file permissions of the original file
