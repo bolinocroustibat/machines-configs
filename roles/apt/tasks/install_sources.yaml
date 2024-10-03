@@ -20,4 +20,4 @@
     dest: "/etc/apt/sources.list.d/{{ item | basename }}"
     mode: u=rw,g=r,o=r # 644
   with_fileglob:
-    - ../templates/sources.list.d/*
+    - "templates/sources.list.d/*"

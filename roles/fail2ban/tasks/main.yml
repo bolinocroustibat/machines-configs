@@ -37,7 +37,7 @@
     group: root
     mode: u=rw,g=r,o=r # 644
   with_fileglob:
-    - ../templates/jail.d/*
+    - "templates/jail.d/*"
   notify: restart fail2ban
 
 - name: Enable fail2ban service

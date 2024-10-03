@@ -1,3 +1,10 @@
+- name: Add SSH keys
+  hosts: remote
+  tasks:
+    - include_role:
+        name: ssh
+        tasks_from: main
+
 - name: Update apt and upgrade packages
   hosts: remote
   tasks:

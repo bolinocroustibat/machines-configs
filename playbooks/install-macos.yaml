@@ -8,6 +8,13 @@
         name: homebrew
         tasks_from: update
 
+- name: Add SSH hosts configs
+  hosts: local
+  tasks:
+    - include_role:
+        name: ssh
+        tasks_from: hosts_configs
+
 - name: Install zsh
   hosts: local
   tasks:

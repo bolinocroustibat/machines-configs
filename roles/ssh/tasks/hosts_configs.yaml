@@ -1,0 +1,29 @@
+- name: Backup existing ssh config file if it exists
+  copy:
+    src: "{{ user_home }}/.ssh/config"
+    dest: "{{ user_home }}/.ssh/config_{{ ansible_date_time.iso8601 }}.bak"
+    mode: preserve # Preserve the file permissions of the original file
+
+- name: Add ssh config file
+  template:
+    src: config.j2
+    dest: "{{ user_home }}/.ssh/config"
+    mode: u=rw,g=r,o=r # 644
+
+- name: Backup existing '.ssh/config.d/*' files if they exist
+  copy:
+    src: "{{ item }}"
+    dest: "{{ user_home }}/.ssh/config.d/{{ item }}_{{ ansible_date_time.iso8601 }}.bak"
+    mode: preserve # Preserve the file permissions of the original file
+  with_fileglob:
+    - "{{ user_home }}/.ssh/config.d/*"
+
+- name: Add '.ssh/config.d/*' files
+  template:
+    src: "{{ item }}"
+    dest: "{{ user_home }}/.ssh/config.d/{{ item }}"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r # 644
+  with_fileglob:
+    - "templates/config.d/*"
