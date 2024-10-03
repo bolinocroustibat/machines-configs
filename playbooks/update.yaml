@@ -1,12 +1,19 @@
-- name: Update Homebrew
+- name: Update Homebrew and upgrade packages
   hosts: local
   tasks:
     - include_role:
         name: homebrew
-        tasks_from: update
+        tasks_from: upgrade
+
+- name: Update apt and upgrade packages
+  hosts: remote
+  tasks:
+    - include_role:
+        name: apt
+        tasks_from: upgrade
 
 - name: Update Oh-My-ZSH
-  hosts: local
+  hosts: all
   tasks:
     - include_role:
         name: oh_my_zsh
@@ -30,7 +37,7 @@
         tasks_from: update
 
 - name: Update global pip
-  hosts: local
+  hosts: all
   tasks:
     - include_role:
         name: pip
@@ -38,7 +45,7 @@
       ignore_errors: true # pip may be managed by uv, so we don't want to fail if it is
 
 - name: Update uv
-  hosts: local
+  hosts: all
   tasks:
     - include_role:
         name: uv

@@ -3,15 +3,20 @@
   register: brew_update_result
   changed_when: "'Already up-to-date' not in brew_update_result.stdout"
 
-- name: Updating Homebrew Formulae
+- name: Upgrading Homebrew Formulae
   command: brew upgrade
   register: brew_upgrade_result
   changed_when: "'Upgrading' in brew_upgrade_result.stdout"
 
-- name: Cleanup Homebrew
+- name: Cleanup Homebrew and scrub the cache
   command: brew cleanup -s
   register: brew_cleanup_result
   changed_when: "'Pruned' in brew_cleanup_result"
+
+# - name: Cleanup Homebrew and remove all cache files
+#   command: brew cleanup --prune
+#   register: brew_cleanup_result
+#   changed_when: "'Pruned' in brew_cleanup_result"
 
 # - name: Check Homebrew for issues
 #   command: brew doctor
@@ -22,6 +27,3 @@
   command: brew upgrade --cask
   register: brew_upgrade_cask_result
   changed_when: "'Downloading' in brew_upgrade_cask_result.stdout"
-
-# - name: Remove homebrew cache
-#   command: rm -rf "$(brew --cache)"
