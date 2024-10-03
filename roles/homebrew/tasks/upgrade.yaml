@@ -11,7 +11,7 @@
 - name: Cleanup Homebrew and scrub the cache
   command: brew cleanup -s
   register: brew_cleanup_result
-  changed_when: "'Pruned' in brew_cleanup_result"
+  changed_when: "'Purging' in brew_cleanup_result.stdout"
 
 # - name: Cleanup Homebrew and remove all cache files
 #   command: brew cleanup --prune
