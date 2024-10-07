@@ -12,11 +12,11 @@
         name: apt
         tasks_from: upgrade
 
-- name: Update Oh-My-ZSH
-  hosts: all
+- name: Update Starship
+  hosts: remote
   tasks:
     - include_role:
-        name: oh_my_zsh
+        name: starship
         tasks_from: update
 
 - name: Update global pnpm

@@ -1,0 +1,3 @@
+- name: Update Starship with curl
+  when: ansible_os_family == "Debian"
+  command: curl -fsSL https://starship.rs/install.sh | bash -s -- -y

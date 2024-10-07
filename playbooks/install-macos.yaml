@@ -22,11 +22,11 @@
         name: zsh
         tasks_from: main
 
-- name: Install and configure oh-my-zsh
-  hosts: local
+- name: Install and configure Starship
+  hosts: remote
   tasks:
     - include_role:
-        name: oh_my_zsh
+        name: starship
         tasks_from: install
 
 - name: Install direnv

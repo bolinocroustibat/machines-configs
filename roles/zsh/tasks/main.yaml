@@ -33,6 +33,38 @@
         update_cache: true
       become: true
 
+- name: Install ZSH autosuggestions
+  block:
+    - name: Install ZSH autosuggestions with homebrew
+      when: ansible_os_family == "Darwin"
+      homebrew:
+        name: zsh-autosuggestions
+        state: latest
+
+    - name: Install ZSH syntax highlighting with Git Clone
+      when: ansible_os_family == "Debian"
+      ansible.builtin.git:
+        repo: "https://github.com/zsh-users/zsh-autosuggestions"
+        dest: "{{ user_home }}/.zsh/zsh-syntax-highlighting"
+        clone: yes
+        update: yes
+
+- name: Install ZSH syntax highlighting
+  block:
+    - name: Install ZSH syntax highlighting with homebrew
+      when: ansible_os_family == "Darwin"
+      homebrew:
+        name: zsh-autosuggestions
+        state: latest
+
+    - name: Install ZSH syntax highlighting with Git Clone
+      when: ansible_os_family == "Debian"
+      ansible.builtin.git:
+        repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"
+        dest: "{{ user_home }}/.zsh/zsh-syntax-highlighting"
+        clone: yes
+        update: yes
+
 - name: Backup existing .zshrc if it exists
   copy:
     remote_src: true

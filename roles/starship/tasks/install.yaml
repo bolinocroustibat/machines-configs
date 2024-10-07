@@ -1,0 +1,24 @@
+- name: Install Starship
+  block:
+    - name: Install Starhip with homebrew
+      when: ansible_os_family == "Darwin"
+      homebrew:
+        name: starship
+        state: latest
+
+    - name: Install Starship with curl
+      when: ansible_os_family == "Debian"
+      command: curl -fsSL https://starship.rs/install.sh | bash -s -- -y
+
+- name: Backup existing starship.toml config file if it exists
+  copy:
+    remote_src: true
+    src: "{{ user_home }}/.config/starship.toml"
+    dest: "{{ user_home }}/.config/starship.toml_{{ ansible_date_time.iso8601 }}.bak"
+    mode: preserve # Preserve the file permissions of the original file
+
+- name: Add starship.toml config file
+  template:
+    src: starship.toml
+    dest: "{{ user_home }}/.config/starship.toml"
+    mode: "u=rw,g=r,o=r" # 644 (read and write access for the owner of the file and read access for group and others)
