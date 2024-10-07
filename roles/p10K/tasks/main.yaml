@@ -1,0 +1,19 @@
+- name: Install p10K with git clone
+  ansible.builtin.git:
+    repo: "git@github.com:romkatv/powerlevel10k.git"
+    dest: "{{ user_home }}/.config/powerlevel10k/powerlevel10k.zsh-theme"
+    clone: yes
+    update: yes
+
+- name: Backup existing .zshrc if it exists
+  copy:
+    remote_src: true
+    src: "{{ user_home }}/.zshrc"
+    dest: "{{ user_home }}/.zshrc_{{ ansible_date_time.iso8601 }}.bak"
+    mode: preserve # Preserve the file permissions of the original file
+
+- name: Add p10k startup command to .zshrc
+  command: "echo '# p10k #\nsource {{ user_home }}/.config/powerlevel10k/powerlevel10k.zsh-theme' >> {{ user_home }}/.zshrc"
+
+- name: Reload ZSH config
+  command: "source {{ user_home }}/.zshrc"
