@@ -1,0 +1,78 @@
+{{ ansible_managed | comment }}
+
+### $PATH ####
+
+export PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
+export PATH="/opt/homebrew/bin" # New Homebrew path
+export PATH="$PATH:{{ user_home }}/Library/Android/sdk/platform-tools" # Android Studio
+export PATH="$PATH:{{ user_home }}/flutter/bin" # Flutter
+export ANDROID_HOME={{ user_home }}/Library/Android/sdk
+
+# Set the default text editor, set the standardized VISUAL and EDITOR environment variables
+export VISUAL=micro
+export EDITOR="$VISUAL"
+
+# SSH key path
+export SSH_KEY_PATH="{{ user_home }}/.ssh/id_ed25519"
+
+### User configuration ###
+
+# You may need to manually set your language environment
+export LANG=en_US.UTF-8 # Global setting, does not overrides anything
+#export LC_ALL=en_US.UTF-8 # Overrides all locale settings
+
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
+
+# Aliases
+alias l='ls -alFh'
+alias ll='ls -lFh'
+alias dfh='df -h'				# disk free with human reading
+alias duh='du -hd1 | sort -h'	# disk usage with human reading, only first level
+{% if ansible_os_family == 'Debian' %}
+alias start='systemctl start'
+alias restart='systemctl restart'
+alias stop='systemctl stop'
+alias status='systemctl status'
+{% endif %}
+alias git_force_pull='git fetch --all & git reset --hard origin/main && git pull'
+alias ruffcheck='ruff check --fix && ruff format'
+#alias cat='ccat'
+{% if ansible_os_family == 'Darwin' %}
+alias docker_psa='docker ps --format "table {{ '{{' }}.Names{{ '}}' }}\t{{ '{{' }}.Ports{{ '}}' }}\t{{ '{{' }}.Status{{ '}}' }}"'
+alias biomecheck='biome check --write .'
+{% endif %}
+
+# iTerm2 shell integration
+source $HOME/.iterm2_shell_integration.zsh
+
+{% if ansible_os_family == 'Darwin' %}
+# Homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Direnv - to load and unload environment variables depending on the current directory - see https://direnv.net/
+eval "$(direnv hook zsh)"
+
+# uv
+. "$HOME/.cargo/env"
+
+# NVM
+source $(brew --prefix nvm)/nvm.sh
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+# pnpm
+export PNPM_HOME="{{ user_home }}/Library/pnpm"
+export PNPM_HOME="{{ user_home }}/Library/pnpm"
+case ":$PATH:" in
+	*":$PNPM_HOME:"*) ;;
+	*) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
+# bun
+export BUN_INSTALL="{{ user_home }}/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+# bun completions
+[ -s "{{ user_home }}/.bun/_bun" ] && source "{{ user_home }}/.bun/_bun"
+{% endif %}

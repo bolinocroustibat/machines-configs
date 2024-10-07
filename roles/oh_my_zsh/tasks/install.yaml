@@ -56,8 +56,9 @@
     dest: "{{ user_home }}/.zshrc_{{ ansible_date_time.iso8601 }}.bak"
     mode: preserve # Preserve the file permissions of the original file
 
-- name: Write .zshrc
-  template:
-    src: .zshrc.j2
+- name: Add oh-my-zzh config to .zshrc
+  blockinfile:
     dest: "{{ user_home }}/.zshrc"
+    block: "{{ lookup('template', '.zshrc.j2') }}"
+    marker: "### {mark} Oh-My-Zsh (Ansible-managed) ### "
     mode: "u=rw,g=r,o=r" # 644 (read and write access for the owner of the file and read access for group and others)
