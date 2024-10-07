@@ -3,10 +3,6 @@
 ### $PATH ####
 
 export PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
-export PATH="/opt/homebrew/bin" # New Homebrew path
-export PATH="$PATH:{{ user_home }}/Library/Android/sdk/platform-tools" # Android Studio
-export PATH="$PATH:{{ user_home }}/flutter/bin" # Flutter
-export ANDROID_HOME={{ user_home }}/Library/Android/sdk
 
 # Set the default text editor, set the standardized VISUAL and EDITOR environment variables
 export VISUAL=micro
@@ -15,18 +11,19 @@ export EDITOR="$VISUAL"
 # SSH key path
 export SSH_KEY_PATH="{{ user_home }}/.ssh/id_ed25519"
 
+# ZSH plugins
+source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+
 ### User configuration ###
 
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8 # Global setting, does not overrides anything
 #export LC_ALL=en_US.UTF-8 # Overrides all locale settings
 
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
 # Aliases
-alias l='ls -alFh'
-alias ll='ls -lFh'
+alias l='ls -alFh --color=auto'
+alias ll='ls -lFh --color=auto'
 alias dfh='df -h'				# disk free with human reading
 alias duh='du -hd1 | sort -h'	# disk usage with human reading, only first level
 {% if ansible_os_family == 'Debian' %}
@@ -50,7 +47,7 @@ source $HOME/.iterm2_shell_integration.zsh
 # Homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
-# Direnv - to load and unload environment variables depending on the current directory - see https://direnv.net/
+# Direnv - https://direnv.net/
 eval "$(direnv hook zsh)"
 
 # uv
@@ -63,7 +60,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 # pnpm
-export PNPM_HOME="{{ user_home }}/Library/pnpm"
 export PNPM_HOME="{{ user_home }}/Library/pnpm"
 case ":$PATH:" in
 	*":$PNPM_HOME:"*) ;;
