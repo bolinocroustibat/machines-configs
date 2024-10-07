@@ -6,7 +6,7 @@
         tasks_from: install
     - include_role:
         name: homebrew
-        tasks_from: update
+        tasks_from: upgrade
 
 - name: Add SSH hosts configs
   hosts: local
@@ -69,7 +69,7 @@
   tasks:
     - include_role:
         name: pnpm
-        tasks_from: main
+        tasks_from: install
 
 - name: Install Biome
   hosts: local
