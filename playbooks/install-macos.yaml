@@ -22,12 +22,12 @@
         name: zsh
         tasks_from: main
 
-- name: Install p10k prompt
+- name: Install and configure Starship
   hosts: local
   tasks:
     - include_role:
-        name: p10k
-        tasks_from: main
+        name: starship
+        tasks_from: install
 
 - name: Install direnv
   hosts: local
