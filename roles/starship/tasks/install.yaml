@@ -1,6 +1,6 @@
 - name: Install Starship
   block:
-    - name: Install Starhip with homebrew
+    - name: Install Starship with homebrew
       when: ansible_os_family == "Darwin"
       homebrew:
         name: starship
@@ -21,4 +21,11 @@
   template:
     src: starship.toml
     dest: "{{ user_home }}/.config/starship.toml"
+    mode: "u=rw,g=r,o=r" # 644 (read and write access for the owner of the file and read access for group and others)
+
+- name: Add Starship to .zshrc file
+  blockinfile:
+    dest: "{{ user_home }}/.zshrc"
+    block: "{{ lookup('template', '.zshrc.j2') }}"
+    marker: "### {mark} Starship (Ansible-managed) ### "
     mode: "u=rw,g=r,o=r" # 644 (read and write access for the owner of the file and read access for group and others)
