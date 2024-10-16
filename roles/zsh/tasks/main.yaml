@@ -46,8 +46,8 @@
       ansible.builtin.git:
         repo: "https://github.com/zsh-users/zsh-autosuggestions"
         dest: "{{ user_home }}/.zsh/zsh-autosuggestions"
-        clone: yes
-        update: yes
+        clone: true
+        update: true
 
 - name: Install ZSH syntax highlighting
   block:
@@ -62,8 +62,8 @@
       ansible.builtin.git:
         repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"
         dest: "{{ user_home }}/.zsh/zsh-syntax-highlighting"
-        clone: yes
-        update: yes
+        clone: true
+        update: true
 
 - name: Backup existing .zshrc if it exists
   copy:

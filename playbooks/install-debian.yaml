@@ -99,5 +99,5 @@
   hosts: web-servers
   tasks:
     - include_role:
-        name: WEBSITES
+        name: websites
         tasks_from: main.yaml
