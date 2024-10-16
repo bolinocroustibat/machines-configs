@@ -1,7 +1,7 @@
 format = """
 $username\
 $hostname\
-$localip\
+$ssh \
 $shlvl\
 $kubernetes\
 $directory\
@@ -10,26 +10,13 @@ $git_commit\
 $git_state\
 $git_metrics\
 $git_status\
-$hg_branch\
-$docker_context\
 $package\
-$cmake\
-$guix_shell\
-$opa\
 $php\
 $python\
 $terraform\
-$typst\
-$vlang\
-$nix_shell\
-$meson\
-$spack\
 $memory_usage\
-$openstack\
-$nats\
 $direnv\
 $env_var\
-$crystal\
 $custom\
 $sudo\
 $cmd_duration\
@@ -46,28 +33,30 @@ $character"""
 style_user = 'green bold'
 style_root = 'red bold'
 format = '[$user]($style)'
-disabled = false
 show_always = true
 
 [hostname]
-ssh_only = false
-format = '[$ssh_symbol](bold blue)@[$hostname](bold red)'
+ssh_only = true
+format = '@[$hostname](bold red)'
 trim_at = '.'
 disabled = false
 
 [directory]
 truncate_to_repo = false
-format ='/[$path]($style)[$read_only]($read_only_style) '
+format ='[$path]($style)[$read_only]($read_only_style) '
 
 [git_branch]
-symbol = '🌱 '
-truncation_length = 4
-truncation_symbol = ''
-ignore_branches = ['master', 'main']
+format = '[$symbol$branch(:$remote_branch)]($style) '
 
 [os]
 format = "[$symbol]($style)"
 disabled = false
+
+[package]
+format = '[$symbol$version]($style) '
+
+[python]
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
 
 [os.symbols]
 Debian = "🌀 "
