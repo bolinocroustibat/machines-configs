@@ -45,7 +45,7 @@
       when: ansible_os_family == "Debian"
       ansible.builtin.git:
         repo: "https://github.com/zsh-users/zsh-autosuggestions"
-        dest: "{{ user_home }}/.zsh/zsh-syntax-highlighting"
+        dest: "{{ user_home }}/.zsh/zsh-autosuggestions"
         clone: yes
         update: yes
 
