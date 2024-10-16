@@ -8,7 +8,7 @@
 
     - name: Install Starship with curl
       when: ansible_os_family == "Debian"
-      command: curl -fsSL https://starship.rs/install.sh | bash -s -- -y
+      command: curl -fsSL https://starship.rs/install.sh | sh -s -- -y
 
 - name: Backup existing starship.toml config file if it exists
   copy:
