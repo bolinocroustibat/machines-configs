@@ -6,7 +6,7 @@
     create_home: true
     uid: 1002
     groups: www-data
-    append: yes
+    append: true
 
 - name: Add '.ssh' directory
   file:
