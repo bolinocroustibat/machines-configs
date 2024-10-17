@@ -13,6 +13,7 @@ $git_status\
 $package\
 $php\
 $python\
+$bun\
 $terraform\
 $memory_usage\
 $direnv\
@@ -45,6 +46,9 @@ disabled = false
 truncate_to_repo = false
 format ='[$path]($style)[$read_only]($read_only_style) '
 
+[directory.substitutions]
+"code" = "󰨞"
+
 [git_branch]
 format = '[$symbol$branch(:$remote_branch)]($style) '
 
@@ -52,15 +56,20 @@ format = '[$symbol$branch(:$remote_branch)]($style) '
 format = "[$symbol]($style)"
 disabled = false
 
+[os.symbols]
+Debian = " "
+Kali = " "
+Linux = " "
+Macos = " "
+Ubuntu = " "
+
 [package]
+symbol = "󰏗 "
 format = '[$symbol$version]($style) '
 
-[python]
-format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+[php]
+symbol = " "
 
-[os.symbols]
-Debian = "🌀 "
-Kali = "🐉 "
-Linux = "🐧 "
-Macos = "🍎 "
-Ubuntu = "🎯 "
+[python]
+symbol = " "
+format = ' [${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
