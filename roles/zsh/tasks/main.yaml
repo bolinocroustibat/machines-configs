@@ -44,7 +44,7 @@
     - name: Install ZSH syntax highlighting with git clone
       when: ansible_os_family == "Debian"
       ansible.builtin.git:
-        repo: "https://github.com/zsh-users/zsh-autosuggestions"
+        repo: "https://github.com/zsh-users/zsh-autosuggestions.git"
         dest: "{{ user_home }}/.zsh/zsh-autosuggestions"
         clone: true
         update: true
