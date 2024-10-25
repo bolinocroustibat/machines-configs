@@ -1,0 +1,68 @@
+format = """
+$username\
+$hostname\
+$ssh \
+$shlvl\
+$kubernetes\
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_metrics\
+$git_status\
+$package\
+$php\
+$python\
+$bun\
+$terraform\
+$memory_usage\
+$direnv\
+$env_var\
+$custom\
+$sudo\
+$cmd_duration\
+$line_break\
+$jobs\
+$time\
+$status\
+$os\
+$container\
+$shell\
+$character"""
+
+[username]
+style_user = 'green bold'
+style_root = 'red bold'
+format = '[$user]($style)'
+show_always = true
+
+[hostname]
+ssh_only = false
+format = '@[$hostname](bold red)'
+trim_at = '.'
+disabled = false
+
+[directory]
+truncate_to_repo = false
+format ='[$path]($style)[$read_only]($read_only_style) '
+
+[git_branch]
+format = '[$symbol$branch(:$remote_branch)]($style) '
+
+[os]
+format = "[$symbol]($style)"
+disabled = false
+
+[os.symbols]
+Debian = "🌀 "
+Kali = "🐉 "
+Linux = "🐧 "
+Macos = " "
+Ubuntu = "🎯 "
+
+[package]
+format = '[$symbol$version]($style)'
+
+[python]
+format = ' [${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+python_binary = ['.venv/bin/python', '.venv/bin/python3', '.venv/bin/python2']

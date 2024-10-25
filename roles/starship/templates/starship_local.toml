@@ -31,7 +31,7 @@ $shell\
 $character"""
 
 [username]
-style_user = 'green bold'
+style_user = 'purple bold'
 style_root = 'red bold'
 format = '[$user]($style)'
 show_always = true
@@ -57,19 +57,14 @@ format = "[$symbol]($style)"
 disabled = false
 
 [os.symbols]
-Debian = " "
-Kali = " "
-Linux = " "
+Debian = "🌀 "
+Kali = "🐉 "
+Linux = "🐧 "
 Macos = " "
-Ubuntu = " "
+Ubuntu = "🎯 "
 
 [package]
-symbol = "󰏗 "
 format = '[$symbol$version]($style) '
 
-[php]
-symbol = " "
-
 [python]
-symbol = " "
 format = ' [${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
