@@ -18,8 +18,16 @@
     mode: preserve # Preserve the file permissions of the original file
 
 - name: Add starship.toml config file
+  when: ansible_os_family == "Darwin"
   template:
-    src: starship.toml
+    src: starship_local.toml
+    dest: "{{ user_home }}/.config/starship.toml"
+    mode: "u=rw,g=r,o=r" # 644 (read and write access for the owner of the file and read access for group and others)
+
+- name: Add starship.toml config file
+  when: ansible_os_family == "Debian"
+  template:
+    src: starship_remote.toml
     dest: "{{ user_home }}/.config/starship.toml"
     mode: "u=rw,g=r,o=r" # 644 (read and write access for the owner of the file and read access for group and others)
 
