@@ -1,4 +1,2 @@
 user_home: /Users/bolino
 type: local-development
-
-uv_install_dir: '{{ user_home }}/.cargo'

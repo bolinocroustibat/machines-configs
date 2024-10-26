@@ -22,7 +22,7 @@
     dest: "/home/{{ github_actions__user_name }}/.ssh/id_rsa.pub"
     owner: "{{ github_actions__user_name }}"
     group: "{{ github_actions__user_name }}"
-    mode: u=rw,g=rx,o=rx # 755 (read and execute access for everyone and also write access for the owner of the file)
+    mode: u=rwx,g=rx,o=rx # 755 (read and execute access for everyone and also write access for the owner of the file)
 
 - name: Add the GitHub Actions user public key to 'authorized_keys' file
   authorized_key:

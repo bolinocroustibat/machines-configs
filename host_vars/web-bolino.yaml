@@ -3,4 +3,4 @@ type: remote-web
 
 www_path: /home/www
 
-uv_install_dir: '/usr/local/bin/uv'
+uv_install_dir: /usr/local/bin/uv
