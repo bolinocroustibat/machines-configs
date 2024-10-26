@@ -6,9 +6,22 @@
         name: starship
         state: latest
 
-    - name: Install Starship with curl
+    - name: Download Starship install script
       when: ansible_os_family == "Debian"
-      command: curl -fsSL https://starship.rs/install.sh | sh -s -- -y
+      get_url:
+        url: "https://starship.rs/install.sh"
+        dest: "{{ user_home }}/starship_install.sh"
+        mode: u=rwx,g=rx,o=rx # 755 (read and execute access for everyone and also write access for the owner of the file)
+
+    - name: Install Starship
+      when: ansible_os_family == "Debian"
+      command: "sh {{ user_home }}/starship_install.sh -y"
+
+    - name: Delete Starship install script
+      when: ansible_os_family == "Debian"
+      file:
+        path: "{{ user_home }}/starship_install.sh"
+        state: absent
 
 - name: Backup existing starship.toml config file if it exists
   copy:

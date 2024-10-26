@@ -40,13 +40,3 @@
     - include_role:
         name: uv
         tasks_from: update
-
-- name: Update Ruby gems
-  hosts: local
-  tasks:
-    - name: Updating Ruby gems
-      command: gem update --system
-      register: ruby_result
-      changed_when: "'Latest version already installed' not in ruby_result.stdout"
-      failed_when: "'ERROR' in ruby_result.stderr"
-      ignore_errors: true
