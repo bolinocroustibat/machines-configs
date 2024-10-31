@@ -3,9 +3,9 @@
     name: postgresql
     state: present
 
-- name: Change local user user password
+- name: Change local Postgres user password
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_user: "{{ postgres__local_user }}"
   postgresql_user:
     password: "{{ postgres__local_user_password }}"
