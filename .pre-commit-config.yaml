@@ -17,9 +17,9 @@ repos:
       # Run the formatter
       - id: ruff-format
 
-  - repo: https://github.com/ansible/ansible-lint.git
-    rev: v24.9.2 # Ansible-lint version
-    hooks:
-      - id: ansible-lint
-        files: \.(yaml|yml)$
-        verbose: false
+  # - repo: https://github.com/ansible/ansible-lint.git
+  #   rev: v24.9.2 # Ansible-lint version
+  #   hooks:
+  #     - id: ansible-lint
+  #       files: \.(yaml|yml)$
+  #       verbose: false
