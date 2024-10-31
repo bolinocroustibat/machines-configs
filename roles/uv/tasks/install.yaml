@@ -1,4 +1,11 @@
+- name: Install uv with homebrew
+  when: ansible_os_family == "Darwin"
+  homebrew:
+    name: uv
+    state: latest
+
 - name: Download uv installation script
+  when: ansible_os_family == "Debian"
   uri:
     url: 'https://astral.sh/uv/install.sh'
     method: GET
@@ -8,6 +15,7 @@
     mode: u=rwx,g=rx,o=rx # 755 (make the file executable)
 
 - name: Execute uv installation script
+  when: ansible_os_family == "Debian"
   command: "sh /tmp/uv_install.sh"
   environment:
     UV_INSTALL_DIR: "{{ uv_install_dir }}"
@@ -16,6 +24,7 @@
   changed_when: "'installed!' in uv_result.stdout"
 
 - name: Delete uv install script
+  when: ansible_os_family == "Debian"
   file:
     path: "/tmp/uv_install.sh"
     state: absent
