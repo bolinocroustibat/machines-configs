@@ -8,6 +8,16 @@
   register: brew_upgrade_result
   changed_when: "'Upgrading' in brew_upgrade_result.stdout"
 
+- name: Upgrading Homebrew casks
+  command: brew upgrade --cask --greedy
+  register: brew_upgrade_cask_result
+  changed_when: "'Downloading' in brew_upgrade_cask_result.stdout"
+
+- name: Homebrew autoremove
+  command: brew autoremove
+  register: brew_autoremove_result
+  changed_when: "'Uninstalling' in brew_autoremove_result.stdout"
+
 - name: Cleanup Homebrew and scrub the cache
   command: brew cleanup -s
   register: brew_cleanup_result
@@ -22,8 +32,3 @@
 #   command: brew doctor
 #   register: brew_doctor_result
 #   changed_when: brew_doctor_result.stdout.find("Your system is ready to brew") == -1
-
-- name: Updating Homebrew Cask
-  command: brew upgrade --cask
-  register: brew_upgrade_cask_result
-  changed_when: "'Downloading' in brew_upgrade_cask_result.stdout"
