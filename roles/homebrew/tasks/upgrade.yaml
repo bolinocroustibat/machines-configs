@@ -3,7 +3,7 @@
   register: brew_update_result
   changed_when: "'Already up-to-date' not in brew_update_result.stdout"
 
-- name: Upgrading Homebrew Formulae
+- name: Upgrading Homebrew formulae
   command: brew upgrade
   register: brew_upgrade_result
   changed_when: "'Upgrading' in brew_upgrade_result.stdout"
