@@ -64,13 +64,6 @@
         name: nvm
         tasks_from: main
 
-- name: Install pnpm
-  hosts: local
-  tasks:
-    - include_role:
-        name: pnpm
-        tasks_from: install
-
 - name: Install Biome
   hosts: local
   tasks:
