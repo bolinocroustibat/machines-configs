@@ -19,13 +19,6 @@
         name: starship
         tasks_from: update
 
-- name: Update global pnpm
-  hosts: local
-  tasks:
-    - include_role:
-        name: pnpm
-        tasks_from: update
-
 - name: Update global pip
   hosts: all
   tasks:
