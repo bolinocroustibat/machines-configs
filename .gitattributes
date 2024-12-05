@@ -1,5 +1,8 @@
-/inventory.*  filter=git-crypt diff=git-crypt
 secrets.*  filter=git-crypt diff=git-crypt
-**/sites-available/*  filter=git-crypt diff=git-crypt
+/inventory.*  filter=git-crypt diff=git-crypt
 /roles/cron/templates/*  filter=git-crypt diff=git-crypt
 /roles/ssh/templates/*  filter=git-crypt diff=git-crypt
+/roles/websites/defaults/*  filter=git-crypt diff=git-crypt
+/roles/websites/templates/*  filter=git-crypt diff=git-crypt
+/roles/websites/vars/*  filter=git-crypt diff=git-crypt
+/hosts_vars/*  filter=git-crypt diff=git-crypt

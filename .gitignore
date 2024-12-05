@@ -11,9 +11,8 @@ __pypackages__/
 .ruff_cache/
 
 # secrets
-/inventory.*
 secrets.*
-**/sites-available/*
+/inventory.*
 /roles/cron/templates/*
 /roles/ssh/templates/*
 /roles/websites/defaults/*
