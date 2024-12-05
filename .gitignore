@@ -16,7 +16,9 @@ secrets.*
 **/sites-available/*
 /roles/cron/templates/*
 /roles/ssh/templates/*
-/roles/websites/*
+/roles/websites/defaults/*
+/roles/websites/templates/*
+/roles/websites/vars/*
 /hosts_vars/*
 /roles/databases-backup-over-scp/defaults/main.yaml
 /roles/postgres/defaults/main.yaml
