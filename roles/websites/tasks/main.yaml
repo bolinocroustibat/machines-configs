@@ -1,0 +1,62 @@
+- name: Deploy websites
+  block:
+    - name: Clone repository
+      git:
+        repo: "{{ item.repo }}"
+        dest: "{{ www_path }}/{{ item.name }}"
+        update: true
+      loop: "{{ websites | selectattr('repo', 'defined') | list }}"
+
+    - name: Setup Python environment
+      command: "cd {{ www_path }}/{{ item.name }} && uv sync"
+      register: uv_sync
+      changed_when: "'Installed' in uv_sync.stdout"
+      failed_when: "'×' in uv_sync.stdout"
+      loop: "{{ websites | selectattr('needs_venv', 'equalto', true) | list }}"
+
+    - name: Install systemd service
+      template:
+        src: "services/{{ item.name }}.service.j2"
+        dest: "/etc/systemd/system/{{ item.name }}.service"
+        mode: u=rw,g=r,o=r # 644
+      loop: "{{ websites | selectattr('needs_service', 'equalto', true) | list }}"
+
+    - name: Restart service
+      systemd:
+        name: "{{ item.name }}"
+        state: restarted
+        enabled: true
+      loop: "{{ websites | selectattr('needs_service', 'equalto', true) | list }}"
+
+    - name: Backup existing vhost
+      copy:
+        src: "{{ nginx_conf_path }}/{{ item.domain }}.conf"
+        dest: "{{ nginx_conf_path }}/{{ item.domain }}.conf.bak_{{ ansible_date_time.iso8601 }}"
+        mode: preserve
+      loop: "{{ websites | selectattr('domain', 'defined') | list }}"
+      ignore_errors: true
+
+    - name: Install Nginx vhost
+      template:
+        src: "vhosts/{{ item.domain }}.conf.j2"
+        dest: "{{ nginx_conf_path }}/{{ item.domain }}.conf"
+        mode: u=rw,g=r,o=r # 644
+      loop: "{{ websites | selectattr('domain', 'defined') | list }}"
+
+    - name: Enable vhost
+      file:
+        src: "{{ nginx_conf_path }}/{{ item.domain }}.conf"
+        dest: "{{ nginx_enabled_path }}/{{ item.domain }}.conf"
+        state: link
+      loop: "{{ websites | selectattr('domain', 'defined') | list }}"
+      notify: reload nginx config
+
+    - name: Setup cron jobs
+      cron:
+        name: "{{ item.0.name }} - {{ item.1.name }}"
+        minute: "{{ item.1.minute | default('0') }}"
+        hour: "{{ item.1.hour | default('*') }}"
+        weekday: "{{ item.1.weekday | default('*') }}"
+        job: "{{ www_path }}/{{ item.0.name }}/.venv/bin/python {{ www_path }}/{{ item.0.name }}/{{ item.1.command }}"
+        user: www-data
+      loop: "{{ websites | selectattr('cron_jobs', 'defined') | product('cron_jobs') | list }}"

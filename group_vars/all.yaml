@@ -1,3 +1,2 @@
-www_path: /var/www
 nginx_available_path: /etc/nginx/sites-available
 nginx_enabled_path: /etc/nginx/sites-enabled
