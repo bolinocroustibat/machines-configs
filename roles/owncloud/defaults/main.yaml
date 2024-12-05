@@ -1,1 +1,1 @@
-owncloud__path: /var/www/owncloud
+owncloud__path: "{{ www_path }}/owncloud"
