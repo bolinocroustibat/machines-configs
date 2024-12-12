@@ -61,4 +61,10 @@ export BUN_INSTALL="{{ user_home }}/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 # bun completions
 [ -s "{{ user_home }}/.bun/_bun" ] && source "{{ user_home }}/.bun/_bun"
+
+# Docker + Ansible
+export DOCKER_HOST="unix:///Users/bolino/.docker/run/docker.sock"
+
+# Kubernetes kubectl
+[[ $commands[kubectl] ]] && source <(kubectl completion zsh)
 {% endif %}
