@@ -1,22 +1,29 @@
 - name: Install Micro text editor with homebrew
-  when: ansible_os_family == "Darwin"
   homebrew:
     name: micro
     state: latest
+  when: ansible_os_family == "Darwin"
 
 - name: Install Micro text editor with apt
-  when: ansible_os_family == "Debian"
   apt:
     name: micro
     state: latest
     update_cache: true
+  when: ansible_os_family == "Debian"
+
+- name: Ensure micro config directory exists
+  file:
+    path: "{{ user_home }}/.config/micro"
+    state: directory
+    mode: '0755'
 
 - name: Backup existing config file if it exists
   copy:
     remote_src: true
     src: "{{ user_home }}/.config/micro/settings.json"
     dest: "{{ user_home }}/.config/micro/settings.json_{{ ansible_date_time.iso8601 }}.bak"
-    mode: preserve # Preserve the file permissions of the original file
+    mode: preserve
+  when: ansible_check_mode == false and lookup('file', '{{ user_home }}/.config/micro/settings.json', errors='ignore') is defined
 
 - name: Copy config file
   template:
