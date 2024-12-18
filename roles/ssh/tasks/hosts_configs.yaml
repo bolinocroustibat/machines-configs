@@ -1,8 +1,16 @@
+- name: Ensure .ssh/config.d directory exists
+  file:
+    path: "{{ user_home }}/.ssh/config.d"
+    state: directory
+    mode: u=rwx,g=rx,o=rx  # 755
+
 - name: Backup existing ssh config file if it exists
   copy:
     src: "{{ user_home }}/.ssh/config"
     dest: "{{ user_home }}/.ssh/config_{{ ansible_date_time.iso8601 }}.bak"
-    mode: preserve # Preserve the file permissions of the original file
+    mode: preserve
+    remote_src: yes
+  when: ansible_stat.exists is defined and ansible_stat.exists
 
 - name: Add ssh config file
   template:
@@ -13,17 +21,19 @@
 - name: Backup existing '.ssh/config.d/*' files if they exist
   copy:
     src: "{{ item }}"
-    dest: "{{ user_home }}/.ssh/config.d/{{ item }}_{{ ansible_date_time.iso8601 }}.bak"
-    mode: preserve # Preserve the file permissions of the original file
+    dest: "{{ user_home }}/.ssh/config.d/{{ item | basename }}_{{ ansible_date_time.iso8601 }}.bak"
+    mode: preserve
+    remote_src: yes
   with_fileglob:
     - "{{ user_home }}/.ssh/config.d/*"
+  when: item != ""
 
 - name: Add '.ssh/config.d/*' files
   template:
     src: "{{ item }}"
-    dest: "{{ user_home }}/.ssh/config.d/{{ item }}"
+    dest: "{{ user_home }}/.ssh/config.d/{{ item | basename }}"
     owner: root
     group: root
-    mode: u=rw,g=r,o=r # 644
+    mode: u=rw,g=r,o=r  # 644
   with_fileglob:
     - "templates/config.d/*"

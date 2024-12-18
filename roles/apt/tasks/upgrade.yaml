@@ -2,14 +2,13 @@
 # apt update && apt upgrade && apt autoremove && apt autoclean
 
 - name: Update APT cache
-  when: ansible_os_family == 'Debian'
   apt:
     update_cache: true
     force_apt_get: true
   become: true
+  when: ansible_os_family == 'Debian'
 
 # - name: List packages to upgrade (1/2)
-#   when: ansible_os_family == 'Debian'
 #   command: aptitude -q -F%p --disable-columns search "~U"
 #   register: updates
 #   changed_when: False
@@ -17,33 +16,34 @@
 # - name: List packages to upgrade (2/2)
 #   debug: msg="{{ updates.stdout_lines | count }} packages to upgrade ({{ updates.stdout_lines | join(', ') }})"
 #   when: (ansible_os_family == 'Debian' and updates.stdout_lines)
+#   when: ansible_os_family == 'Debian'
 
 - name: Upgrade packages
-  when: ansible_os_family == 'Debian'
   apt:
     upgrade: true
   become: true
+  when: ansible_os_family == 'Debian'
 
 # - name: List services to restart (1/2)
-#   when: ansible_os_family == 'Debian'
 #   shell: |
 #     set -o pipefail
 #     checkrestart | grep ^service | awk '{print $2}'
 #   register: services
 #   changed_when: False
+#   when: ansible_os_family == 'Debian'
 
 # - name: List services to restart (2/2)
-#   when: (ansible_os_family == 'Debian' and services.stdout_lines)
 #   debug: msg="{{ services.stdout_lines | count }} services to restart ({{ services.stdout_lines | join (', ') }})"
+#   when: (ansible_os_family == 'Debian' and services.stdout_lines)
 
 - name: Remove unused packages
-  when: ansible_os_family == "Debian"
   apt:
     autoremove: true
   become: true
+  when: ansible_os_family == "Debian"
 
 - name: Clean up
-  when: ansible_os_family == "Debian"
   apt:
     autoclean: true
   become: true
+  when: ansible_os_family == "Debian"

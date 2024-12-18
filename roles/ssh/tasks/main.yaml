@@ -13,6 +13,17 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: u=rw,g=,o= # 600 (only the user can read and write)
+    validate_certs: true
+    force: no  # Don't download if file exists
+
+- name: Ensure authorized_keys file has correct permissions
+  ansible.builtin.file:
+    path: "{{ user_home }}/.ssh/authorized_keys"
+    state: file
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: u=rw,g=,o= # 600 (only the user can read and write)
+    create: yes
 
 - name: Add SSH public key to authorized_keys
   authorized_key:

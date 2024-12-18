@@ -1,7 +1,7 @@
 - name: Install fail2ban
   apt:
     name: fail2ban
-    state: latest
+    state: present
     update_cache: true
 
 - name: Backup existing jail.local file if it exists
@@ -10,6 +10,7 @@
     src: "/etc/fail2ban/jail.local"
     dest: "/etc/fail2ban/jail.local_{{ ansible_date_time.iso8601 }}.bak"
     mode: preserve # Preserve the file permissions of the original file
+  failed_when: false
 
 - name: Add jail.local file
   template:
@@ -24,15 +25,16 @@
   copy:
     remote_src: true
     src: "{{ item }}"
-    dest: "/etc/fail2ban/jail.d/{{ item }}_{{ ansible_date_time.iso8601 }}.bak"
-    mode: preserve # Preserve the file permissions of the original file
+    dest: "/etc/fail2ban/jail.d/{{ item | basename }}_{{ ansible_date_time.iso8601 }}.bak"
+    mode: preserve
   with_fileglob:
     - "/etc/fail2ban/jail.d/*"
+  failed_when: false
 
 - name: Add jail.d/* files
   template:
     src: "{{ item }}"
-    dest: "/etc/fail2ban/jail.d/{{ item }}"
+    dest: "/etc/fail2ban/jail.d/{{ item | basename }}"
     owner: root
     group: root
     mode: u=rw,g=r,o=r # 644

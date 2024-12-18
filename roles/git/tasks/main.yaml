@@ -21,14 +21,20 @@
 
     - name: Set user signing key
       git_config:
+        name: gpg.format
+        value: ssh
+        scope: global
+
+    - name: Set SSH signing key path
+      git_config:
         name: user.signingkey
         value: "{{ user_home }}/.ssh/id_ed25519.pub"
         scope: global
 
-    - name: Set Git user GPG key
+    - name: Enable commit signing
       git_config:
-        name: user.signingkey
-        value: true
+        name: commit.gpgsign
+        value: "true"
         scope: global
 
     - name: Set Git user editor

@@ -10,11 +10,11 @@
 
 - name: Add '.ssh' directory
   file:
-    path: "/home/github/.ssh"
+    path: "/home/{{ github_actions__user_name }}/.ssh"
     state: directory
     owner: "{{ github_actions__user_name }}"
     group: "{{ github_actions__user_name }}"
-    mode: u=rwx,g=rx,o=rx # 755 (read and execute access for everyone and also write access for the owner of the file)
+    mode: u=rwx,g=,o= # 700 (only owner has read, write, and execute permissions)
 
 - name: Add the GitHub Actions user public key to '.ssh' directory
   template:
@@ -22,10 +22,14 @@
     dest: "/home/{{ github_actions__user_name }}/.ssh/id_rsa.pub"
     owner: "{{ github_actions__user_name }}"
     group: "{{ github_actions__user_name }}"
-    mode: u=rwx,g=rx,o=rx # 755 (read and execute access for everyone and also write access for the owner of the file)
+    mode: u=rw,g=r,o=r # 644 (read access for everyone and also write access for the owner of the file)
 
 - name: Add the GitHub Actions user public key to 'authorized_keys' file
   authorized_key:
     user: "{{ github_actions__user_name }}"
     state: present
     key: "{{ lookup('file', '/home/{{ github_actions__user_name }}/.ssh/id_rsa.pub') }}"
+  register: auth_key_result
+  failed_when:
+    - auth_key_result.failed
+    - "'No such file or directory' not in auth_key_result.msg"
