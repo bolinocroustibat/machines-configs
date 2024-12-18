@@ -57,6 +57,13 @@
         name: micro
         tasks_from: main
 
+- name: Install and configure rmate
+  hosts: remote
+  tasks:
+    - include_role:
+        name: rmate
+        tasks_from: main
+
 - name: Install and configure uv
   hosts: remote
   tasks:
