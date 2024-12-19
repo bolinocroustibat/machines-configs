@@ -16,6 +16,8 @@
     path: "{{ user_home }}/.config/micro"
     state: directory
     mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 
 - name: Backup existing config file if it exists
   copy:
@@ -23,7 +25,10 @@
     src: "{{ user_home }}/.config/micro/settings.json"
     dest: "{{ user_home }}/.config/micro/settings.json_{{ ansible_date_time.iso8601 }}.bak"
     mode: preserve
-  when: ansible_check_mode == false and lookup('file', '{{ user_home }}/.config/micro/settings.json', errors='ignore') is defined
+    owner: "{{ ansible_user }}"
+  when:
+    - not ansible_check_mode
+    - lookup('file', '{{ user_home }}/.config/micro/settings.json', errors='ignore') is defined
 
 - name: Copy config file
   template:
