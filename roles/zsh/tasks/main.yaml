@@ -46,6 +46,7 @@
       ansible.builtin.git:
         repo: "https://github.com/zsh-users/zsh-autosuggestions.git"
         dest: "{{ user_home }}/.zsh/zsh-autosuggestions"
+        version: "master"
         clone: true
         update: true
 
@@ -62,6 +63,7 @@
       ansible.builtin.git:
         repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"
         dest: "{{ user_home }}/.zsh/zsh-syntax-highlighting"
+        version: "master"
         clone: true
         update: true
 
