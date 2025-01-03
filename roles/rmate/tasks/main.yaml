@@ -6,7 +6,7 @@
         url: https://raw.githubusercontent.com/aurora/rmate/master/rmate
         dest: /usr/local/bin/rmate
         mode: u=rwx,g=rx,o=rx
-        validate_certs: yes
+        validate_certs: true
       register: download_result
       failed_when: download_result.status_code is defined and download_result.status_code != 200
 
@@ -15,9 +15,9 @@
         src: /usr/local/bin/rmate
         dest: /usr/local/bin/sublime
         state: link
-        force: yes
+        force: true
       when: download_result is success
   rescue:
     - name: Report failure
       fail:
-        msg: "Failed to setup rmate. Download status
+        msg: "Failed to setup rmate. Download status: {{ download_result.status_code | default('unknown') }}"

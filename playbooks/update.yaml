@@ -1,28 +1,32 @@
 - name: Update Homebrew and upgrade packages
   hosts: local
   tasks:
-    - include_role:
+    - name: Update Homebrew packages
+      include_role:
         name: homebrew
         tasks_from: upgrade
 
 - name: Update apt and upgrade packages
   hosts: remote
   tasks:
-    - include_role:
+    - name: Upgrade apt packages
+      include_role:
         name: apt
         tasks_from: upgrade
 
 - name: Update Starship
   hosts: remote
   tasks:
-    - include_role:
+    - name: Update Starship prompt
+      include_role:
         name: starship
         tasks_from: update
 
 - name: Update global pip
   hosts: all
   tasks:
-    - include_role:
+    - name: Update pip packages
+      include_role:
         name: pip
         tasks_from: update
       ignore_errors: true # pip may be managed by uv, so we don't want to fail if it is
@@ -30,6 +34,7 @@
 - name: Update uv
   hosts: all
   tasks:
-    - include_role:
+    - name: Update uv package manager
+      include_role:
         name: uv
         tasks_from: update

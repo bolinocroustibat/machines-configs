@@ -43,4 +43,4 @@
     block: "{{ lookup('template', '.zshrc.j2') }}"
     marker: "### {mark} Starship (Ansible-managed) ### "
     mode: "u=rw,g=r,o=r" # 644 (read and write access for the owner of the file and read access for group and others)
-    create: yes
+    create: true
