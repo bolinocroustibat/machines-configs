@@ -9,7 +9,7 @@
     src: "{{ user_home }}/.ssh/config"
     dest: "{{ user_home }}/.ssh/config_{{ ansible_date_time.iso8601 }}.bak"
     mode: preserve
-    remote_src: yes
+    remote_src: true
   when: ansible_stat.exists is defined and ansible_stat.exists
 
 - name: Add ssh config file
@@ -23,7 +23,7 @@
     src: "{{ item }}"
     dest: "{{ user_home }}/.ssh/config.d/{{ item | basename }}_{{ ansible_date_time.iso8601 }}.bak"
     mode: preserve
-    remote_src: yes
+    remote_src: true
   with_fileglob:
     - "{{ user_home }}/.ssh/config.d/*"
   when: item != ""

@@ -1,73 +1,84 @@
 - name: Install and update Homebrew
   hosts: local
   tasks:
-    - include_role:
+    - name: Install Homebrew
+      include_role:
         name: homebrew
         tasks_from: install
-    - include_role:
+    - name: Upgrade Homebrew packages
+      include_role:
         name: homebrew
         tasks_from: upgrade
 
 - name: Add SSH hosts configs
   hosts: local
   tasks:
-    - include_role:
+    - name: Configure SSH hosts
+      include_role:
         name: ssh
         tasks_from: hosts_configs
 
 - name: Install zsh
   hosts: local
   tasks:
-    - include_role:
+    - name: Install and configure zsh
+      include_role:
         name: zsh
         tasks_from: main
 
 - name: Install and configure Starship
   hosts: local
   tasks:
-    - include_role:
+    - name: Install Starship prompt
+      include_role:
         name: starship
         tasks_from: install
 
 - name: Install direnv
   hosts: local
   tasks:
-    - include_role:
+    - name: Install and configure direnv
+      include_role:
         name: direnv
         tasks_from: main
 
 - name: Install Micro
   hosts: local
   tasks:
-    - include_role:
+    - name: Install Micro editor
+      include_role:
         name: micro
         tasks_from: main
 
 - name: Configure Git
   hosts: local
   tasks:
-    - include_role:
+    - name: Set up Git configuration
+      include_role:
         name: git
         tasks_from: main
 
 - name: Install uv
   hosts: local
   tasks:
-    - include_role:
+    - name: Install uv package manager
+      include_role:
         name: uv
         tasks_from: install
 
 - name: Install NVM
   hosts: local
   tasks:
-    - include_role:
+    - name: Install Node Version Manager
+      include_role:
         name: nvm
         tasks_from: main
 
 - name: Install Biome
   hosts: local
   tasks:
-    - include_role:
+    - name: Install Biome formatter
+      include_role:
         name: biome
         tasks_from: install
 
