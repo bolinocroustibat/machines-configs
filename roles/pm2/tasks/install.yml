@@ -1,0 +1,19 @@
+- name: Install PM2 globally
+  npm:
+    name: pm2
+    global: true
+    state: present
+  become: false
+
+- name: Add PM2 startup to .zshrc
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: 'export PATH="$HOME/.npm-global/bin:$PATH"'
+    state: present
+  become: false
+
+- name: Generate PM2 startup script
+  command: "{{ ansible_env.HOME }}/.npm-global/bin/pm2 startup"
+  register: pm2_startup
+  changed_when: "'You have to run this command as root' in pm2_startup.stdout"
+  become: false

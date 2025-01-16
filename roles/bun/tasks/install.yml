@@ -1,0 +1,12 @@
+- name: Download Bun installer
+  get_url:
+    url: https://bun.sh/install
+    dest: /tmp/bun-installer.sh
+    mode: '0755'
+  become: false
+
+- name: Install Bun
+  command: "/tmp/bun-installer.sh"
+  args:
+    creates: "{{ ansible_env.HOME }}/.bun/bin/bun"
+  become: false
