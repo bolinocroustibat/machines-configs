@@ -1,0 +1,12 @@
+---
+- name: Include install tasks
+  ansible.builtin.import_tasks: install.yml
+  tags:
+    - pm2
+    - pm2:install
+
+- name: Include update tasks
+  ansible.builtin.import_tasks: update.yml
+  tags:
+    - pm2
+    - pm2:update
