@@ -38,9 +38,8 @@ show_always = true
 
 [hostname]
 ssh_only = false
-format = '@[$hostname](bold red)'
-trim_at = '.'
-disabled = false
+format = '@[$hostname](bold red)($style)'
+trim_at = ''
 
 [directory]
 truncate_to_repo = false
