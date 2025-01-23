@@ -1,12 +1,22 @@
-- name: Download Bun installer
+---
+- name: Install Bun via Homebrew (MacOS)
+  community.general.homebrew:
+    name: bun
+    state: present
+  become: false
+  when: ansible_os_family == "Darwin"
+
+- name: Download Bun installer (Debian)
   get_url:
     url: https://bun.sh/install
     dest: /tmp/bun-installer.sh
     mode: '0755'
   become: false
+  when: ansible_os_family == "Debian"
 
-- name: Install Bun
+- name: Install Bun (Debian)
   command: "/tmp/bun-installer.sh"
   args:
     creates: "{{ ansible_env.HOME }}/.bun/bin/bun"
   become: false
+  when: ansible_os_family == "Debian"

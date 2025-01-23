@@ -1,5 +1,14 @@
-- name: Upgrade Bun
+---
+- name: Update Bun via Homebrew (MacOS)
+  community.general.homebrew:
+    name: bun
+    state: latest
+  become: false
+  when: ansible_os_family == "Darwin"
+
+- name: Upgrade Bun (Debian)
   command: "{{ ansible_env.HOME }}/.bun/bin/bun upgrade"
   register: bun_upgrade
   changed_when: "'Already up to date' not in bun_upgrade.stdout"
   become: false
+  when: ansible_os_family == "Debian"
