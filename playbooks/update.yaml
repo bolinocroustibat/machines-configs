@@ -14,6 +14,14 @@
         name: apt
         tasks_from: upgrade
 
+- name: Update ZSH and plugins
+  hosts: all
+  tasks:
+    - name: Update ZSH
+      include_role:
+        name: zsh
+        tasks_from: update
+
 - name: Update Starship
   hosts: remote
   tasks:
