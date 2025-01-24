@@ -1,5 +1,8 @@
 {{ ansible_managed | comment }}
 
+### Starship ###
+eval "$(starship init zsh)"
+
 ### $PATH ####
 
 export PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
@@ -8,12 +11,22 @@ export PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
 export VISUAL=micro
 export EDITOR="$VISUAL"
 
+{% if ansible_os_family == 'Darwin' %}
 # SSH key path
 export SSH_KEY_PATH="{{ user_home }}/.ssh/id_ed25519"
+{% endif %}
 
 # ZSH plugins
 source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+{% if ansible_os_family == 'Debian' %}
+### Save ZSH history ###
+HISTFILE="{{ user_home }}/.zsh_history"
+HISTSIZE=1000
+SAVEHIST=1000
+setopt appendhistory
+{% endif %}
 
 ### User configuration ###
 
@@ -32,10 +45,10 @@ alias restart='systemctl restart'
 alias stop='systemctl stop'
 alias status='systemctl status'
 {% endif %}
-alias git_force_pull='git fetch --all & git reset --hard origin/main && git pull'
-alias ruffcheck='ruff check --fix && ruff format'
 #alias cat='ccat'
 {% if ansible_os_family == 'Darwin' %}
+alias git_force_pull='git fetch --all & git reset --hard origin/main && git pull'
+alias ruffcheck='ruff check --fix && ruff format'
 alias docker_psa='docker ps --format "table {{ '{{' }}.Names{{ '}}' }}\t{{ '{{' }}.Ports{{ '}}' }}\t{{ '{{' }}.Status{{ '}}' }}"'
 alias biomecheck='biome check --write .'
 {% endif %}
