@@ -12,7 +12,7 @@
   when: ansible_os_family == "Debian"
 
 - name: Execute uv installation script
-  command: "sh /tmp/uv_install.sh"
+  command: sh /tmp/uv_install.sh
   environment:
     UV_INSTALL_DIR: "{{ uv_install_dir }}"
   register: uv_result
@@ -27,7 +27,13 @@
   when: ansible_os_family == "Debian"
 
 - name: Install Python 3.12 with uv
-  command: "{{ uv_install_dir }}/bin/uv python install 3.12"
+  command: "{{ uv_install_dir }}/uv python install 3.12"
   register: uv_python_result
   changed_when: "'Installed Python 3.12' in uv_python_result.stdout"
+  failed_when: uv_python_result.rc != 0
+
+- name: Install Python 3.13 with uv
+  command: "{{ uv_install_dir }}/uv python install 3.13"
+  register: uv_python_result
+  changed_when: "'Installed Python 3.13' in uv_python_result.stdout"
   failed_when: uv_python_result.rc != 0
