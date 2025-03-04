@@ -10,37 +10,51 @@
       when: ansible_os_family == "Debian"
       get_url:
         url: "https://starship.rs/install.sh"
-        dest: "{{ user_home }}/starship_install.sh"
-        mode: u=rwx,g=rx,o=rx # 755 (read and execute access for everyone and also write access for the owner of the file)
+        dest: "/tmp/starship_install.sh"
+        mode: u=rwx,g=rx,o=rx
 
-    - name: Install Starship
+    - name: Install Starship system-wide
       when: ansible_os_family == "Debian"
-      command: "sh {{ user_home }}/starship_install.sh -y"
+      command: "sh /tmp/starship_install.sh --bin-dir /usr/local/bin -y"
 
     - name: Delete Starship install script
       when: ansible_os_family == "Debian"
       file:
-        path: "{{ user_home }}/starship_install.sh"
+        path: "/tmp/starship_install.sh"
         state: absent
 
-- name: Backup existing starship.toml config file if it exists
-  copy:
-    remote_src: true
-    src: "{{ user_home }}/.config/starship.toml"
-    dest: "{{ user_home }}/.config/starship.toml_{{ ansible_date_time.iso8601 }}.bak"
-    mode: preserve
-  failed_when: false
+- name: Configure Starship for root and github users
+  loop:
+    - { home: "/root", user: "root" }
+    - { home: "/home/github", user: "github" }
+  block:
+    - name: Create .config directory for user
+      file:
+        path: "{{ item.home }}/.config"
+        state: directory
+        mode: "0755"
+        owner: "{{ item.user }}"
 
-- name: Add starship.toml config file
-  template:
-    src: "starship_{{ 'local' if ansible_os_family == 'Darwin' else 'remote' }}.toml"
-    dest: "{{ user_home }}/.config/starship.toml"
-    mode: "u=rw,g=r,o=r"
+    - name: Backup existing starship.toml if exists
+      copy:
+        remote_src: true
+        src: "{{ item.home }}/.config/starship.toml"
+        dest: "{{ item.home }}/.config/starship.toml_{{ ansible_date_time.iso8601 }}.bak"
+        mode: preserve
+      failed_when: false
 
-- name: Add Starship to .zshrc file
-  blockinfile:
-    dest: "{{ user_home }}/.zshrc"
-    block: "{{ lookup('template', '.zshrc.j2') }}"
-    marker: "### {mark} Starship (Ansible-managed) ### "
-    mode: "u=rw,g=r,o=r" # 644 (read and write access for the owner of the file and read access for group and others)
-    create: true
+    - name: Add starship.toml config file
+      template:
+        src: "starship_{{ 'local' if ansible_os_family == 'Darwin' else 'remote' }}.toml"
+        dest: "{{ item.home }}/.config/starship.toml"
+        mode: "0644"
+        owner: "{{ item.user }}"
+
+    - name: Add Starship to user's .zshrc file
+      blockinfile:
+        dest: "{{ item.home }}/.zshrc"
+        block: "{{ lookup('template', '.zshrc.j2') }}"
+        marker: "### {mark} Starship (Ansible-managed) ### "
+        mode: "0644"
+        create: true
+        owner: "{{ item.user }}"
