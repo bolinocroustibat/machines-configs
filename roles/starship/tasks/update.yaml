@@ -1,18 +1,26 @@
 # For MacOS ("Darwin") systems, Starship is updated as a Homebrew package.
 
-- name: Download Starship install script
-  when: ansible_os_family == "Debian"
-  get_url:
-    url: "https://starship.rs/install.sh"
-    dest: "{{ user_home }}/starship_install.sh"
-    mode: u=rwx,g=rx,o=rx # 755 (read and execute access for everyone and also write access for the owner of the file)
+- name: Update Starship
+  block:
+    - name: Update Starship with homebrew
+      when: ansible_os_family == "Darwin"
+      homebrew:
+        name: starship
+        state: latest
 
-- name: Install Starship
-  when: ansible_os_family == "Debian"
-  command: "sh {{ user_home }}/starship_install.sh -y"
+    - name: Download latest Starship install script
+      when: ansible_os_family == "Debian"
+      get_url:
+        url: "https://starship.rs/install.sh"
+        dest: "/tmp/starship_install.sh"
+        mode: u=rwx,g=rx,o=rx
 
-- name: Delete Starship install script
-  when: ansible_os_family == "Debian"
-  file:
-    path: "{{ user_home }}/starship_install.sh"
-    state: absent
+    - name: Update Starship system-wide
+      when: ansible_os_family == "Debian"
+      command: "sh /tmp/starship_install.sh --bin-dir /usr/local/bin -y"
+
+    - name: Delete Starship install script
+      when: ansible_os_family == "Debian"
+      file:
+        path: "/tmp/starship_install.sh"
+        state: absent
