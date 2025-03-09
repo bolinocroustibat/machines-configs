@@ -1,0 +1,7 @@
+- name: Update Minecraft server repository
+  git:
+    repo: "git@github.com:bolinocroustibat/minecraft-server.git"
+    dest: "/root/minecraft-server"
+    accept_hostkey: yes
+    update: yes
+    version: main
