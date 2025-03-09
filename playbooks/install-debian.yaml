@@ -125,3 +125,11 @@
       include_role:
         name: websites
         tasks_from: main.yaml
+
+- name: Install Minecraft server
+  hosts: data-bolino
+  tasks:
+    - name: Include minecraft-server role
+      include_role:
+        name: minecraft-server
+        tasks_from: install
