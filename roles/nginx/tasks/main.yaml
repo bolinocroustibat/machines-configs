@@ -25,6 +25,16 @@
     - sites-enabled
     - conf.d
 
+- name: Copy .htpasswd file
+  template:
+    src: .htpasswd
+    dest: /etc/nginx/.htpasswd
+    mode: u=rw,g=r,o= # 640 (only owner can write, group can read)
+    owner: www-data
+    group: www-data
+  notify:
+    - reload nginx config
+
 - name: Ensure configuration is set
   template:
     src: "{{ item.src }}"
