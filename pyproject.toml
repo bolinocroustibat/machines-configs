@@ -1,6 +1,6 @@
 [project]
 name = "machines-configs"
-version = "0.2.1"
+version = "0.2.2"
 description = "Ansible playbooks for setting up local development and remote machines"
 authors = [{ name = "Adrien Carpentier", email = "me@adriencarpentier.com" }]
 readme = "README.md"
