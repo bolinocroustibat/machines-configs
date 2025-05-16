@@ -31,7 +31,7 @@
         tasks_from: update
 
 - name: Update global pip
-  hosts: all
+  hosts: remote # python is entirely managed by uv on local
   tasks:
     - name: Update pip packages
       include_role:
