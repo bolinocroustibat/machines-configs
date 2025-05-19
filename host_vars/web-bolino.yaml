@@ -4,3 +4,13 @@ type: remote-web
 www_path: /home/www
 
 uv_install_dir: /usr/local/bin
+
+# fail2ban configurations
+fail2ban_jails:
+  - name: sshd
+    type: common
+  - name: nginx
+    type: common
+  - name: php
+    type: common
+fail2ban_filters: [] # No need to specify nginx filters as they're included by default
