@@ -1,0 +1,77 @@
+- name: Install fail2ban
+  apt:
+    name: fail2ban
+    state: present
+    update_cache: true
+
+- name: Backup existing jail.local file if it exists
+  copy:
+    remote_src: true
+    src: "/etc/fail2ban/jail.local"
+    dest: "/etc/fail2ban/jail.local_{{ ansible_date_time.iso8601 }}.bak"
+    mode: preserve # Preserve the file permissions of the original file
+  failed_when: false
+
+- name: Add jail.local file
+  template:
+    src: jail.local.j2
+    dest: "/etc/fail2ban/jail.local"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r # 644
+  notify: restart fail2ban
+
+- name: Backup existing jail.d/* files if they exist
+  copy:
+    remote_src: true
+    src: "{{ item }}"
+    dest: "/etc/fail2ban/jail.d/{{ item | basename }}_{{ ansible_date_time.iso8601 }}.bak"
+    mode: preserve
+  with_fileglob:
+    - "/etc/fail2ban/jail.d/*"
+  failed_when: false
+
+- name: Add common jail.d/* files
+  template:
+    src: "templates/jail.d/{{ item.name }}.conf"
+    dest: "/etc/fail2ban/jail.d/{{ item.name }}.conf"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r # 644
+  loop: "{{ fail2ban_jails | selectattr('type', 'equalto', 'common') | list }}"
+  notify: restart fail2ban
+
+- name: Add custom jail.d/* files
+  template:
+    src: "templates/jail.d/{{ item.name }}.conf"
+    dest: "/etc/fail2ban/jail.d/{{ item.name }}.conf"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r # 644
+  loop: "{{ fail2ban_jails | selectattr('type', 'equalto', 'custom') | list }}"
+  notify: restart fail2ban
+
+- name: Backup existing filter.d/* files if they exist
+  copy:
+    remote_src: true
+    src: "{{ item }}"
+    dest: "/etc/fail2ban/filter.d/{{ item | basename }}_{{ ansible_date_time.iso8601 }}.bak"
+    mode: preserve
+  with_fileglob:
+    - "/etc/fail2ban/filter.d/*"
+  failed_when: false
+
+- name: Add custom filter.d/* files
+  template:
+    src: "templates/filter.d/{{ item.name }}.conf"
+    dest: "/etc/fail2ban/filter.d/{{ item.name }}.conf"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r # 644
+  loop: "{{ fail2ban_filters | selectattr('type', 'equalto', 'custom') | list }}"
+  notify: restart fail2ban
+
+- name: Enable fail2ban service
+  service:
+    name: fail2ban
+    enabled: true

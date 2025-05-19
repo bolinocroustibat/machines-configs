@@ -39,6 +39,14 @@
         tasks_from: update
       ignore_errors: true # pip may be managed by uv, so we don't want to fail if it is
 
+- name: Update fail2ban configurations
+  hosts: remote
+  tasks:
+    - name: Update fail2ban configurations
+      include_role:
+        name: fail2ban
+        tasks_from: update
+
 - name: Update uv
   hosts: all
   tasks:
