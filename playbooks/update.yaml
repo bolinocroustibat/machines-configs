@@ -41,6 +41,7 @@
 
 - name: Update fail2ban configurations
   hosts: remote
+  tags: fail2ban
   tasks:
     - name: Update fail2ban configurations
       include_role:
