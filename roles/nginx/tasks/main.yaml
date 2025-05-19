@@ -24,6 +24,7 @@
     - sites-available
     - sites-enabled
     - conf.d
+    - snippets
 
 - name: Copy .htpasswd file
   template:
@@ -32,6 +33,14 @@
     mode: u=rw,g=r,o= # 640 (only owner can write, group can read)
     owner: www-data
     group: www-data
+  notify:
+    - reload nginx config
+
+- name: Copy PHP snippet
+  template:
+    src: snippets/php.conf.j2
+    dest: /etc/nginx/snippets/php.conf
+    mode: u=rw,g=r,o=r # 644
   notify:
     - reload nginx config
 
