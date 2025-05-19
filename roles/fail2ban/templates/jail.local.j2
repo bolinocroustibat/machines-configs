@@ -1,21 +1,39 @@
 [DEFAULT]
 
+# Enable IPv6 support automatically if available
 allowipv6 = auto
 
 # "bantime" is the number of seconds that a host is banned.
+# In this case, banned hosts will be blocked for 1 day
 bantime  = 1d
 
 # A host is banned if it has generated "maxretry" during the last "findtime"
-# seconds.
-findtime  = 1d
+# seconds. Here, we look at a 30-minute window for counting failures
+findtime  = 30m
 
 # "maxretry" is the number of failures before a host get banned.
+# After 4 failed attempts within the findtime window, the host will be banned
 maxretry = 4
 
 
 # Destination email address used solely for the interpolations in
 # jail.{conf,local,d/*} configuration files.
+# This is where notifications will be sent
 destemail = {{ fail2ban__user_email }}
 
 # Sender email address used solely for some actions
+# This is the "from" address for fail2ban notifications
 sender = {{ fail2ban__sender_email}}
+
+
+# Recidive jail configuration
+# This jail catches repeat offenders who keep getting banned across different jails
+[recidive]
+# Path to the fail2ban log file where ban actions are recorded
+logpath  = /var/log/fail2ban.log
+# Ban action to use - in this case, ban from all ports
+banaction = %(banaction_allports)s
+# Ban time for repeat offenders - 1 week (longer than regular bans)
+bantime  = 1w
+# Time window to look for repeat offenses - 1 day
+findtime = 1d
