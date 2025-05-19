@@ -7,10 +7,10 @@ uv_install_dir: /usr/local/bin
 
 # fail2ban configurations
 fail2ban_jails:
-  - name: sshd
-    type: common
   - name: nginx
-    type: common
+    type: custom
   - name: php
+    type: common
+  - name: sshd
     type: common
 fail2ban_filters: [] # No need to specify nginx filters as they're included by default

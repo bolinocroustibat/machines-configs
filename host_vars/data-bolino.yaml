@@ -5,11 +5,11 @@ uv_install_dir: '/usr/local/bin'
 
 # fail2ban configurations
 fail2ban_jails:
-  - name: sshd
-    type: common
   - name: apache_transmission
     type: custom
   - name: php
+    type: common
+  - name: sshd
     type: common
 fail2ban_filters:
   - name: apache_transmission
