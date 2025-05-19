@@ -1,2 +1,5 @@
 nginx_available_path: /etc/nginx/sites-available
 nginx_enabled_path: /etc/nginx/sites-enabled
+
+# PHP-FPM socket path
+php_fpm_socket: /run/php/php8.4-fpm.sock
