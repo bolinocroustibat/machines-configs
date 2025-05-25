@@ -34,7 +34,7 @@ http {
 
 	ssl_protocols TLSv1.2 TLSv1.3;
 	# Perfect Forward Secrecy(PFS) is frequently compromised without this
-	ssl_prefer_server_ciphers on;
+	ssl_prefer_server_ciphers off; # No need to put 'on' anymore if using modern ciphers.
 	# Enabling QUIC 0-RTT
 	ssl_early_data on;
 

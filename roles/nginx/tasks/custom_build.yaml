@@ -1,0 +1,23 @@
+- name: Stop Nginx
+  service:
+    name: nginx
+    state: stopped
+
+- name: Get Nginx version
+  command: /usr/sbin/nginx -v
+  register: nginx_version
+
+- name: Copy previous Nginx binary
+  copy:
+    src: /usr/sbin/nginx
+    dest: /usr/sbin/{{ nginx_version }}_{{ ansible_date_time.iso8601 }}.bak
+    mode: preserve
+  when: nginx_installed.stat.exists
+
+- name: Download latest homemade build of Nginx
+  get_url:
+    url: https://github.com/bolinocroustibat/nginx-http3/releases/latest/download/nginx
+    dest: /usr/sbin/nginx
+    mode: u=rwx,g=rx,o=rx
+  notify:
+    - restart nginx
