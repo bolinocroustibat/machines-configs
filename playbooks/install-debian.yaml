@@ -91,7 +91,7 @@
         tasks_from: main
 
 - name: Install and configure Nginx
-  hosts: web-servers
+  hosts: web-servers, media-servers
   tasks:
     - name: Install and configure Nginx web server
       include_role:
@@ -124,7 +124,15 @@
     - name: Deploy and configure websites
       include_role:
         name: websites
-        tasks_from: main.yaml
+        tasks_from: web_servers
+
+- name: Install media websites
+  hosts: media-servers
+  tasks:
+    - name: Deploy and configure media websites
+      include_role:
+        name: websites
+        tasks_from: media_servers
 
 - name: Install Minecraft server
   hosts: data-bolino

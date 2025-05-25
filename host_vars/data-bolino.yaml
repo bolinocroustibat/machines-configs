@@ -1,6 +1,8 @@
 user_home: /root
 type: remote-data
 
+www_path: /var/www
+
 uv_install_dir: '/usr/local/bin'
 
 # fail2ban configurations
