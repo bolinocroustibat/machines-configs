@@ -33,7 +33,7 @@
         src: "{{ nginx_conf_path }}/{{ item.domain }}.conf"
         dest: "{{ nginx_conf_path }}/{{ item.domain }}.conf.bak_{{ ansible_date_time.iso8601 }}"
         mode: preserve
-      loop: "{{ websites | selectattr('domain', 'defined') | list }}"
+      loop: "{{ websites }}"
       ignore_errors: true
 
     - name: Install Nginx vhost
@@ -41,14 +41,14 @@
         src: "vhosts/{{ item.domain }}.conf.j2"
         dest: "{{ nginx_conf_path }}/{{ item.domain }}.conf"
         mode: u=rw,g=r,o=r # 644
-      loop: "{{ websites | selectattr('domain', 'defined') | list }}"
+      loop: "{{ websites }}"
 
     - name: Enable vhost
       file:
         src: "{{ nginx_conf_path }}/{{ item.domain }}.conf"
         dest: "{{ nginx_enabled_path }}/{{ item.domain }}.conf"
         state: link
-      loop: "{{ websites | selectattr('domain', 'defined') | list }}"
+      loop: "{{ websites }}"
       notify: reload nginx config
 
     - name: Setup cron jobs
