@@ -17,6 +17,10 @@
       include_role:
         name: apt
         tasks_from: upgrade
+    - name: Install Docker
+      include_role:
+        name: docker
+        tasks_from: main
 
 - name: Configure .bashrc
   hosts: remote
@@ -83,7 +87,7 @@
         tasks_from: install
 
 - name: Add the GitHub Actions user
-  hosts: web-servers
+  hosts: web_servers
   tasks:
     - name: Configure GitHub Actions runner user
       include_role:
@@ -91,7 +95,7 @@
         tasks_from: main
 
 - name: Install and configure Nginx
-  hosts: web-servers, media-servers
+  hosts: web_servers, media_servers
   tasks:
     - name: Install and configure Nginx web server
       include_role:
@@ -103,7 +107,7 @@
         tasks_from: backup_vhosts
 
 - name: Install Postgres
-  hosts: web-servers
+  hosts: web_servers
   tasks:
     - name: Install and configure PostgreSQL
       include_role:
@@ -111,7 +115,7 @@
         tasks_from: main
 
 - name: Install databases-remote-backup-scripts
-  hosts: web-servers
+  hosts: web_servers
   tasks:
     - name: Set up database backup scripts
       include_role:
@@ -119,7 +123,7 @@
         tasks_from: main
 
 - name: Install websites
-  hosts: web-servers
+  hosts: web_servers
   tasks:
     - name: Deploy and configure websites
       include_role:
@@ -127,7 +131,7 @@
         tasks_from: web_servers
 
 - name: Install media websites
-  hosts: media-servers
+  hosts: media_servers
   tasks:
     - name: Deploy and configure media websites
       include_role:
