@@ -28,6 +28,19 @@
         enabled: true
       loop: "{{ websites | selectattr('needs_service', 'equalto', true) | list }}"
 
+    - name: Docker Compose down
+      community.docker.docker_compose:
+        project_src: "{{ www_path }}/{{ item.name }}"
+        state: absent
+      loop: "{{ websites | selectattr('needs_docker', 'equalto', true) | list }}"
+
+    - name: Docker Compose up
+      community.docker.docker_compose:
+        project_src: "{{ www_path }}/{{ item.name }}"
+        state: present
+        pull: true
+      loop: "{{ websites | selectattr('needs_docker', 'equalto', true) | list }}"
+
     - name: Backup existing vhost
       copy:
         src: "{{ nginx_conf_path }}/{{ item.domain }}.conf"
