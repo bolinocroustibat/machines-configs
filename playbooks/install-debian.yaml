@@ -20,7 +20,7 @@
     - name: Install Docker
       include_role:
         name: docker
-        tasks_from: main
+        tasks_from: install
 
 - name: Configure .bashrc
   hosts: remote

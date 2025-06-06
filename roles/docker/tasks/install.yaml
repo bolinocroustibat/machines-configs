@@ -38,6 +38,12 @@
       - docker-compose-plugin
     state: present
     update_cache: yes
+  notify: restart docker
+
+- name: Ensure Docker service is enabled
+  systemd:
+    name: docker
+    enabled: true
 
 - name: Verify Docker installation
   command: docker run hello-world
