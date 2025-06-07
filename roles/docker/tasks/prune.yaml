@@ -1,0 +1,34 @@
+- name: Prune all unused Docker images
+  command: docker image prune -a --force
+  register: docker_prune_output
+
+- name: Display prune results
+  debug:
+    var: docker_prune_output.stdout_lines
+
+- name: Prune unused Docker containers
+  docker_prune:
+    containers: true
+  register: docker_prune_containers
+
+- name: Display pruned containers
+  debug:
+    var: docker_prune_containers.containers_deleted
+
+- name: Prune unused Docker volumes
+  docker_prune:
+    volumes: true
+  register: docker_prune_volumes
+
+- name: Display pruned volumes
+  debug:
+    var: docker_prune_volumes.volumes_deleted
+
+- name: Prune unused Docker networks
+  docker_prune:
+    networks: true
+  register: docker_prune_networks
+
+- name: Display pruned networks
+  debug:
+    var: docker_prune_networks.networks_deleted

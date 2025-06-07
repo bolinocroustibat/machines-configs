@@ -22,6 +22,15 @@
         name: docker
         tasks_from: update
 
+- name: Prune Docker resources
+  hosts: remote
+  tags: docker-prune
+  tasks:
+    - name: Prune unused Docker resources
+      include_role:
+        name: docker
+        tasks_from: prune
+
 - name: Update ZSH and plugins
   hosts: all
   tasks:
