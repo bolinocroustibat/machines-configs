@@ -5,48 +5,48 @@
         repo: "{{ item.repo }}"
         dest: "{{ www_path }}/{{ item.name }}"
         update: true
-      loop: "{{ websites | selectattr('repo', 'defined') | list }}"
+      loop: "{{ websites_web | selectattr('repo', 'defined') | list }}"
 
     - name: Setup Python environment
       command: "cd {{ www_path }}/{{ item.name }} && uv sync"
       register: uv_sync
       changed_when: "'Installed' in uv_sync.stdout"
       failed_when: "'×' in uv_sync.stdout"
-      loop: "{{ websites | selectattr('needs_venv', 'equalto', true) | list }}"
+      loop: "{{ websites_web | selectattr('needs_venv', 'equalto', true) | list }}"
 
     - name: Install systemd service
       template:
         src: "services/{{ item.name }}.service.j2"
         dest: "/etc/systemd/system/{{ item.name }}.service"
         mode: u=rw,g=r,o=r # 644
-      loop: "{{ websites | selectattr('needs_service', 'equalto', true) | list }}"
+      loop: "{{ websites_web | selectattr('needs_service', 'equalto', true) | list }}"
 
     - name: Restart service
       systemd:
         name: "{{ item.name }}"
         state: restarted
         enabled: true
-      loop: "{{ websites | selectattr('needs_service', 'equalto', true) | list }}"
+      loop: "{{ websites_web | selectattr('needs_service', 'equalto', true) | list }}"
 
     - name: Docker Compose down
       community.docker.docker_compose:
         project_src: "{{ www_path }}/{{ item.name }}"
         state: absent
-      loop: "{{ websites | selectattr('needs_docker', 'equalto', true) | list }}"
+      loop: "{{ websites_web | selectattr('needs_docker', 'equalto', true) | list }}"
 
     - name: Docker Compose up
       community.docker.docker_compose:
         project_src: "{{ www_path }}/{{ item.name }}"
         state: present
         pull: true
-      loop: "{{ websites | selectattr('needs_docker', 'equalto', true) | list }}"
+      loop: "{{ websites_web | selectattr('needs_docker', 'equalto', true) | list }}"
 
     - name: Backup existing vhost
       copy:
         src: "{{ nginx_conf_path }}/{{ item.domain }}.conf"
         dest: "{{ nginx_conf_path }}/{{ item.domain }}.conf.bak_{{ ansible_date_time.iso8601 }}"
         mode: preserve
-      loop: "{{ websites }}"
+      loop: "{{ websites_web }}"
       ignore_errors: true
 
     - name: Install Nginx vhost
@@ -54,14 +54,14 @@
         src: "vhosts/{{ item.domain }}.conf.j2"
         dest: "{{ nginx_conf_path }}/{{ item.domain }}.conf"
         mode: u=rw,g=r,o=r # 644
-      loop: "{{ websites }}"
+      loop: "{{ websites_web }}"
 
     - name: Enable vhost
       file:
         src: "{{ nginx_conf_path }}/{{ item.domain }}.conf"
         dest: "{{ nginx_enabled_path }}/{{ item.domain }}.conf"
         state: link
-      loop: "{{ websites }}"
+      loop: "{{ websites_web }}"
       notify: reload nginx config
 
     - name: Setup cron jobs
@@ -72,4 +72,4 @@
         weekday: "{{ item.1.weekday | default('*') }}"
         job: "{{ www_path }}/{{ item.0.name }}/.venv/bin/python {{ www_path }}/{{ item.0.name }}/{{ item.1.command }}"
         user: www-data
-      loop: "{{ websites | selectattr('cron_jobs', 'defined') | product('cron_jobs') | list }}"
+      loop: "{{ websites_web | selectattr('cron_jobs', 'defined') | product('cron_jobs') | list }}"
