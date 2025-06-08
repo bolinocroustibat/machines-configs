@@ -21,3 +21,32 @@
   with_fileglob:
     - "templates/sources.list.d/*"
   when: ansible_os_family == 'Debian'
+
+- name: Ensure sources.list.d directory exists
+  file:
+    path: /etc/apt/sources.list.d
+    state: directory
+    mode: '0755'
+
+- name: Install Debian sources
+  template:
+    src: sources.list.d/debian.sources.j2
+    dest: /etc/apt/sources.list.d/debian.sources
+    mode: '0644'
+    backup: yes
+
+- name: Install custom sources
+  template:
+    src: "sources.list.d/{{ item.name }}.sources.j2"
+    dest: "/etc/apt/sources.list.d/{{ item.name }}.sources"
+    mode: '0644'
+  loop: "{{ custom_sources }}"
+
+- name: Remove old sources.list if exists
+  file:
+    path: /etc/apt/sources.list
+    state: absent
+
+- name: Update apt cache
+  apt:
+    update_cache: yes

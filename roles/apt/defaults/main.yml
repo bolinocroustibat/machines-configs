@@ -1,0 +1,8 @@
+debian_target_distribution: "trixie"  # Can be overridden when needed
+debian_target_codename: "13"  # For reference
+install_owncloud_sources: false  # Set to true only when needed
+
+# List of custom sources to install
+custom_sources:
+  - name: docker
+  - name: pgdg
