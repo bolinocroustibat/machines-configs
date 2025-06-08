@@ -1,0 +1,52 @@
+- name: Upgrade Debian distribution
+  hosts: remote
+  tags: upgrade
+  vars_prompt:
+    - name: "confirm_upgrade"
+      prompt: "Are you sure you want to upgrade to {{ debian_target_distribution }}? This operation cannot be undone. Type 'yes' to continue"
+      private: false
+  tasks:
+    - name: Verify user confirmation
+      fail:
+        msg: "Upgrade cancelled by user"
+      when: confirm_upgrade != "yes"
+
+    - name: Update package lists
+      apt:
+        update_cache: true
+        cache_valid_time: 3600
+        force_apt_get: true
+
+    - name: Perform distribution upgrade
+      include_role:
+        name: apt
+        tasks_from: dist_upgrade
+
+- name: Verify system state
+  hosts: remote
+  tags: verify
+  tasks:
+    - name: Check if system is running
+      ping:
+
+    - name: Verify SSH connection
+      wait_for_connection:
+        timeout: 60
+
+    - name: Check system status
+      command: systemctl status
+      register: system_status
+      changed_when: false
+
+    - name: Display system status
+      debug:
+        var: system_status.stdout_lines
+
+    - name: Check for failed services
+      shell: systemctl list-units --state=failed
+      register: failed_services
+      changed_when: false
+
+    - name: Display failed services
+      debug:
+        var: failed_services.stdout_lines
