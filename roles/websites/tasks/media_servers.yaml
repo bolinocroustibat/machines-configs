@@ -5,7 +5,7 @@
         src: "{{ nginx_conf_path }}/{{ item.domain }}.conf"
         dest: "{{ nginx_conf_path }}/{{ item.domain }}.conf.bak_{{ ansible_date_time.iso8601 }}"
         mode: preserve
-      loop: "{{ media_websites }}"
+      loop: "{{ websites_media }}"
       ignore_errors: true
 
     - name: Install Nginx vhost
@@ -13,12 +13,12 @@
         src: "vhosts/{{ item.domain }}.conf.j2"
         dest: "{{ nginx_conf_path }}/{{ item.domain }}.conf"
         mode: u=rw,g=r,o=r # 644
-      loop: "{{ media_websites }}"
+      loop: "{{ websites_media }}"
 
     - name: Enable vhost
       file:
         src: "{{ nginx_conf_path }}/{{ item.domain }}.conf"
         dest: "{{ nginx_enabled_path }}/{{ item.domain }}.conf"
         state: link
-      loop: "{{ media_websites }}"
+      loop: "{{ websites_media }}"
       notify: reload nginx config
