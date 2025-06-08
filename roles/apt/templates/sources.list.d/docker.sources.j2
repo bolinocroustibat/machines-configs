@@ -1,0 +1,8 @@
+{{ ansible_managed | comment }}
+
+Types: deb
+URIs: https://download.docker.com/linux/debian
+Suites: {{ debian_distribution }}
+Components: stable
+Architectures: {{ ansible_architecture }}
+Signed-By: /etc/apt/keyrings/docker.asc

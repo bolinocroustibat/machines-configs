@@ -1,0 +1,48 @@
+- name: Update current system
+  apt:
+    update_cache: yes
+    upgrade: full
+    autoremove: yes
+    autoclean: yes
+
+- name: Install required packages for dist-upgrade
+  apt:
+    name:
+      - debian-keyring
+      - debian-archive-keyring
+    state: latest
+
+- name: Update sources for new distribution
+  template:
+    src: sources.list.d/debian.sources.j2
+    dest: /etc/apt/sources.list.d/debian.sources
+  vars:
+    debian_distribution: "{{ debian_target_distribution }}"
+
+- name: Update package list for new distribution
+  apt:
+    update_cache: yes
+
+- name: Perform minimal system upgrade
+  apt:
+    upgrade: yes
+    force_apt_get: yes
+
+- name: Perform full distribution upgrade
+  apt:
+    upgrade: dist
+    force_apt_get: yes
+
+- name: Clean up old packages
+  apt:
+    autoremove: yes
+    purge: yes
+
+- name: Display new system version
+  command: cat /etc/debian_version
+  register: debian_version
+  changed_when: false
+
+- name: Show new Debian version
+  debug:
+    var: debian_version.stdout
