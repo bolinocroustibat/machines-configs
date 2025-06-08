@@ -1,6 +1,6 @@
 - name: Update apt cache
   apt:
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
 
 - name: Update Docker packages
@@ -12,5 +12,5 @@
       - docker-buildx-plugin
       - docker-compose-plugin
     state: latest
-    update_cache: yes
+    update_cache: true
   notify: restart docker

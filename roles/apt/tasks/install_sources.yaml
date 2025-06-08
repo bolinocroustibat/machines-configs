@@ -33,14 +33,14 @@
     src: sources.list.d/debian.sources.j2
     dest: /etc/apt/sources.list.d/debian.sources
     mode: '0644'
-    backup: yes
+    backup: true
 
 - name: Install custom sources
   template:
     src: "sources.list.d/{{ item.name }}.sources.j2"
     dest: "/etc/apt/sources.list.d/{{ item.name }}.sources"
     mode: '0644'
-  loop: "{{ custom_sources }}"
+  loop: "{{ apt_custom_sources }}"
 
 - name: Remove old sources.list if exists
   file:
@@ -49,4 +49,4 @@
 
 - name: Update apt cache
   apt:
-    update_cache: yes
+    update_cache: true

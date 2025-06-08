@@ -1,9 +1,9 @@
-- name: Update current system
+- name: Update package lists
   apt:
-    update_cache: yes
+    update_cache: true
     upgrade: full
-    autoremove: yes
-    autoclean: yes
+    autoremove: true
+    autoclean: true
 
 - name: Install required packages for dist-upgrade
   apt:
@@ -17,26 +17,26 @@
     src: sources.list.d/debian.sources.j2
     dest: /etc/apt/sources.list.d/debian.sources
   vars:
-    debian_distribution: "{{ debian_target_distribution }}"
+    debian_distribution: "{{ apt_debian_target_distribution }}"
 
 - name: Update package list for new distribution
   apt:
-    update_cache: yes
+    update_cache: true
 
 - name: Perform minimal system upgrade
   apt:
-    upgrade: yes
-    force_apt_get: yes
+    upgrade: true
+    force_apt_get: true
 
 - name: Perform full distribution upgrade
   apt:
     upgrade: dist
-    force_apt_get: yes
+    force_apt_get: true
 
 - name: Clean up old packages
   apt:
-    autoremove: yes
-    purge: yes
+    autoremove: true
+    purge: true
 
 - name: Display new system version
   command: cat /etc/debian_version
