@@ -1,0 +1,49 @@
+- name: Allow SSH
+  ufw:
+    rule: allow
+    port: ssh
+    proto: tcp
+
+- name: Allow HTTP
+  ufw:
+    rule: allow
+    port: http
+    proto: tcp
+
+- name: Allow HTTPS
+  ufw:
+    rule: allow
+    port: https
+    proto: tcp
+
+- name: Allow QUIC
+  ufw:
+    rule: allow
+    port: 443
+    proto: udp
+
+- name: Allow Nginx HTTP
+  ufw:
+    rule: allow
+    app: 'Nginx HTTP'
+
+- name: Allow Nginx HTTPS
+  ufw:
+    rule: allow
+    app: 'Nginx HTTPS'
+
+- name: Configure media server specific rules
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: "{{ item | regex_replace('.*/tcp', 'tcp') | regex_replace('.*/udp', 'udp') | default('tcp') }}"
+  loop:
+    - 4443
+    - 9091
+    - 51413
+    - 25565/tcp
+  when: "'media_servers' in group_names"
+
+- name: Reload UFW
+  ufw:
+    state: reloaded

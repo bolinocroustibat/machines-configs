@@ -2,8 +2,12 @@
   apt:
     name: ufw
     state: present
-    update_cache: true
-    cache_valid_time: 3600
+    update_cache: yes
+
+- name: Enable UFW
+  ufw:
+    state: enabled
+    policy: deny
 
 - name: Set default policies
   community.general.ufw:
