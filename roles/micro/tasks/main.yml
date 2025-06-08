@@ -26,9 +26,7 @@
     dest: "{{ user_home }}/.config/micro/settings.json_{{ ansible_date_time.iso8601 }}.bak"
     mode: preserve
     owner: "{{ ansible_user }}"
-  when:
-    - not ansible_check_mode
-    - lookup('file', '{{ user_home }}/.config/micro/settings.json', errors='ignore') is defined
+  when: not ansible_check_mode and lookup('file', user_home + '/.config/micro/settings.json', errors='ignore') is defined
 
 - name: Copy config file
   template:

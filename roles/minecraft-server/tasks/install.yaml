@@ -4,7 +4,7 @@
       - docker.io
       - docker-compose
     state: present
-    update_cache: yes
+    update_cache: true
 
 - name: Create minecraft server directory
   file:
@@ -16,8 +16,8 @@
   git:
     repo: "git@github.com:bolinocroustibat/minecraft-server.git"
     dest: "{{ user_home }}/minecraft-server"
-    accept_hostkey: yes
-    update: yes
+    accept_hostkey: true
+    update: true
     version: main
   register: git_clone
 
