@@ -1,9 +1,13 @@
 - name: Upgrade Debian distribution
   hosts: remote
   tags: upgrade
+  pre_tasks:
+    - name: Include apt role defaults
+      include_vars:
+        file: roles/apt/defaults/main.yml
   vars_prompt:
     - name: "confirm_upgrade"
-      prompt: "Are you sure you want to upgrade to {{ debian_target_distribution }}? This operation cannot be undone. Type 'yes' to continue"
+      prompt: "Are you sure you want to upgrade to {{ apt_debian_target_distribution }}? This operation cannot be undone. Type 'yes' to continue"
       private: false
   tasks:
     - name: Verify user confirmation

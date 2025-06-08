@@ -2,6 +2,6 @@
   git:
     repo: "git@github.com:bolinocroustibat/minecraft-server.git"
     dest: "/root/minecraft-server"
-    accept_hostkey: yes
-    update: yes
+    accept_hostkey: true
+    update: true
     version: main
