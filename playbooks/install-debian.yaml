@@ -4,7 +4,7 @@
     - name: Configure SSH keys and settings
       include_role:
         name: ssh
-        tasks_from: main
+        tasks_from: install
 
 - name: Update apt and upgrade packages
   hosts: remote
@@ -28,7 +28,7 @@
     - name: Configure bash environment
       include_role:
         name: bash
-        tasks_from: main
+        tasks_from: install
 
 - name: Install zsh
   hosts: remote
@@ -36,7 +36,7 @@
     - name: Install and configure zsh shell
       include_role:
         name: zsh
-        tasks_from: main
+        tasks_from: install
 
 - name: Install and configure Starship
   hosts: remote
@@ -52,15 +52,20 @@
     - name: Set up fail2ban intrusion prevention
       include_role:
         name: fail2ban
-        tasks_from: main
+        tasks_from: install
 
-- name: Install and configure ufw
+- name: Install and configure UFW
   hosts: remote
   tasks:
-    - name: Configure UFW firewall
+    - name: Install UFW
       include_role:
         name: ufw
-        tasks_from: main
+        tasks_from: install
+
+    - name: Configure UFW rules
+      include_role:
+        name: ufw
+        tasks_from: rules
 
 - name: Install and configure Micro
   hosts: remote
@@ -68,7 +73,7 @@
     - name: Install Micro editor
       include_role:
         name: micro
-        tasks_from: main
+        tasks_from: install
 
 - name: Install and configure rmate
   hosts: remote
@@ -76,7 +81,7 @@
     - name: Install rmate remote editor
       include_role:
         name: rmate
-        tasks_from: main
+        tasks_from: install
 
 - name: Install and configure uv
   hosts: remote
@@ -100,7 +105,7 @@
     - name: Install and configure Nginx web server
       include_role:
         name: nginx
-        tasks_from: main
+        tasks_from: install
     - name: Backup Nginx virtual hosts configuration
       include_role:
         name: nginx
@@ -112,7 +117,7 @@
     - name: Install and configure PostgreSQL
       include_role:
         name: postgres
-        tasks_from: main
+        tasks_from: install
 
 - name: Install databases-remote-backup-scripts
   hosts: web_servers
@@ -120,7 +125,7 @@
     - name: Set up database backup scripts
       include_role:
         name: databases-remote-backup-scripts
-        tasks_from: main
+        tasks_from: install
 
 - name: Install websites
   hosts: web_servers
@@ -128,7 +133,7 @@
     - name: Deploy and configure websites
       include_role:
         name: websites
-        tasks_from: web_servers
+        tasks_from: main
 
 - name: Install media websites
   hosts: media_servers
