@@ -1,0 +1,55 @@
+- name: Stop Apache2 service
+  systemd:
+    name: apache2
+    state: stopped
+    enabled: false
+  ignore_errors: true
+
+- name: Remove Apache2 packages
+  apt:
+    name:
+      - apache2
+      - apache2-bin
+      - apache2-data
+      - apache2-utils
+      - apache2-suexec-custom
+      - apache2-suexec-pristine
+      - apache2-doc
+      - apache2-dev
+    state: absent
+    purge: true
+    autoremove: true
+  ignore_errors: true
+
+- name: Remove Apache2 configuration files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - /etc/apache2
+    - /var/lib/apache2
+    - /var/log/apache2
+    - /var/cache/apache2
+    - /var/www/html
+    - /usr/share/apache2
+    - /usr/lib/apache2
+  ignore_errors: true
+
+- name: Clean up any remaining Apache2 files
+  find:
+    paths:
+      - /etc
+      - /var
+      - /usr
+    patterns:
+      - "apache2*"
+      - "apache*"
+    file_type: any
+  register: remaining_files
+
+- name: Remove remaining Apache2 files
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ remaining_files.files }}"
+  ignore_errors: true
