@@ -99,6 +99,14 @@
         name: github_actions
         tasks_from: main
 
+- name: Uninstall Apache2
+  hosts: web_servers, media_servers
+  tasks:
+    - name: Include Apache2 uninstall tasks
+      include_role:
+        name: apache2
+        tasks_from: uninstall
+
 - name: Install and configure Nginx
   hosts: web_servers, media_servers
   tasks:
