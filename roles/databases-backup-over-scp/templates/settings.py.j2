@@ -1,21 +1,49 @@
 {{ ansible_managed | comment }}
 
+# Logging settings
+LOG_LEVEL = "DEBUG"  # Available levels: DEBUG, INFO, WARNING, ERROR, SUCCESS
+LOGFILE = "log_last_script.log"  # log file will be created in the script's directory (relative path)
+
 # PostgreSQL database details to which backup to be done.
-POSTGRES_DB_NAMES = [{% for db in dabatase_backup_over_scp__postgres_databases %}"{{ db }}",{% endfor %}]  # PostgreSQL databases names to backup.
-POSTGRES_SYSTEM_USER = "{{ postgres__local_user }}"  # make sure this system user has enough privileges to take all databases backup.
-POSTGRES_PASSWD = "{{ postgres__local_user_password }}"
-POSTGRES_PORT = 5432
+# Used only by backup-postgresql.py script.
+POSTGRES_DEFAULT_PORT = 5432
+POSTGRES_DEFAULT_USER = "{{ postgres__local_user }}"  # make sure this system user has enough privileges to take all databases backup.
+POSTGRES_DEFAULT_PASSWORD = "{{ postgres__local_user_password }}"
+
+POSTGRES_DATABASES = {
+{% for website in websites_web %}
+{% if website.database is defined and website.database == 'postgres' %}
+    "{{ website.name }}_django": {
+        "user": POSTGRES_DEFAULT_USER,
+        "password": POSTGRES_DEFAULT_PASSWORD,
+        "port": {{ website.db_port | default(POSTGRES_DEFAULT_PORT) }},
+    },
+{% endif %}
+{% endfor %}
+}
 
 # MySQL database details to which backup to be done.
-MYSQL_DB_NAMES = [{% for db in dabatase_backup_over_scp__mysql_databases %}"{{ db }}",{% endfor %}]  # MySQL databases to backup
-MYSQL_USER = "{{ mysql__local_user }}"  # make sure this MySQL user has enough privileges to take all databases backup.
-MYSQL_USER_PASSWORD = "{{ mysql__local_user_password }}"
+# Used only by backup-mysql.py script.
+MYSQL_DEFAULT_USER = "{{ mysql__local_user }}"  # make sure this MySQL user has enough privileges to take all databases backup.
+MYSQL_DEFAULT_PASSWORD = "{{ mysql__local_user_password }}"
+MYSQL_DEFAULT_PORT = 3306
+
+MYSQL_DATABASES = {
+{% for website in websites_web %}
+{% if website.database is defined and website.database == 'mariadb' %}
+    "{{ website.name }}_wp": {
+        "user": MYSQL_DEFAULT_USER,
+        "password": MYSQL_DEFAULT_PASSWORD,
+        "port": {{ website.db_port | default(MYSQL_DEFAULT_PORT) }},
+    },
+{% endif %}
+{% endfor %}
+}
 
 # Local setting
-LOCAL_PATH = "{{ dabatase_backup_over_scp__local_backup_path }}"  # full local path where dumps will be saved, with trailing slash.
-LOGFILE = "{{ user_home }}/databases-backup-script-over-scp/log-last-script.log"  # full path to log file.
+LOCAL_PATH = "{{ dabatase_backup_over_scp__local_backup_path }}"  # local path where dumps will be saved, relative to the script's directory
 
 # Remote settings
-REMOTE_HOST = "{{ dabatase_backup_over_scp__remote_host }}"  # leave blank if you don't want to save remotely
+REMOTE_HOST = "{{ dabatase_backup_over_scp__remote_host }}"  # leave blank if you don't want to save remotely.
 REMOTE_USER = "{{ dabatase_backup_over_scp__remote_user }}"  # you need to be authorized on remote with your user SSH keys.
 REMOTE_PATH = "{{ dabatase_backup_over_scp__remote_backup_path }}"  # full remote path where dumps will be saved.
