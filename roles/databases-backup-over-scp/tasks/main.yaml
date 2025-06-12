@@ -24,7 +24,7 @@
     minute: "0"
     hour: "2"
     day: "1"
-    job: "{{ user_home }}/databases-backup-over-scp/.venv/bin/python {{ user_home }}/databases-backup-over-scp/main.py >> {{ user_home }}/databases-backup-over-scp/cron_{{ ansible_date_time.iso8601 }}.log"
+    job: "{{ user_home }}/databases-backup-over-scp/.main.py >> {{ user_home }}/databases-backup-over-scp/cron_{{ ansible_date_time.iso8601 }}.log"
 
 - name: Add cron job to delete old backups
   cron:
