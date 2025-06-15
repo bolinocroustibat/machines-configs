@@ -1,0 +1,13 @@
+- name: Allow Portainer agent from data-bolino
+  ufw:
+    rule: allow
+    port: 9001
+    proto: tcp
+    from_ip: "{{ hostvars['data-bolino']['ansible_host'] }}"
+    comment: 'Portainer agent from data-bolino'
+  when: inventory_hostname == 'web-bolino'
+
+- name: Reload UFW
+  ufw:
+    state: reloaded
+  when: inventory_hostname == 'web-bolino'

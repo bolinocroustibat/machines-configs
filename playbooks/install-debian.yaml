@@ -22,6 +22,18 @@
         name: docker
         tasks_from: install
 
+- name: Install Portainer
+  hosts: data-bolino,web-bolino
+  tasks:
+    - name: Install Portainer and Portainer Agent
+      include_role:
+        name: portainer
+        tasks_from: install
+    - name: Configure UFW rules for Portainer
+      include_role:
+        name: portainer
+        tasks_from: ufw
+
 - name: Configure .bashrc
   hosts: remote
   tasks:
