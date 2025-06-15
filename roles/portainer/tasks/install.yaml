@@ -1,0 +1,30 @@
+- name: Install Portainer on data-bolino
+  when: inventory_hostname == 'data-bolino'
+  block:
+    - name: Create Portainer container
+      community.docker.docker_container:
+        name: portainer
+        image: portainer/portainer-ce:lts
+        state: started
+        restart_policy: always
+        ports:
+          - "8000:8000"
+          - "{{ portainer_web_port }}:9443"
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+          - portainer_data:/data
+
+- name: Install Portainer Agent on web-bolino
+  when: inventory_hostname == 'web-bolino'
+  block:
+    - name: Create Portainer Agent container
+      community.docker.docker_container:
+        name: portainer_agent
+        image: portainer/agent:latest
+        state: started
+        restart_policy: always
+        ports:
+          - "{{ portainer_agent_port }}:9001"
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+          - portainer_agent_data:/data
