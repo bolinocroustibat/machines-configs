@@ -1,4 +1,3 @@
----
 - name: Update Bun via Homebrew (MacOS)
   community.general.homebrew:
     name: bun
