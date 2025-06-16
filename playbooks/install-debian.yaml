@@ -22,6 +22,14 @@
         name: docker
         tasks_from: install
 
+- name: Install WireGuard
+  hosts: data-bolino
+  tasks:
+    - name: Install WireGuard
+      include_role:
+        name: wireguard
+        tasks_from: install
+
 - name: Install Portainer
   hosts: data-bolino,web-bolino
   tasks:
