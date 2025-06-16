@@ -1,10 +1,48 @@
-- name: Git clone wireguard installation script
-  git:
-    repo: git@github.com:Nyr/wireguard-install.git
-    dest: "{{ user_home }}/wireguard-install"
-    update: yes
+- name: Create WireGuard configuration directory
+  file:
+    path: "{{ ansible_env.HOME }}/.wg-easy"
+    state: directory
+    mode: '0700'
 
-- name: Execute wireguard installation script
-  command: sh "{{ user_home }}/wireguard-install/wireguard-install.sh"
-  register: wireguard_result
-  failed_when: "'FAILED' in wireguard_result.stderr"
+- name: Copy docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ ansible_env.HOME }}/.wg-easy/docker-compose.yml"
+    mode: '0644'
+  notify: Recreate WireGuard container
+
+- name: Start WireGuard container
+  community.docker.docker_compose_v2:
+    project_src: "{{ ansible_env.HOME }}/.wg-easy"
+    state: present
+    remove_orphans: true
+    build: "never"
+    pull: "always"
+    recreate: always
+
+- name: Deploy Nginx vhost for WireGuard
+  template:
+    src: "{{ wireguard_domain }}.conf.j2"
+    dest: "/etc/nginx/sites-available/{{ wireguard_domain }}.conf"
+    mode: u=rw,g=r,o=r  # 644
+  notify: Reload Nginx
+
+- name: Enable Nginx vhost for WireGuard
+  file:
+    src: "/etc/nginx/sites-available/{{ wireguard_domain }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ wireguard_domain }}.conf"
+    state: link
+    force: true
+  notify: Reload Nginx
+
+- name: Check if DNS is properly configured
+  command: dig +short {{ wireguard_domain }}
+  register: dns_check
+  changed_when: false
+  failed_when: dns_check.stdout == ""
+
+- name: Configure SSL with Certbot
+  command: certbot --nginx -d {{ wireguard_domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
+  args:
+    creates: "/etc/letsencrypt/live/{{ wireguard_domain }}/fullchain.pem"
+  when: dns_check.stdout != ""

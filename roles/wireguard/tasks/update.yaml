@@ -1,5 +1,0 @@
-- name: Git pull wireguard installation script
-  git:
-    repo: git@github.com:Nyr/wireguard-install.git
-    dest: "{{ user_home }}/wireguard-install"
-    update: yes

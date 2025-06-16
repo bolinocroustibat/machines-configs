@@ -1,0 +1,19 @@
+services:
+  wg-easy:
+    container_name: wg-easy
+    image: ghcr.io/wg-easy/wg-easy:latest
+    environment:
+      WG_HOST: "{{ wireguard_host }}"
+      PASSWORD: "{{ wireguard_admin_password }}"
+    volumes:
+      - "{{ ansible_env.HOME }}/.wg-easy:/etc/wireguard"
+    ports:
+      - "51820:51820/udp"
+      - "127.0.0.1:{{ wireguard_web_port }}:51821/tcp"
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv4.ip_forward=1
+    restart: unless-stopped
