@@ -10,14 +10,20 @@ __pypackages__/
 # Ruff
 .ruff_cache/
 
-# secrets
-secrets.*
+# Secrets files
+# Generic secrets files
 /inventory.*
+/hosts_vars/*
+roles/**/vars/secrets.yml
+roles/**/vars/secrets.yaml
+vault.yml
+*.vault
+.vault_pass
+# Example secrets files
+!roles/**/vars/secrets.yml.example
+!roles/**/vars/secrets.yaml.example
+# Specific secrets (#TODO: to be made generic)
+/roles/postgres/defaults/main.yaml
 /roles/cron/templates/*
 /roles/ssh/templates/*
-/roles/websites/defaults/*
 /roles/websites/templates/*
-/roles/websites/vars/*
-/hosts_vars/*
-/roles/databases-backup-over-scp/defaults/main.yaml
-/roles/postgres/defaults/main.yaml
