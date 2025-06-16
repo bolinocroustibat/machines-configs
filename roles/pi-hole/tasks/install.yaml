@@ -1,0 +1,48 @@
+- name: Create Pi-hole installation directory
+  file:
+    path: /opt/pi-hole
+    state: directory
+    mode: u=rwx,g=rx,o=rx  # 755
+
+- name: Copy docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: /opt/pi-hole/docker-compose.yml
+    mode: u=rw,g=r,o=r  # 644
+  notify: Recreate Pi-hole container
+
+- name: Start Pi-hole container
+  community.docker.docker_compose_v2:
+    project_src: /opt/pi-hole
+    state: present
+    remove_orphans: true
+    build: "never"
+    pull: "always"
+    recreate: always
+
+- name: Deploy Nginx vhost for Pi-hole
+  template:
+    src: "{{ pihole_domain }}.conf.j2"
+    dest: "/etc/nginx/sites-available/{{ pihole_domain }}.conf"
+    mode: u=rw,g=r,o=r  # 644
+  notify: Reload Nginx
+
+- name: Enable Nginx vhost for Pi-hole
+  file:
+    src: "/etc/nginx/sites-available/{{ pihole_domain }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ pihole_domain }}.conf"
+    state: link
+    force: true
+  notify: Reload Nginx
+
+- name: Check if DNS is properly configured
+  command: dig +short {{ pihole_domain }}
+  register: dns_check
+  changed_when: false
+  failed_when: dns_check.stdout == ""
+
+- name: Configure SSL with Certbot
+  command: certbot --nginx -d {{ pihole_domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
+  args:
+    creates: "/etc/letsencrypt/live/{{ pihole_domain }}/fullchain.pem"
+  when: dns_check.stdout != ""

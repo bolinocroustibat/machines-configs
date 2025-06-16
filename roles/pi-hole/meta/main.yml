@@ -1,0 +1,21 @@
+galaxy_info:
+  role_name: pihole
+  author: bolino
+  description: Role to install Pi-hole using Docker Compose
+  company: bolino
+  license: MIT
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+  galaxy_tags:
+    - docker
+    - pi-hole
+    - dns
+    - ad-blocker
+
+dependencies: []

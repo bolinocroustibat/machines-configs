@@ -1,14 +1,42 @@
 # venv
 .venv/
 venv/
+ENV/
 
-# Python packaging
-.python-version
+# Python
 __pycache__/
 __pypackages__/
-
-# Ruff
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
 .ruff_cache/
+.python-version
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
 
 # Secrets files
 # Generic secrets files
