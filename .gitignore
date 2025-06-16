@@ -51,7 +51,6 @@ vault.yml
 !roles/**/vars/secrets.yml.example
 !roles/**/vars/secrets.yaml.example
 # Specific secrets (#TODO: to be made generic)
-/roles/postgres/defaults/main.yaml
 /roles/cron/templates/*
 /roles/ssh/templates/*
 /roles/websites/templates/*
