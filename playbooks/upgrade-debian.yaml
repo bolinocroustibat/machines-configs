@@ -4,7 +4,7 @@
   pre_tasks:
     - name: Include apt role defaults
       include_vars:
-        file: roles/apt/defaults/main.yml
+        file: roles/apt/defaults/main.yaml
   vars_prompt:
     - name: "confirm_upgrade"
       prompt: "Are you sure you want to upgrade to {{ apt_debian_target_distribution }}? This operation cannot be undone. Type 'yes' to continue"
