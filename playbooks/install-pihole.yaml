@@ -1,0 +1,7 @@
+- name: Install Pi-hole
+  hosts: data-bolino
+  tasks:
+    - name: Install Pi-hole
+      include_role:
+        name: pi-hole
+        tasks_from: install
