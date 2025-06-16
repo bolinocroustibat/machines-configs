@@ -1,12 +1,11 @@
----
 - name: Include install tasks
-  ansible.builtin.import_tasks: install.yml
+  ansible.builtin.import_tasks: install.yaml
   tags:
     - bun
     - bun:install
 
 - name: Include update tasks
-  ansible.builtin.import_tasks: update.yml
+  ansible.builtin.import_tasks: update.yaml
   tags:
     - bun
     - bun:update
