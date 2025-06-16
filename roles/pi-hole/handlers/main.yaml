@@ -1,0 +1,14 @@
+- name: Reload Nginx
+  ansible.builtin.service:
+    name: nginx
+    state: reloaded
+
+- name: Recreate Pi-hole container
+  # Equivalent to: docker compose up -d --force-recreate
+  community.docker.docker_compose_v2:
+    project_src: /opt/pi-hole
+    state: present
+    remove_orphans: true
+    build: "never"
+    pull: "always"
+    recreate: always
