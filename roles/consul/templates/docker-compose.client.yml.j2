@@ -1,0 +1,30 @@
+services:
+  consul:
+    container_name: consul
+    image: hashicorp/consul:1.21.1
+    command: agent -client=0.0.0.0 -retry-join={{ consul_servers | join(' -retry-join=') }}
+    environment:
+      CONSUL_LOCAL_CONFIG: |
+        {
+          "acl": {
+            "enabled": true,
+            "default_policy": "deny",
+            "down_policy": "extend-cache",
+            "tokens": {
+              "agent": "{{ consul_admin_password }}"
+            }
+          }
+        }
+    volumes:
+      - "{{ ansible_env.HOME }}/.consul/config:/consul/config"
+      - "{{ ansible_env.HOME }}/.consul/data:/consul/data"
+    ports:
+      - "127.0.0.1:8500:8500"
+      - "8600:8600/udp"
+    restart: unless-stopped
+    networks:
+      - consul_network
+
+networks:
+  consul_network:
+    driver: bridge
