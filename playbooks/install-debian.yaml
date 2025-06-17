@@ -127,7 +127,7 @@
         tasks_from: main
 
 - name: Uninstall Apache2
-  hosts: web_servers, media_servers
+  hosts: remote
   tasks:
     - name: Include Apache2 uninstall tasks
       include_role:
@@ -145,6 +145,14 @@
       include_role:
         name: nginx
         tasks_from: backup_vhosts
+
+- name: Install Certbot
+  hosts: web_servers, media_servers
+  tasks:
+    - name: Install Certbot and Nginx plugin
+      include_role:
+        name: certbot
+        tasks_from: install
 
 - name: Install WireGuard
   hosts: data-bolino
