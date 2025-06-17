@@ -1,4 +1,4 @@
-debian_distribution: bookworm
+debian_distribution: trixie
 
 user_home: /root
 
