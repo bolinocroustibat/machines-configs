@@ -14,7 +14,7 @@
 
 - name: Update sources for new distribution
   template:
-    src: sources.list.d/debian.sources.j2
+    src: debian.sources.j2
     dest: /etc/apt/sources.list.d/debian.sources
   vars:
     debian_distribution: "{{ apt_debian_target_distribution }}"
