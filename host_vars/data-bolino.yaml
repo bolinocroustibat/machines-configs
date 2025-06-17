@@ -1,7 +1,6 @@
-debian_version: trixie
+debian_distribution: trixie
 
 user_home: /root
-type: remote-data
 
 www_path: /var/www
 
