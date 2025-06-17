@@ -23,38 +23,16 @@
         path: "/tmp/starship_install.sh"
         state: absent
 
-- name: Configure Starship for root and github users
+- name: Get list of users
+  getent:
+    database: passwd
+  register: users
+
+- name: Configure Starship for users
+  include_tasks: configure_user.yaml
   loop:
     - { home: "/root", user: "root" }
     - { home: "/home/github", user: "github" }
-  block:
-    - name: Create .config directory for user
-      file:
-        path: "{{ item.home }}/.config"
-        state: directory
-        mode: u=rwx,g=rx,o=rx # 755
-        owner: "{{ item.user }}"
-
-    - name: Backup existing starship.toml if exists
-      copy:
-        remote_src: true
-        src: "{{ item.home }}/.config/starship.toml"
-        dest: "{{ item.home }}/.config/starship.toml_{{ ansible_date_time.iso8601 }}.bak"
-        mode: preserve
-      failed_when: false
-
-    - name: Add starship.toml config file
-      template:
-        src: "starship_{{ 'local' if ansible_os_family == 'Darwin' else 'remote' }}.toml"
-        dest: "{{ item.home }}/.config/starship.toml"
-        mode: u=rw,g=r,o=r # 644 (read access for everyone and also write access for the owner of the file)
-        owner: "{{ item.user }}"
-
-    - name: Add Starship to user's .zshrc file
-      blockinfile:
-        dest: "{{ item.home }}/.zshrc"
-        block: "{{ lookup('template', '.zshrc.j2') }}"
-        marker: "### {mark} Starship (Ansible-managed) ### "
-        mode: u=rw,g=r,o=r # 644 (read access for everyone and also write access for the owner of the file)
-        create: true
-        owner: "{{ item.user }}"
+  loop_control:
+    loop_var: user_config
+  when: user_config.user in users.ansible_facts.getent_passwd.keys()
