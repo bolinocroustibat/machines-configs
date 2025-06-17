@@ -15,4 +15,4 @@
   ansible.builtin.template:
     src: .bashrc.j2
     dest: "{{ user_home }}/.bashrc"
-    mode: "u=rw,g=r,o=r" # 644 (read and write access for the owner of the file and read access for group and others)
+    mode: u=rw,g=r,o=r # 644 (read and write access for the owner of the file and read access for group and others)
