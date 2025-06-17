@@ -1,6 +1,18 @@
 - name: Install Consul
   hosts: web-bolino,data-bolino,bolino-vm3
+  vars:
+    consul_server_hosts:
+      - "web-bolino"
+      - "data-bolino"
+    consul_servers:
+      - "web-bolino"
+      - "data-bolino"
   tasks:
+    - name: Clean APT cache
+      apt:
+        update_cache: true
+        cache_valid_time: 0
+
     - name: Install Consul
       include_role:
         name: consul
