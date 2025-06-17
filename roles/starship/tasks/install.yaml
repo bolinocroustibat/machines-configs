@@ -32,7 +32,7 @@
       file:
         path: "{{ item.home }}/.config"
         state: directory
-        mode: "0755"
+        mode: u=rwx,g=rx,o=rx # 755
         owner: "{{ item.user }}"
 
     - name: Backup existing starship.toml if exists
@@ -47,7 +47,7 @@
       template:
         src: "starship_{{ 'local' if ansible_os_family == 'Darwin' else 'remote' }}.toml"
         dest: "{{ item.home }}/.config/starship.toml"
-        mode: "0644"
+        mode: u=rw,g=r,o=r # 644 (read access for everyone and also write access for the owner of the file)
         owner: "{{ item.user }}"
 
     - name: Add Starship to user's .zshrc file
@@ -55,6 +55,6 @@
         dest: "{{ item.home }}/.zshrc"
         block: "{{ lookup('template', '.zshrc.j2') }}"
         marker: "### {mark} Starship (Ansible-managed) ### "
-        mode: "0644"
+        mode: u=rw,g=r,o=r # 644 (read access for everyone and also write access for the owner of the file)
         create: true
         owner: "{{ item.user }}"

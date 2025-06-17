@@ -9,7 +9,7 @@
   get_url:
     url: https://bun.sh/install
     dest: /tmp/bun-installer.sh
-    mode: '0755'
+    mode: u=rwx,g=rx,o=rx # 755
   become: false
   when: ansible_os_family == "Debian"
 

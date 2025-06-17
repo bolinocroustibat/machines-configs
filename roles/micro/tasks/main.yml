@@ -15,7 +15,7 @@
   file:
     path: "{{ user_home }}/.config/micro"
     state: directory
-    mode: '0755'
+    mode: u=rwx,g=rx,o=rx # 755
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 
