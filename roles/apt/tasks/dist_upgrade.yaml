@@ -38,6 +38,10 @@
     autoremove: true
     purge: true
 
+- name: Wait for system to be ready
+  wait_for_connection:
+    timeout: 60
+
 - name: Display new system version
   command: cat /etc/debian_version
   register: debian_version
