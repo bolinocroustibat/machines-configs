@@ -1,37 +1,79 @@
-- name: Create Consul data directory
-  file:
-    path: "{{ ansible_env.HOME }}/.consul"
-    state: directory
-    mode: u=rwx,g=rx,o=rx # 755
+# Installation du dépôt HashiCorp et de ses clés GPG
+- name: Add HashiCorp GPG key
+  apt_key:
+    url: https://apt.releases.hashicorp.com/gpg
+    keyring: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+    state: present
 
+# Ajout du dépôt HashiCorp pour l'installation de Consul
+- name: Add HashiCorp repository
+  apt_repository:
+    repo: "deb [arch={{ ansible_architecture }} signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+    state: present
+    filename: hashicorp
+
+# Installation du paquet Consul
+- name: Install Consul
+  apt:
+    name: consul
+    state: present
+    update_cache: true
+
+# Création du répertoire de configuration Consul
 - name: Create Consul configuration directory
   file:
-    path: "{{ ansible_env.HOME }}/.consul/config"
+    path: /etc/consul.d
     state: directory
     mode: u=rwx,g=rx,o=rx # 755
 
-- name: Copy Consul Docker Compose file (Server)
+# Configuration des serveurs Consul (web-bolino et data-bolino)
+# Ces serveurs forment un cluster de 2 nœuds
+- name: Copy Consul server configuration
   template:
-    src: docker-compose.server.yml.j2
-    dest: "{{ ansible_env.HOME }}/.consul/docker-compose.yml"
+    src: server.hcl.j2
+    dest: /etc/consul.d/server.hcl
     mode: u=rw,g=r,o=r # 644
   notify: restart consul
   when: inventory_hostname in consul_server_hosts
 
-- name: Copy Consul Docker Compose file (Client)
+# Configuration des clients Consul (bolino-vm3)
+# Les clients se connectent automatiquement aux serveurs
+- name: Copy Consul client configuration
   template:
-    src: docker-compose.client.yml.j2
-    dest: "{{ ansible_env.HOME }}/.consul/docker-compose.yml"
+    src: client.hcl.j2
+    dest: /etc/consul.d/client.hcl
     mode: u=rw,g=r,o=r # 644
   notify: restart consul
   when: inventory_hostname not in consul_server_hosts
 
-- name: Start Consul container
-  community.docker.docker_compose:
-    project_src: "{{ ansible_env.HOME }}/.consul"
-    state: present
-  notify: restart consul
+# Attente du démarrage de Consul avant de continuer
+# Nécessaire pour l'initialisation du système ACL
+- name: Wait for Consul to start
+  wait_for:
+    port: 8500
+    timeout: 60
+  when: inventory_hostname in consul_server_hosts
 
+# Initialisation du système ACL sur le premier serveur uniquement
+# Cette commande génère un token bootstrap qui est un token administrateur
+# Le token est extrait de la sortie de la commande avec grep et awk
+- name: Bootstrap ACL system
+  shell: consul acl bootstrap | grep SecretID | awk '{print $2}'
+  register: bootstrap_token
+  changed_when: true
+  failed_when: false
+  when: inventory_hostname == consul_server_hosts[0]
+  # On ignore l'erreur si le système ACL est déjà initialisé
+  ignore_errors: true
+
+# Affichage du token bootstrap dans les logs Ansible
+# Ce token doit être copié et ajouté dans secrets.yaml
+- name: Display bootstrap token
+  debug:
+    msg: "Bootstrap token: {{ bootstrap_token.stdout }}"
+  when: inventory_hostname == consul_server_hosts[0] and bootstrap_token.rc == 0
+
+# Configuration du reverse proxy Nginx pour l'interface web
 - name: Copy Nginx configuration
   template:
     src: consul.adriencarpentier.com.conf.j2
@@ -39,6 +81,7 @@
     mode: u=rw,g=r,o=r # 644
   notify: reload nginx
 
+# Activation du site Nginx
 - name: Enable Nginx site
   file:
     src: /etc/nginx/sites-available/{{ consul_domain }}
