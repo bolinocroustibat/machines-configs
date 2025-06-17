@@ -12,3 +12,6 @@ fail2ban_jails:
   - name: nginx-transmission
 fail2ban_filters:
   - name: nginx-transmission
+
+# Starship prompt configuration
+starship_host_color: "bold yellow"

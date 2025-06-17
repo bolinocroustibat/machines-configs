@@ -24,7 +24,7 @@
 
     - name: Add starship.toml config file
       template:
-        src: "starship_{{ 'local' if ansible_os_family == 'Darwin' else 'remote' }}.toml"
+        src: "starship_{{ 'local' if ansible_os_family == 'Darwin' else 'remote' }}.toml.j2"
         dest: "{{ user_config.home }}/.config/starship.toml"
         mode: u=rw,g=r,o=r # 644 (read access for everyone and also write access for the owner of the file)
         owner: "{{ user_config.user }}"
