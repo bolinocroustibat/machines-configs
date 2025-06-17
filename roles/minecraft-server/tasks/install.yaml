@@ -10,7 +10,7 @@
   file:
     path: "{{ user_home }}/minecraft-server"
     state: directory
-    mode: "0755"
+    mode: u=rwx,g=rx,o=rx # 755
 
 - name: Clone or update Minecraft server repository
   git:
@@ -24,7 +24,7 @@
 - name: Make minecraft-backup.sh executable
   file:
     path: "{{ user_home }}/minecraft-server/minecraft-backup.sh"
-    mode: "0755"
+    mode: u=rwx,g=rx,o=rx # 755
   when: git_clone.changed
 
 - name: Start Minecraft server
