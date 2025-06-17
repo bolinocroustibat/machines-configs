@@ -4,8 +4,6 @@ user_home: /root
 
 www_path: /var/www
 
-uv_install_dir: '/usr/local/bin'
-
 # fail2ban configurations
 fail2ban_jails:
   - name: sshd
