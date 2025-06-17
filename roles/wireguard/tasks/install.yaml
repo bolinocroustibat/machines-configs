@@ -8,7 +8,7 @@
   template:
     src: docker-compose.yml.j2
     dest: "{{ ansible_env.HOME }}/.wg-easy/docker-compose.yml"
-    mode: '0644'
+    mode: u=rw,g=r,o=r # 644 (read and write access for the owner of the file and read access for group and others)
   notify: Recreate WireGuard container
 
 - name: Start WireGuard container
