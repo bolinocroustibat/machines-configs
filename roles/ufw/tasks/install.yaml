@@ -21,11 +21,6 @@
     rule: allow
     name: ssh
 
-- name: Allow Nginx HTTP and HTTPS
-  community.general.ufw:
-    rule: allow
-    name: Nginx Full
-
 - name: Enable UFW and persist across reboots
   community.general.ufw:
     state: enabled
