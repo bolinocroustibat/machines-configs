@@ -8,39 +8,38 @@
 
 - name: Update apt and upgrade packages
   hosts: remote
+  vars:
+    apt_debian_target_distribution: "trixie"  # Can be overridden when needed
+    apt_debian_target_codename: "13"  # For reference
+  vars_prompt:
+    - name: "confirm_upgrade"
+      prompt: "Are you sure you want to upgrade to {{ apt_debian_target_distribution }}? This operation cannot be undone. Type 'yes' to continue"
+      private: false
   tasks:
     - name: Configure APT package sources
       include_role:
         name: apt
         tasks_from: install_sources
+    - name: Verify user confirmation
+      fail:
+        msg: "Upgrade cancelled by user"
+      when: confirm_upgrade != "yes"
+    - name: Perform distribution upgrade
+      include_role:
+        name: apt
+        tasks_from: dist_upgrade
     - name: Upgrade all packages
       include_role:
         name: apt
         tasks_from: upgrade
-    - name: Install Docker
-      include_role:
-        name: docker
-        tasks_from: install
 
-- name: Install WireGuard
-  hosts: data-bolino
+- name: Install Git
+  hosts: remote
   tasks:
-    - name: Install WireGuard
+    - name: Install Git
       include_role:
-        name: wireguard
+        name: git
         tasks_from: install
-
-- name: Install Portainer
-  hosts: data-bolino,web-bolino
-  tasks:
-    - name: Install Portainer and Portainer Agent
-      include_role:
-        name: portainer
-        tasks_from: install
-    - name: Configure UFW rules for Portainer
-      include_role:
-        name: portainer
-        tasks_from: ufw
 
 - name: Configure .bashrc
   hosts: remote
@@ -95,6 +94,14 @@
         name: micro
         tasks_from: install
 
+- name: Install Docker
+  hosts: web-bolino, data-bolino
+  tasks:
+    - name: Install Docker
+      include_role:
+        name: docker
+        tasks_from: install
+
 - name: Install and configure rmate
   hosts: remote
   tasks:
@@ -138,6 +145,26 @@
       include_role:
         name: nginx
         tasks_from: backup_vhosts
+
+- name: Install WireGuard
+  hosts: data-bolino
+  tasks:
+    - name: Install WireGuard
+      include_role:
+        name: wireguard
+        tasks_from: install
+
+- name: Install Portainer
+  hosts: data-bolino,web-bolino
+  tasks:
+    - name: Install Portainer and Portainer Agent
+      include_role:
+        name: portainer
+        tasks_from: install
+    - name: Configure UFW rules for Portainer
+      include_role:
+        name: portainer
+        tasks_from: ufw
 
 - name: Install Postgres
   hosts: web_servers

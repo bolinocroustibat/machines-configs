@@ -1,3 +1,26 @@
+- name: Create PostgreSQL GPG key directory
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: u=rwx,g=rx,o=rx # 755
+
+- name: Download PostgreSQL GPG key
+  get_url:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    dest: /etc/apt/keyrings/postgresql.asc
+    mode: u=rw,g=r,o=r # 644
+
+- name: Install PostgreSQL sources
+  template:
+    src: sources.list.d/pgdg.sources.j2
+    dest: /etc/apt/sources.list.d/pgdg.sources
+    mode: u=rw,g=r,o=r # 644
+
+- name: Update apt cache
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+
 - name: Install Postgres
   apt:
     name: postgresql

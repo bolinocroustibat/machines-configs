@@ -1,13 +1,12 @@
 - name: Upgrade Debian distribution
   hosts: remote
   tags: upgrade
-  pre_tasks:
-    - name: Include apt role defaults
-      include_vars:
-        file: roles/apt/defaults/main.yaml
+  vars:
+    apt_debian_target_distribution: "trixie"  # Can be overridden when needed
+    apt_debian_target_codename: "13"  # For reference
   vars_prompt:
     - name: "confirm_upgrade"
-      prompt: "Are you sure you want to upgrade to {{ apt_debian_target_distribution }}? This operation cannot be undone. Type 'yes' to continue"
+      prompt: "Are you sure you want to upgrade to {{ debian_target_distribution }}? This operation cannot be undone. Type 'yes' to continue"
       private: false
   tasks:
     - name: Verify user confirmation

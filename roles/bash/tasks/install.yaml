@@ -8,10 +8,11 @@
     src: "{{ user_home }}/.bashrc"
     dest: "{{ user_home }}/.bashrc_{{ ansible_date_time.iso8601 }}.bak"
     mode: preserve
+    remote_src: true
   when: bashrc.stat.exists
 
 - name: Write .bashrc
   ansible.builtin.template:
     src: .bashrc.j2
     dest: "{{ user_home }}/.bashrc"
-    mode: "u=rw,go=r"
+    mode: "u=rw,g=r,o=r" # 644 (read and write access for the owner of the file and read access for group and others)
