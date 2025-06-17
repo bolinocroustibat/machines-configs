@@ -33,6 +33,14 @@
         update_cache: true
       become: true
 
+- name: Install git (required for ZSH plugins)
+  when: ansible_os_family == "Debian"
+  apt:
+    name: git
+    state: present
+    update_cache: true
+  become: true
+
 - name: Install ZSH autosuggestions
   block:
     - name: Install ZSH autosuggestions with homebrew
@@ -67,12 +75,18 @@
         clone: true
         update: true
 
+- name: Check if .zshrc exists
+  stat:
+    path: "{{ user_home }}/.zshrc"
+  register: zshrc_stat
+
 - name: Backup existing .zshrc if it exists
   copy:
     remote_src: true
     src: "{{ user_home }}/.zshrc"
     dest: "{{ user_home }}/.zshrc_{{ ansible_date_time.iso8601 }}.bak"
     mode: preserve # Preserve the file permissions of the original file
+  when: zshrc_stat.stat.exists
 
 - name: Write .zshrc
   template:

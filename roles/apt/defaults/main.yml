@@ -1,7 +1,0 @@
-apt_debian_target_distribution: "trixie"  # Can be overridden when needed
-apt_debian_target_codename: "13"  # For reference
-
-# List of custom sources to install
-apt_custom_sources:
-  - name: docker
-  - name: pgdg # PostgreSQL
