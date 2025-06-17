@@ -1,0 +1,14 @@
+debian_distribution: bookworm
+
+user_home: /root
+
+www_path: /var/www
+
+uv_install_dir: '/usr/local/bin'
+
+# fail2ban configurations
+fail2ban_jails:
+  - name: sshd
+  - name: nginx
+  - name: php
+fail2ban_filters: [] # No need to specify nginx filters as they're included by default
