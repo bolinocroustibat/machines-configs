@@ -1,0 +1,54 @@
+- name: Create Consul data directory
+  file:
+    path: "{{ ansible_env.HOME }}/.consul"
+    state: directory
+    mode: u=rwx,g=rx,o=rx # 755
+
+- name: Create Consul configuration directory
+  file:
+    path: "{{ ansible_env.HOME }}/.consul/config"
+    state: directory
+    mode: u=rwx,g=rx,o=rx # 755
+
+- name: Copy Consul Docker Compose file (Server)
+  template:
+    src: docker-compose.server.yml.j2
+    dest: "{{ ansible_env.HOME }}/.consul/docker-compose.yml"
+    mode: u=rw,g=r,o=r # 644
+  notify: restart consul
+  when: inventory_hostname in consul_server_hosts
+
+- name: Copy Consul Docker Compose file (Client)
+  template:
+    src: docker-compose.client.yml.j2
+    dest: "{{ ansible_env.HOME }}/.consul/docker-compose.yml"
+    mode: u=rw,g=r,o=r # 644
+  notify: restart consul
+  when: inventory_hostname not in consul_server_hosts
+
+- name: Start Consul container
+  community.docker.docker_compose:
+    project_src: "{{ ansible_env.HOME }}/.consul"
+    state: present
+  notify: restart consul
+
+- name: Copy Nginx configuration
+  template:
+    src: consul.adriencarpentier.com.conf.j2
+    dest: /etc/nginx/sites-available/{{ consul_domain }}
+    mode: u=rw,g=r,o=r # 644
+  notify: reload nginx
+
+- name: Enable Nginx site
+  file:
+    src: /etc/nginx/sites-available/{{ consul_domain }}
+    dest: /etc/nginx/sites-enabled/{{ consul_domain }}
+    state: link
+  notify: reload nginx
+
+# Installation du certificat SSL avec Certbot
+- name: Install SSL certificate with Certbot
+  command: certbot --nginx -d {{ consul_domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
+  args:
+    creates: /etc/letsencrypt/live/{{ consul_domain }}
+  notify: reload nginx

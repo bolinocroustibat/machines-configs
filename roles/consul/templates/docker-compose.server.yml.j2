@@ -1,0 +1,34 @@
+services:
+  consul:
+    container_name: consul
+    image: hashicorp/consul:1.21.1
+    command: agent -server -ui -node=server-1 -bootstrap-expect=1 -client=0.0.0.0
+    environment:
+      CONSUL_LOCAL_CONFIG: |
+        {
+          "acl": {
+            "enabled": true,
+            "default_policy": "deny",
+            "down_policy": "extend-cache",
+            "tokens": {
+              "master": "{{ consul_admin_password }}"
+            }
+          }
+        }
+    volumes:
+      - "{{ ansible_env.HOME }}/.consul/config:/consul/config"
+      - "{{ ansible_env.HOME }}/.consul/data:/consul/data"
+    ports:
+      - "127.0.0.1:8500:8500"
+      - "8501:8501"
+      - "8600:8600/udp"
+      - "8301:8301"
+      - "8302:8302"
+      - "8300:8300"
+    restart: unless-stopped
+    networks:
+      - consul_network
+
+networks:
+  consul_network:
+    driver: bridge
