@@ -28,7 +28,7 @@
 
 - name: Install Docker sources
   template:
-    src: sources.list.d/docker.sources.j2
+    src: docker.sources.j2
     dest: /etc/apt/sources.list.d/docker.sources
     mode: u=rw,g=r,o=r # 644
 
