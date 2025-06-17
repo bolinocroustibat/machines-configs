@@ -3,45 +3,40 @@
     rule: allow
     port: ssh
     proto: tcp
+    comment: "Allow SSH access for remote administration"
 
 - name: Allow HTTP
   ufw:
     rule: allow
     port: http
     proto: tcp
+    comment: "Allow HTTP traffic for web servers"
 
 - name: Allow HTTPS
   ufw:
     rule: allow
     port: https
     proto: tcp
+    comment: "Allow HTTPS traffic for secure web servers"
 
 - name: Allow QUIC
   ufw:
     rule: allow
     port: 443
     proto: udp
-
-- name: Allow Nginx HTTP
-  ufw:
-    rule: allow
-    app: 'Nginx HTTP'
-
-- name: Allow Nginx HTTPS
-  ufw:
-    rule: allow
-    app: 'Nginx HTTPS'
+    comment: "Allow QUIC protocol for HTTP/3"
 
 - name: Configure media server specific rules
   ufw:
     rule: allow
-    port: "{{ item }}"
-    proto: "{{ item | regex_replace('.*/tcp', 'tcp') | regex_replace('.*/udp', 'udp') | default('tcp') }}"
+    port: "{{ item.port }}"
+    proto: "{{ item.proto | default('tcp') }}"
+    comment: "{{ item.comment }}"
   loop:
-    - 4443
-    - 9091
-    - 51413
-    - 25565/tcp
+    - { port: 4443, comment: "Allow Syncthing web interface" }
+    - { port: 9091, comment: "Allow Transmission web interface" }
+    - { port: 51413, comment: "Allow Transmission peer connections" }
+    - { port: 25565, proto: tcp, comment: "Allow Minecraft server" }
   when: "'media_servers' in group_names"
 
 - name: Reload UFW
