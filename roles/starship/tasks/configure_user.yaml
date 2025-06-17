@@ -1,0 +1,40 @@
+- name: Check if user exists
+  getent:
+    database: passwd
+    key: "{{ user_config.user }}"
+  register: user_exists
+  failed_when: false
+
+- name: Configure Starship for user
+  block:
+    - name: Create .config directory for user
+      file:
+        path: "{{ user_config.home }}/.config"
+        state: directory
+        mode: u=rwx,g=rx,o=rx # 755
+        owner: "{{ user_config.user }}"
+
+    - name: Backup existing starship.toml if exists
+      copy:
+        remote_src: true
+        src: "{{ user_config.home }}/.config/starship.toml"
+        dest: "{{ user_config.home }}/.config/starship.toml_{{ ansible_date_time.iso8601 }}.bak"
+        mode: preserve
+      failed_when: false
+
+    - name: Add starship.toml config file
+      template:
+        src: "starship_{{ 'local' if ansible_os_family == 'Darwin' else 'remote' }}.toml"
+        dest: "{{ user_config.home }}/.config/starship.toml"
+        mode: u=rw,g=r,o=r # 644 (read access for everyone and also write access for the owner of the file)
+        owner: "{{ user_config.user }}"
+
+    - name: Add Starship to user's .zshrc file
+      blockinfile:
+        dest: "{{ user_config.home }}/.zshrc"
+        block: "{{ lookup('template', '.zshrc.j2') }}"
+        marker: "### {mark} Starship (Ansible-managed) ### "
+        mode: u=rw,g=r,o=r # 644 (read access for everyone and also write access for the owner of the file)
+        create: true
+        owner: "{{ user_config.user }}"
+  when: user_config.user in user_exists.ansible_facts.getent_passwd.keys()
