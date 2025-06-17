@@ -1,0 +1,7 @@
+- name: Install Consul
+  hosts: web-bolino,data-bolino,bolino-vm3
+  tasks:
+    - name: Install Consul
+      include_role:
+        name: consul
+        tasks_from: install
