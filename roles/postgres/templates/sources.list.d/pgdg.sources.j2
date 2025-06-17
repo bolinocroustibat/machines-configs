@@ -1,0 +1,7 @@
+{{ ansible_managed | comment }}
+
+Types: deb
+URIs: http://apt.postgresql.org/pub/repos/apt
+Suites: {{ debian_distribution }}-pgdg
+Components: main
+Signed-By: /etc/apt/keyrings/postgresql.asc

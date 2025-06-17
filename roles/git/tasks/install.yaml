@@ -1,0 +1,15 @@
+- name: Install Git
+  block:
+    - name: Install Git with homebrew
+      when: ansible_os_family == "Darwin"
+      homebrew:
+        name: git
+        state: latest
+
+    - name: Install Git with apt
+      when: ansible_os_family == "Debian"
+      apt:
+        name: git
+        state: present
+        update_cache: true
+      become: true
