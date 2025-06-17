@@ -1,33 +1,39 @@
-# Installation du dépôt HashiCorp et de ses clés GPG
-- name: Add HashiCorp GPG key
-  apt_key:
+# Install HashiCorp repository and GPG keys
+- name: Create directory for GPG keys
+  file:
+    path: /usr/share/keyrings
+    state: directory
+    mode: u=rwx,g=rx,o=rx
+
+- name: Download HashiCorp GPG key
+  get_url:
     url: https://apt.releases.hashicorp.com/gpg
-    keyring: /usr/share/keyrings/hashicorp-archive-keyring.gpg
-    state: present
+    dest: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+    mode: u=rw,g=r,o=r
 
-# Ajout du dépôt HashiCorp pour l'installation de Consul
-- name: Add HashiCorp repository
-  apt_repository:
-    repo: "deb [arch={{ ansible_architecture }} signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
-    state: present
-    filename: hashicorp
+# Add HashiCorp repository for Consul installation
+- name: Create HashiCorp repository configuration
+  template:
+    src: hashicorp.sources.j2
+    dest: /etc/apt/sources.list.d/hashicorp.sources
+    mode: u=rw,g=r,o=r
 
-# Installation du paquet Consul
+# Install Consul package
 - name: Install Consul
   apt:
     name: consul
     state: present
     update_cache: true
 
-# Création du répertoire de configuration Consul
+# Create Consul configuration directory
 - name: Create Consul configuration directory
   file:
     path: /etc/consul.d
     state: directory
     mode: u=rwx,g=rx,o=rx # 755
 
-# Configuration des serveurs Consul (web-bolino et data-bolino)
-# Ces serveurs forment un cluster de 2 nœuds
+# Configure Consul servers (web-bolino and data-bolino)
+# These servers form a 2-node cluster
 - name: Copy Consul server configuration
   template:
     src: server.hcl.j2
@@ -36,8 +42,8 @@
   notify: restart consul
   when: inventory_hostname in consul_server_hosts
 
-# Configuration des clients Consul (bolino-vm3)
-# Les clients se connectent automatiquement aux serveurs
+# Configure Consul clients (bolino-vm3)
+# Clients automatically connect to servers
 - name: Copy Consul client configuration
   template:
     src: client.hcl.j2
@@ -46,34 +52,34 @@
   notify: restart consul
   when: inventory_hostname not in consul_server_hosts
 
-# Attente du démarrage de Consul avant de continuer
-# Nécessaire pour l'initialisation du système ACL
+# Wait for Consul to start before continuing
+# Required for ACL system initialization
 - name: Wait for Consul to start
   wait_for:
     port: 8500
     timeout: 60
   when: inventory_hostname in consul_server_hosts
 
-# Initialisation du système ACL sur le premier serveur uniquement
-# Cette commande génère un token bootstrap qui est un token administrateur
-# Le token est extrait de la sortie de la commande avec grep et awk
+# Initialize ACL system on first server only
+# This command generates a bootstrap token which is an admin token
+# The token is extracted from the command output using grep and awk
 - name: Bootstrap ACL system
   shell: consul acl bootstrap | grep SecretID | awk '{print $2}'
   register: bootstrap_token
   changed_when: true
   failed_when: false
   when: inventory_hostname == consul_server_hosts[0]
-  # On ignore l'erreur si le système ACL est déjà initialisé
+  # Ignore error if ACL system is already initialized
   ignore_errors: true
 
-# Affichage du token bootstrap dans les logs Ansible
-# Ce token doit être copié et ajouté dans secrets.yaml
+# Display bootstrap token in Ansible logs
+# This token must be copied and added to secrets.yaml
 - name: Display bootstrap token
   debug:
     msg: "Bootstrap token: {{ bootstrap_token.stdout }}"
   when: inventory_hostname == consul_server_hosts[0] and bootstrap_token.rc == 0
 
-# Configuration du reverse proxy Nginx pour l'interface web
+# Configure Nginx reverse proxy for web interface
 - name: Copy Nginx configuration
   template:
     src: consul.adriencarpentier.com.conf.j2
@@ -81,7 +87,7 @@
     mode: u=rw,g=r,o=r # 644
   notify: reload nginx
 
-# Activation du site Nginx
+# Enable Nginx site
 - name: Enable Nginx site
   file:
     src: /etc/nginx/sites-available/{{ consul_domain }}
@@ -89,7 +95,7 @@
     state: link
   notify: reload nginx
 
-# Installation du certificat SSL avec Certbot
+# Install SSL certificate with Certbot
 - name: Install SSL certificate with Certbot
   command: certbot --nginx -d {{ consul_domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
   args:
