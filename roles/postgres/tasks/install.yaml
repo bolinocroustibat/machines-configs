@@ -12,7 +12,7 @@
 
 - name: Install PostgreSQL sources
   template:
-    src: sources.list.d/pgdg.sources.j2
+    src: pgdg.sources.j2
     dest: /etc/apt/sources.list.d/pgdg.sources
     mode: u=rw,g=r,o=r # 644
 
