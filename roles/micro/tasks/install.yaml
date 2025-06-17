@@ -19,6 +19,11 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 
+- name: Check if config file exists
+  stat:
+    path: "{{ user_home }}/.config/micro/settings.json"
+  register: micro_config
+
 - name: Backup existing config file if it exists
   copy:
     remote_src: true
@@ -26,10 +31,11 @@
     dest: "{{ user_home }}/.config/micro/settings.json_{{ ansible_date_time.iso8601 }}.bak"
     mode: preserve
     owner: "{{ ansible_user }}"
-  when: not ansible_check_mode and lookup('file', user_home + '/.config/micro/settings.json', errors='ignore') is defined
+  when: micro_config.stat.exists
 
 - name: Copy config file
   template:
     src: settings.json.j2
     dest: "{{ user_home }}/.config/micro/settings.json"
-    mode: u=rw,g=r,o=r
+    mode: u=rw,g=r,o=r # 644 (read and write access for the owner of the file and read access for group and others)
+    owner: "{{ ansible_user }}"
