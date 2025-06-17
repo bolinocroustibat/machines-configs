@@ -1,8 +1,7 @@
 - name: restart consul
-  community.docker.docker_compose:
-    project_src: "{{ consul_data_dir }}"
-    state: present
-    restarted: true
+  systemd:
+    name: consul
+    state: restarted
 
 - name: reload nginx
   service:
