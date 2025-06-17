@@ -10,3 +10,6 @@ fail2ban_jails:
   - name: nginx
   - name: php
 fail2ban_filters: [] # No need to specify nginx filters as they're included by default
+
+# Starship prompt configuration
+starship_host_color: "bold red"
