@@ -74,3 +74,11 @@
       include_role:
         name: uv
         tasks_from: update
+
+- name: Update Bun
+  hosts: all
+  tasks:
+    - name: Update Bun package manager
+      include_role:
+        name: bun
+        tasks_from: update
