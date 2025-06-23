@@ -119,7 +119,7 @@
         tasks_from: install
 
 - name: Add the GitHub Actions user
-  hosts: web_servers
+  hosts: web-bolino, data-bolino
   tasks:
     - name: Configure GitHub Actions runner user
       include_role:
