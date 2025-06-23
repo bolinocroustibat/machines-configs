@@ -4,7 +4,7 @@
     - name: Create Portainer container
       community.docker.docker_container:
         name: portainer
-        image: portainer/portainer-ce:lts
+        image: portainer/portainer-ce:latest
         state: started
         restart_policy: always
         ports:
