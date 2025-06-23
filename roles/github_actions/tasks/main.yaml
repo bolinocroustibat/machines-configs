@@ -5,7 +5,7 @@
     comment: user used by GitHub Actions runner for deploying tasks
     create_home: true
     uid: 1002
-    groups: www-data
+    groups: www-data,docker
     append: true
 
 - name: Add '.ssh' directory
