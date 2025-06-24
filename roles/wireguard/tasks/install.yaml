@@ -1,4 +1,4 @@
-- name: Include WireGuard secrets
+- name: Include Wg-Easy secrets
   include_vars: secrets.yaml
 
 - name: Create Wg-Easy configuration directory
