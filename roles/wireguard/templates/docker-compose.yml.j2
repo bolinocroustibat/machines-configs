@@ -4,7 +4,8 @@ services:
     image: ghcr.io/wg-easy/wg-easy:latest
     environment:
       WG_HOST: "{{ wireguard_domain }}"
-      PASSWORD: "{{ wireguard_admin_password }}"
+      PASSWORD_HASH: "{{ wireguard_admin_password_hash | replace('$', '$$') }}"
+      WG_DEFAULT_DNS: "{{ wireguard_default_dns }}"
     volumes:
       - "/opt/wg-easy:/etc/wireguard"
     ports:
@@ -17,3 +18,9 @@ services:
       - net.ipv4.conf.all.src_valid_mark=1
       - net.ipv4.ip_forward=1
     restart: unless-stopped
+    networks:
+      - pi-hole_default
+
+networks:
+  pi-hole_default:
+    external: true
