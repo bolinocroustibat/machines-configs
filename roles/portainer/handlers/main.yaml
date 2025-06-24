@@ -1,3 +1,8 @@
+- name: Reload nginx
+  ansible.builtin.service:
+    name: nginx
+    state: reloaded
+
 - name: Recreate Portainer container
   # Equivalent to: docker stop portainer && docker rm portainer && docker run ...
   community.docker.docker_container:
