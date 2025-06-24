@@ -1,0 +1,58 @@
+- name: Include Uptime Kuma secrets
+  include_vars: secrets.yaml
+
+- name: Create Uptime Kuma installation directory
+  file:
+    path: "/opt/uptime-kuma"
+    state: directory
+    mode: u=rwx,g=,o= # 700 (only the user can read, write and execute)
+
+- name: Copy docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: /opt/uptime-kuma/docker-compose.yml
+    mode: u=rw,g=r,o=r  # 644
+  notify: recreate uptime kuma container
+
+- name: Start Uptime Kuma container
+  community.docker.docker_compose_v2:
+    project_src: /opt/uptime-kuma
+    state: present
+    remove_orphans: true
+    build: "never"
+    pull: "always"
+    recreate: always
+
+- name: Check if DNS is properly configured
+  command: dig +short {{ uptime_kuma_domain }}
+  register: dns_check
+  changed_when: false
+  failed_when: dns_check.stdout == ""
+
+- name: Check if SSL certificate exists
+  stat:
+    path: "/etc/letsencrypt/live/{{ uptime_kuma_domain }}/fullchain.pem"
+  register: ssl_cert_exists
+
+- name: Deploy Nginx vhost for Uptime Kuma (only if SSL doesn't exist)
+  template:
+    src: "{{ uptime_kuma_domain }}.conf.j2"
+    dest: "/etc/nginx/sites-available/{{ uptime_kuma_domain }}.conf"
+    mode: u=rw,g=r,o=r  # 644
+  notify: reload nginx
+  when: not ssl_cert_exists.stat.exists
+
+- name: Enable Nginx vhost for Uptime Kuma (only if SSL doesn't exist)
+  file:
+    src: "/etc/nginx/sites-available/{{ uptime_kuma_domain }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ uptime_kuma_domain }}.conf"
+    state: link
+    force: true
+  notify: reload nginx
+  when: not ssl_cert_exists.stat.exists
+
+- name: Configure SSL with Certbot (only if SSL doesn't exist)
+  command: certbot --nginx -d {{ uptime_kuma_domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
+  args:
+    creates: "/etc/letsencrypt/live/{{ uptime_kuma_domain }}/fullchain.pem"
+  when: dns_check.stdout != "" and not ssl_cert_exists.stat.exists
