@@ -118,6 +118,14 @@
         name: uv
         tasks_from: install
 
+- name: Install and configure direnv
+  hosts: remote
+  tasks:
+    - name: Install and configure direnv
+      include_role:
+        name: direnv
+        tasks_from: install
+
 - name: Add the GitHub Actions user
   hosts: web-bolino, data-bolino
   tasks:
