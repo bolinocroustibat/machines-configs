@@ -1,0 +1,7 @@
+- name: Install Uptime Kuma monitoring
+  hosts: data-bolino
+  tasks:
+    - name: Install Uptime Kuma
+      include_role:
+        name: uptime-kuma
+        tasks_from: install
