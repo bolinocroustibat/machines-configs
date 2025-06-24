@@ -143,7 +143,7 @@
         tasks_from: uninstall
 
 - name: Install and configure Nginx
-  hosts: web_servers, media_servers
+  hosts: web-bolino, data-bolino
   tasks:
     - name: Install and configure Nginx web server
       include_role:
@@ -155,7 +155,7 @@
         tasks_from: backup_vhosts
 
 - name: Install Certbot
-  hosts: web_servers, media_servers
+  hosts: web-bolino, data-bolino
   tasks:
     - name: Install Certbot and Nginx plugin
       include_role:
@@ -183,7 +183,7 @@
         tasks_from: ufw
 
 - name: Install Postgres
-  hosts: web_servers
+  hosts: web-bolino
   tasks:
     - name: Install and configure PostgreSQL
       include_role:
@@ -191,7 +191,7 @@
         tasks_from: install
 
 - name: Install databases-remote-backup-scripts
-  hosts: web_servers
+  hosts: web-bolino
   tasks:
     - name: Set up database backup scripts
       include_role:
@@ -199,7 +199,7 @@
         tasks_from: install
 
 - name: Install websites
-  hosts: web_servers
+  hosts: web-bolino
   tasks:
     - name: Deploy and configure websites
       include_role:
@@ -207,7 +207,7 @@
         tasks_from: main
 
 - name: Install media websites
-  hosts: media_servers
+  hosts: data-bolino
   tasks:
     - name: Deploy and configure media websites
       include_role:
