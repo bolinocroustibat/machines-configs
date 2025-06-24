@@ -1,3 +1,7 @@
+# Include Consul secrets
+- name: Include Consul secrets
+  include_vars: secrets.yaml
+
 # Install HashiCorp repository and GPG keys
 - name: Create directory for GPG keys
   file:
@@ -83,15 +87,15 @@
 - name: Copy Nginx configuration
   template:
     src: consul.adriencarpentier.com.conf.j2
-    dest: /etc/nginx/sites-available/{{ consul_domain }}
+    dest: /etc/nginx/sites-available/{{ consul_domain }}.conf
     mode: u=rw,g=r,o=r # 644
   notify: reload nginx
 
 # Enable Nginx site
 - name: Enable Nginx site
   file:
-    src: /etc/nginx/sites-available/{{ consul_domain }}
-    dest: /etc/nginx/sites-enabled/{{ consul_domain }}
+    src: /etc/nginx/sites-available/{{ consul_domain }}.conf
+    dest: /etc/nginx/sites-enabled/{{ consul_domain }}.conf
     state: link
   notify: reload nginx
 
