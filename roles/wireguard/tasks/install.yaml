@@ -1,39 +1,27 @@
-- name: Create WireGuard configuration directory
+- name: Include WireGuard secrets
+  include_vars: secrets.yaml
+
+- name: Create Wg-Easy configuration directory
   file:
-    path: "{{ ansible_env.HOME }}/.wg-easy"
+    path: "/opt/wg-easy"
     state: directory
-    mode: '0700'
+    mode: u=rwx,g=,o= # 700 (only the user can read, write and execute)
 
 - name: Copy docker-compose.yml
   template:
     src: docker-compose.yml.j2
-    dest: "{{ ansible_env.HOME }}/.wg-easy/docker-compose.yml"
+    dest: "/opt/wg-easy/docker-compose.yml"
     mode: u=rw,g=r,o=r # 644 (read and write access for the owner of the file and read access for group and others)
-  notify: Recreate WireGuard container
+  notify: recreate wg-easy container
 
-- name: Start WireGuard container
+- name: Start Wg-Easy container
   community.docker.docker_compose_v2:
-    project_src: "{{ ansible_env.HOME }}/.wg-easy"
+    project_src: "/opt/wg-easy"
     state: present
     remove_orphans: true
     build: "never"
     pull: "always"
     recreate: always
-
-- name: Deploy Nginx vhost for WireGuard
-  template:
-    src: "{{ wireguard_domain }}.conf.j2"
-    dest: "/etc/nginx/sites-available/{{ wireguard_domain }}.conf"
-    mode: u=rw,g=r,o=r  # 644
-  notify: Reload Nginx
-
-- name: Enable Nginx vhost for WireGuard
-  file:
-    src: "/etc/nginx/sites-available/{{ wireguard_domain }}.conf"
-    dest: "/etc/nginx/sites-enabled/{{ wireguard_domain }}.conf"
-    state: link
-    force: true
-  notify: Reload Nginx
 
 - name: Check if DNS is properly configured
   command: dig +short {{ wireguard_domain }}
@@ -41,8 +29,30 @@
   changed_when: false
   failed_when: dns_check.stdout == ""
 
-- name: Configure SSL with Certbot
+- name: Check if SSL certificate exists
+  stat:
+    path: "/etc/letsencrypt/live/{{ wireguard_domain }}/fullchain.pem"
+  register: ssl_cert_exists
+
+- name: Deploy Nginx vhost for WireGuard (only if SSL doesn't exist)
+  template:
+    src: "{{ wireguard_domain }}.conf.j2"
+    dest: "/etc/nginx/sites-available/{{ wireguard_domain }}.conf"
+    mode: u=rw,g=r,o=r  # 644
+  notify: reload nginx
+  when: not ssl_cert_exists.stat.exists
+
+- name: Enable Nginx vhost for WireGuard (only if SSL doesn't exist)
+  file:
+    src: "/etc/nginx/sites-available/{{ wireguard_domain }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ wireguard_domain }}.conf"
+    state: link
+    force: true
+  notify: reload nginx
+  when: not ssl_cert_exists.stat.exists
+
+- name: Configure SSL with Certbot (only if SSL doesn't exist)
   command: certbot --nginx -d {{ wireguard_domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
   args:
     creates: "/etc/letsencrypt/live/{{ wireguard_domain }}/fullchain.pem"
-  when: dns_check.stdout != ""
+  when: dns_check.stdout != "" and not ssl_cert_exists.stat.exists
