@@ -37,7 +37,7 @@
     - { port: 9091, comment: "Allow Transmission web interface" }
     - { port: 51413, comment: "Allow Transmission peer connections" }
     - { port: 25565, proto: tcp, comment: "Allow Minecraft server" }
-  when: "'media_servers' in group_names"
+  when: inventory_hostname == 'data-bolino'
 
 - name: Reload UFW
   ufw:
