@@ -1,3 +1,6 @@
+- name: Include Portainer secrets
+  include_vars: secrets.yaml
+
 - name: Install Portainer on data-bolino
   when: inventory_hostname == 'data-bolino'
   block:
@@ -28,3 +31,37 @@
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
           - portainer_agent_data:/data
+
+- name: Check if DNS is properly configured
+  command: dig +short {{ portainer_domain }}
+  register: dns_check
+  changed_when: false
+  failed_when: dns_check.stdout == ""
+
+- name: Check if SSL certificate exists
+  stat:
+    path: "/etc/letsencrypt/live/{{ portainer_domain }}/fullchain.pem"
+  register: ssl_cert_exists
+
+- name: Deploy Nginx vhost for Portainer (only if SSL doesn't exist)
+  template:
+    src: "{{ portainer_domain }}.conf.j2"
+    dest: "/etc/nginx/sites-available/{{ portainer_domain }}.conf"
+    mode: u=rw,g=r,o=r  # 644
+  notify: reload nginx
+  when: not ssl_cert_exists.stat.exists
+
+- name: Enable Nginx vhost for Portainer (only if SSL doesn't exist)
+  file:
+    src: "/etc/nginx/sites-available/{{ portainer_domain }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ portainer_domain }}.conf"
+    state: link
+    force: true
+  notify: reload nginx
+  when: not ssl_cert_exists.stat.exists
+
+- name: Configure SSL with Certbot (only if SSL doesn't exist)
+  command: certbot --nginx -d {{ portainer_domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
+  args:
+    creates: "/etc/letsencrypt/live/{{ portainer_domain }}/fullchain.pem"
+  when: dns_check.stdout != "" and not ssl_cert_exists.stat.exists
