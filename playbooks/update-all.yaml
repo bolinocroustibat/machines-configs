@@ -22,6 +22,29 @@
         name: docker
         tasks_from: update
 
+- name: Update Docker-based services
+  hosts: data-bolino
+  tasks:
+    - name: Update Pi-hole
+      include_role:
+        name: pi-hole
+        tasks_from: update
+
+    - name: Update WireGuard
+      include_role:
+        name: wireguard
+        tasks_from: update
+
+    - name: Update Portainer
+      include_role:
+        name: portainer
+        tasks_from: update
+
+    - name: Update Uptime Kuma
+      include_role:
+        name: uptime-kuma
+        tasks_from: update
+
 - name: Prune Docker resources
   hosts: remote
   tags: docker-prune
