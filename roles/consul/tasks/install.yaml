@@ -83,25 +83,41 @@
     msg: "Bootstrap token: {{ bootstrap_token.stdout }}"
   when: inventory_hostname == consul_server_hosts[0] and bootstrap_token.rc == 0
 
-# Configure Nginx reverse proxy for web interface
-- name: Copy Nginx configuration
+# Check if DNS is properly configured
+- name: Check if DNS is properly configured
+  command: dig +short {{ consul_domain }}
+  register: dns_check
+  changed_when: false
+  failed_when: dns_check.stdout == ""
+
+# Check if SSL certificate exists
+- name: Check if SSL certificate exists
+  stat:
+    path: "/etc/letsencrypt/live/{{ consul_domain }}/fullchain.pem"
+  register: ssl_cert_exists
+
+# Configure Nginx reverse proxy for web interface (only if SSL doesn't exist)
+- name: Copy Nginx configuration (only if SSL doesn't exist)
   template:
     src: consul.adriencarpentier.com.conf.j2
     dest: /etc/nginx/sites-available/{{ consul_domain }}.conf
     mode: u=rw,g=r,o=r # 644
   notify: reload nginx
+  when: not ssl_cert_exists.stat.exists
 
-# Enable Nginx site
-- name: Enable Nginx site
+# Enable Nginx site (only if SSL doesn't exist)
+- name: Enable Nginx site (only if SSL doesn't exist)
   file:
     src: /etc/nginx/sites-available/{{ consul_domain }}.conf
     dest: /etc/nginx/sites-enabled/{{ consul_domain }}.conf
     state: link
   notify: reload nginx
+  when: not ssl_cert_exists.stat.exists
 
-# Install SSL certificate with Certbot
-- name: Install SSL certificate with Certbot
+# Install SSL certificate with Certbot (only if SSL doesn't exist)
+- name: Install SSL certificate with Certbot (only if SSL doesn't exist)
   command: certbot --nginx -d {{ consul_domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
   args:
-    creates: /etc/letsencrypt/live/{{ consul_domain }}
+    creates: /etc/letsencrypt/live/{{ consul_domain }}/fullchain.pem
   notify: reload nginx
+  when: dns_check.stdout != "" and not ssl_cert_exists.stat.exists
