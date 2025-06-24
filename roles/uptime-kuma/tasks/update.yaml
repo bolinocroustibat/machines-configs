@@ -1,0 +1,18 @@
+- name: Include Uptime Kuma secrets
+  include_vars: secrets.yaml
+
+- name: Pull latest Uptime Kuma image
+  community.docker.docker_image:
+    name: louislam/uptime-kuma:latest
+    source: pull
+    force_source: true
+
+- name: Recreate Uptime Kuma container with new image
+  community.docker.docker_compose_v2:
+    project_src: "/opt/uptime-kuma"
+    state: present
+    remove_orphans: true
+    build: "never"
+    pull: "always"
+    recreate: always
+  notify: reload nginx

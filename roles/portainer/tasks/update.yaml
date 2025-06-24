@@ -1,0 +1,22 @@
+- name: Include Portainer secrets
+  include_vars: secrets.yaml
+
+- name: Pull latest Portainer image
+  community.docker.docker_image:
+    name: portainer/portainer-ce:latest
+    source: pull
+    force_source: true
+
+- name: Recreate Portainer container with new image
+  community.docker.docker_container:
+    name: portainer
+    image: portainer/portainer-ce:latest
+    state: started
+    restart_policy: always
+    ports:
+      - "8000:8000"
+      - "{{ portainer_web_port }}:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+  notify: reload nginx
