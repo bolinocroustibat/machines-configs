@@ -1,0 +1,3 @@
+# OwnTracks configuration
+# Sensitive variables are defined in vars/secrets.yaml
+# Copy vars/secrets.yaml.example to vars/secrets.yaml and update values
