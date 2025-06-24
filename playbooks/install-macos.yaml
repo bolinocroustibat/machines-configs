@@ -40,7 +40,7 @@
     - name: Install and configure direnv
       include_role:
         name: direnv
-        tasks_from: main
+        tasks_from: install
 
 - name: Install Micro
   hosts: local
