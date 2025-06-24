@@ -1,0 +1,11 @@
+{{ ansible_managed | comment }}
+
+services:
+  owntracks-frontend:
+    image: owntracks/frontend
+    ports:
+      - {{ owntracks_web_port }}:80   # host:container
+    environment:
+      - SERVER_HOST=otrecorder
+      - SERVER_PORT=8083
+    restart: unless-stopped
