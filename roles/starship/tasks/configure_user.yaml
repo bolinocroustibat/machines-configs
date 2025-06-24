@@ -6,6 +6,7 @@
   failed_when: false
 
 - name: Configure Starship for user
+  when: user_config.user in user_exists.ansible_facts.getent_passwd.keys()
   block:
     - name: Create .config directory for user
       file:
@@ -37,4 +38,3 @@
         mode: u=rw,g=r,o=r # 644 (read access for everyone and also write access for the owner of the file)
         create: true
         owner: "{{ user_config.user }}"
-  when: user_config.user in user_exists.ansible_facts.getent_passwd.keys()
