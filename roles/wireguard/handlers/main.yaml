@@ -1,12 +1,12 @@
-- name: Reload Nginx
+- name: Reload nginx
   ansible.builtin.service:
     name: nginx
     state: reloaded
 
-- name: Recreate WireGuard container
+- name: Recreate wg-easy container
   # Equivalent to: docker compose up -d --force-recreate
   community.docker.docker_compose_v2:
-    project_src: "{{ ansible_env.HOME }}/.wg-easy"
+    project_src: "/opt/wg-easy"
     state: present
     remove_orphans: true
     build: "never"
