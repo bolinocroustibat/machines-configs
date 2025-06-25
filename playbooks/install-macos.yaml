@@ -82,6 +82,14 @@
         name: biome
         tasks_from: install
 
+- name: Install bat
+  hosts: local
+  tasks:
+    - name: Install bat command-line tool
+      include_role:
+        name: bat
+        tasks_from: install
+
 - name: Updating Ruby gems
   hosts: local
   tasks:
