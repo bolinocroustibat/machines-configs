@@ -3,7 +3,7 @@
 ### Starship ###
 eval "$(starship init zsh)"
 
-### $PATH ####
+### $PATH ###
 
 export PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
 
@@ -35,18 +35,19 @@ export LANG=en_US.UTF-8 # Global setting, does not overrides anything
 #export LC_ALL=en_US.UTF-8 # Overrides all locale settings
 
 # Aliases
-alias ll='ls -alFh --color=auto'
-alias l='ls -lFh --color=auto'
 alias dfh='df -h'				# disk free with human reading
 alias duh='du -hd1 | sort -h'	# disk usage with human reading, only first level
 {% if ansible_os_family == 'Debian' %}
+alias l='ls -lFh --color=auto'
+alias ll='ls -alFh --color=auto'
 alias start='systemctl start'
 alias restart='systemctl restart'
 alias stop='systemctl stop'
 alias status='systemctl status'
 {% endif %}
-#alias cat='ccat'
 {% if ansible_os_family == 'Darwin' %}
+alias l='eza --long --icons --grid --octal-permissions --hyperlink --time-style=iso'
+alias ll='eza --long --icons --grid --octal-permissions --hyperlink --time-style=iso --all'
 alias git_force_pull='git fetch --all & git reset --hard origin/main && git pull'
 alias ruffcheck='ruff check --fix && ruff format'
 alias docker_psa='docker ps --format "table {{ '{{' }}.Names{{ '}}' }}\t{{ '{{' }}.Ports{{ '}}' }}\t{{ '{{' }}.Status{{ '}}' }}"'
@@ -60,20 +61,11 @@ source $HOME/.iterm2_shell_integration.zsh
 # Homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
-# Direnv - https://direnv.net/
-eval "$(direnv hook zsh)"
-
 # NVM
 source $(brew --prefix nvm)/nvm.sh
 export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
-
-# bun
-export BUN_INSTALL="{{ user_home }}/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-# bun completions
-[ -s "{{ user_home }}/.bun/_bun" ] && source "{{ user_home }}/.bun/_bun"
 
 # Docker + Ansible
 export DOCKER_HOST="unix:///Users/bolino/.docker/run/docker.sock"

@@ -34,3 +34,13 @@
     src: direnv.toml.j2
     dest: "{{ user_home }}/.config/direnv/direnv.toml"
     mode: u=rw,g=r,o=r
+
+- name: Configure direnv in .zshrc
+  become: false
+  vars:
+    zshrc_path: "{{ ansible_env.HOME }}/.zshrc"
+  blockinfile:
+    path: "{{ zshrc_path }}"
+    marker: "# {mark} direnv hook added by ansible. See https://direnv.net/"
+    block: |
+      eval "$(direnv hook zsh)"
