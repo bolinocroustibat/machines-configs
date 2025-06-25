@@ -94,6 +94,14 @@
         name: micro
         tasks_from: install
 
+- name: Install bat
+  hosts: remote
+  tasks:
+    - name: Install bat command-line tool
+      include_role:
+        name: bat
+        tasks_from: install
+
 - name: Install Docker
   hosts: web-bolino, data-bolino
   tasks:

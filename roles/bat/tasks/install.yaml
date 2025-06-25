@@ -1,0 +1,29 @@
+- name: Install bat via Homebrew (MacOS)
+  when: ansible_os_family == 'Darwin'
+  community.general.homebrew:
+    name: bat
+    state: present
+
+- name: Install bat via apt (Debian)
+  when: ansible_os_family == 'Debian'
+  become: true
+  apt:
+    name: bat
+    state: present
+    update_cache: yes
+
+- name: Define zshrc alias for bat (replace cat)
+  become: false
+  vars:
+    zshrc_path: "{{ ansible_env.HOME }}/.zshrc"
+  blockinfile:
+    path: "{{ zshrc_path }}"
+    marker: "# {mark} bat alias added by ansible"
+    block: |
+      alias cat='bat'
+
+- name: Reload zsh shell (interactive session only)
+  shell: exec zsh
+  args:
+    executable: /bin/zsh
+  when: ansible_facts['shell'] is search("zsh")
