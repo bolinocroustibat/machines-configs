@@ -21,4 +21,4 @@
         dest: "{{ nginx_enabled_path }}/{{ item.domain }}.conf"
         state: link
       loop: "{{ websites_media }}"
-      notify: reload nginx config
+      notify: Reload nginx config

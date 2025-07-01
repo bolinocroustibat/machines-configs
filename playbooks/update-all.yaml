@@ -25,6 +25,11 @@
 - name: Update Docker-based services
   hosts: data-bolino
   tasks:
+    - name: Include nginx role for handlers
+      include_role:
+        name: nginx
+        tasks_from: install
+
     - name: Update Pi-hole
       include_role:
         name: pi-hole
