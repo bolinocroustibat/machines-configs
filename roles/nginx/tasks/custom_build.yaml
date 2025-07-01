@@ -19,5 +19,4 @@
     url: https://github.com/bolinocroustibat/nginx-http3/releases/latest/download/nginx
     dest: /usr/sbin/nginx
     mode: u=rwx,g=rx,o=rx
-  notify:
-    - restart nginx
+  notify: Restart nginx

@@ -39,7 +39,7 @@
     src: "{{ wireguard_domain }}.conf.j2"
     dest: "/etc/nginx/sites-available/{{ wireguard_domain }}.conf"
     mode: u=rw,g=r,o=r  # 644
-  notify: reload nginx
+  notify: Reload nginx config
   when: not ssl_cert_exists.stat.exists
 
 - name: Enable Nginx vhost for WireGuard (only if SSL doesn't exist)
@@ -48,7 +48,7 @@
     dest: "/etc/nginx/sites-enabled/{{ wireguard_domain }}.conf"
     state: link
     force: true
-  notify: reload nginx
+  notify: Reload nginx config
   when: not ssl_cert_exists.stat.exists
 
 - name: Configure SSL with Certbot (only if SSL doesn't exist)

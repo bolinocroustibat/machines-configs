@@ -33,16 +33,14 @@
     mode: u=rw,g=r,o= # 640 (only owner can write, group can read)
     owner: www-data
     group: www-data
-  notify:
-    - reload nginx config
+  notify: Reload nginx config
 
 - name: Copy PHP snippet
   template:
     src: snippets/php.conf.j2
     dest: /etc/nginx/snippets/php.conf
     mode: u=rw,g=r,o=r # 644
-  notify:
-    - reload nginx config
+  notify: Reload nginx config
 
 - name: Ensure configuration is set
   template:
@@ -52,12 +50,12 @@
   when: item.state == 'file'
   loop_control:
     label: "{{ item.path }}"
-  notify:
-    - reload nginx config
+  notify: Reload nginx config
+  loop: "{{ nginx_config_items | default([]) }}"
 
 - name: Ensure cache dir exists
   file:
-    path: "{{ nginx_cache_dir }}"
+    path: "/var/cache/nginx"
     state: directory
     owner: www-data
     mode: u=rwx,g=,o= # 700 (only the user can read, write and execute)

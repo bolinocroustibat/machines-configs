@@ -1,11 +1,31 @@
 - name: Include WireGuard secrets
   include_vars: secrets.yaml
 
-- name: Pull latest wg-easy image
+- name: Ensure WireGuard directory exists
+  file:
+    path: "/opt/wg-easy"
+    state: directory
+    mode: u=rwx,g=,o= # 700 (only the user can read, write and execute)
+
+- name: Copy docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: "/opt/wg-easy/docker-compose.yml"
+    mode: u=rw,g=r,o=r # 644
+
+- name: Pull latest wg-easy image only if needed
   community.docker.docker_image:
     name: ghcr.io/wg-easy/wg-easy:latest
     source: pull
-    force_source: true
+    force_source: false
+  register: wg_easy_image_result
+
+- name: Stop and remove existing wg-easy container
+  community.docker.docker_container:
+    name: wg-easy
+    state: absent
+  ignore_errors: true
+  when: wg_easy_image_result.changed
 
 - name: Recreate WireGuard container with new image
   community.docker.docker_compose_v2:
@@ -15,4 +35,5 @@
     build: "never"
     pull: "always"
     recreate: always
-  notify: reload nginx
+  notify: Reload nginx config
+  when: wg_easy_image_result.changed
