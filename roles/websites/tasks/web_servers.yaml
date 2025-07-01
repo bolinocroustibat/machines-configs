@@ -62,7 +62,7 @@
         dest: "{{ nginx_enabled_path }}/{{ item.domain }}.conf"
         state: link
       loop: "{{ websites_web }}"
-      notify: reload nginx config
+      notify: Reload nginx config
 
     - name: Setup cron jobs
       cron:

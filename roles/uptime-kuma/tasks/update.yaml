@@ -1,11 +1,31 @@
 - name: Include Uptime Kuma secrets
   include_vars: secrets.yaml
 
-- name: Pull latest Uptime Kuma image
+- name: Ensure Uptime Kuma directory exists
+  file:
+    path: "/opt/uptime-kuma"
+    state: directory
+    mode: u=rwx,g=,o= # 700 (only the user can read, write and execute)
+
+- name: Copy docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: "/opt/uptime-kuma/docker-compose.yml"
+    mode: u=rw,g=r,o=r # 644
+
+- name: Pull latest Uptime Kuma image only if needed
   community.docker.docker_image:
     name: louislam/uptime-kuma:latest
     source: pull
-    force_source: true
+    force_source: false
+  register: uptime_kuma_image_result
+
+- name: Stop and remove existing Uptime Kuma container
+  community.docker.docker_container:
+    name: uptime-kuma
+    state: absent
+  ignore_errors: true
+  when: uptime_kuma_image_result.changed
 
 - name: Recreate Uptime Kuma container with new image
   community.docker.docker_compose_v2:
@@ -15,4 +35,5 @@
     build: "never"
     pull: "always"
     recreate: always
-  notify: reload nginx
+  notify: Reload nginx config
+  when: uptime_kuma_image_result.changed

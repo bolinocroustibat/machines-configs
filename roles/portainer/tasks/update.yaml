@@ -1,11 +1,12 @@
 - name: Include Portainer secrets
   include_vars: secrets.yaml
 
-- name: Pull latest Portainer image
+- name: Pull latest Portainer image only if needed
   community.docker.docker_image:
     name: portainer/portainer-ce:latest
     source: pull
-    force_source: true
+    force_source: false
+  register: portainer_image_result
 
 - name: Recreate Portainer container with new image
   community.docker.docker_container:
@@ -19,4 +20,5 @@
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
-  notify: reload nginx
+  notify: Reload nginx config
+  when: portainer_image_result.changed
