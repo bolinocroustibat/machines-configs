@@ -43,16 +43,3 @@
         version: "master"
         update: true
         force: true
-
-- name: Backup existing .zshrc if it exists
-  copy:
-    remote_src: true
-    src: "{{ user_home }}/.zshrc"
-    dest: "{{ user_home }}/.zshrc_{{ ansible_date_time.iso8601 }}.bak"
-    mode: preserve
-
-- name: Update .zshrc from template
-  template:
-    src: .zshrc.j2
-    dest: "{{ user_home }}/.zshrc"
-    mode: u=rw,g=r,o=r # 644 (read and write access for the owner of the file and read access for group and others)
