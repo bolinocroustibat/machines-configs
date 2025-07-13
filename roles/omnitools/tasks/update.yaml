@@ -1,0 +1,39 @@
+- name: Include OmniTools secrets
+  include_vars: secrets.yaml
+
+- name: Ensure OmniTools directory exists
+  file:
+    path: "/opt/omnitools"
+    state: directory
+    mode: u=rwx,g=,o= # 700 (only the user can read, write and execute)
+
+- name: Copy docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: "/opt/omnitools/docker-compose.yml"
+    mode: u=rw,g=r,o=r # 644
+
+- name: Pull latest OmniTools image only if needed
+  community.docker.docker_image:
+    name: iib0011/omni-tools:latest
+    source: pull
+    force_source: false
+  register: omnitools_image_result
+
+- name: Stop and remove existing OmniTools container
+  community.docker.docker_container:
+    name: omni-tools
+    state: absent
+  ignore_errors: true
+  when: omnitools_image_result.changed
+
+- name: Recreate OmniTools container with new image
+  community.docker.docker_compose_v2:
+    project_src: "/opt/omnitools"
+    state: present
+    remove_orphans: true
+    build: "never"
+    pull: "always"
+    recreate: always
+  notify: Reload nginx config
+  when: omnitools_image_result.changed
