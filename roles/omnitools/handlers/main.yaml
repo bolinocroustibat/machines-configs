@@ -1,0 +1,10 @@
+- name: Reload nginx config
+  ansible.builtin.service:
+    name: nginx
+    state: reloaded
+
+- name: restart omnitools
+  community.docker.docker_container:
+    name: omni-tools
+    state: started
+    restart_policy: unless-stopped

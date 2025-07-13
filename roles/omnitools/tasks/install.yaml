@@ -1,0 +1,58 @@
+- name: Include OmniTools secrets
+  include_vars: secrets.yaml
+
+- name: Create OmniTools installation directory
+  file:
+    path: "/opt/omnitools"
+    state: directory
+    mode: u=rwx,g=,o= # 700 (only the user can read, write and execute)
+
+- name: Copy docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: /opt/omnitools/docker-compose.yml
+    mode: u=rw,g=r,o=r  # 644
+  notify: restart omnitools
+
+- name: Start OmniTools container
+  community.docker.docker_compose_v2:
+    project_src: /opt/omnitools
+    state: present
+    remove_orphans: true
+    build: "never"
+    pull: "always"
+    recreate: always
+
+- name: Check if DNS is properly configured
+  command: dig +short {{ omnitools_domain }}
+  register: dns_check
+  changed_when: false
+  failed_when: dns_check.stdout == ""
+
+- name: Check if SSL certificate exists
+  stat:
+    path: "/etc/letsencrypt/live/{{ omnitools_domain }}/fullchain.pem"
+  register: ssl_cert_exists
+
+- name: Deploy Nginx vhost for OmniTools (only if SSL doesn't exist)
+  template:
+    src: "{{ omnitools_domain }}.conf.j2"
+    dest: "/etc/nginx/sites-available/{{ omnitools_domain }}.conf"
+    mode: u=rw,g=r,o=r  # 644
+  notify: Reload nginx config
+  when: not ssl_cert_exists.stat.exists
+
+- name: Enable Nginx vhost for OmniTools (only if SSL doesn't exist)
+  file:
+    src: "/etc/nginx/sites-available/{{ omnitools_domain }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ omnitools_domain }}.conf"
+    state: link
+    force: true
+  notify: Reload nginx config
+  when: not ssl_cert_exists.stat.exists
+
+- name: Configure SSL with Certbot (only if SSL doesn't exist)
+  command: certbot --nginx -d {{ omnitools_domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
+  args:
+    creates: "/etc/letsencrypt/live/{{ omnitools_domain }}/fullchain.pem"
+  when: dns_check.stdout != "" and not ssl_cert_exists.stat.exists

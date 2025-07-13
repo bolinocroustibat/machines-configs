@@ -50,6 +50,11 @@
         name: uptime-kuma
         tasks_from: update
 
+    - name: Update OmniTools
+      include_role:
+        name: omnitools
+        tasks_from: update
+
 - name: Prune Docker resources
   hosts: remote
   tags: docker-prune
