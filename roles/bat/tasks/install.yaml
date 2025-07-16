@@ -12,7 +12,7 @@
     state: present
     update_cache: yes
 
-- name: Define zshrc alias for bat (replace cat)
+- name: Define zshrc alias for bat (replace cat) - macOS
   become: false
   vars:
     zshrc_path: "{{ ansible_env.HOME }}/.zshrc"
@@ -21,3 +21,15 @@
     marker: "# {mark} bat alias added by ansible"
     block: |
       alias cat='bat'
+  when: ansible_os_family == 'Darwin'
+
+- name: Define zshrc alias for batcat (replace cat) - Debian
+  become: false
+  vars:
+    zshrc_path: "{{ ansible_env.HOME }}/.zshrc"
+  blockinfile:
+    path: "{{ zshrc_path }}"
+    marker: "# {mark} bat alias added by ansible"
+    block: |
+      alias cat='batcat'
+  when: ansible_os_family == 'Debian'
