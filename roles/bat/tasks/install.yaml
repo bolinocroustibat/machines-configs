@@ -21,9 +21,3 @@
     marker: "# {mark} bat alias added by ansible"
     block: |
       alias cat='bat'
-
-- name: Reload zsh shell (interactive session only)
-  shell: exec zsh
-  args:
-    executable: /bin/zsh
-  when: ansible_facts['shell'] is search("zsh")
