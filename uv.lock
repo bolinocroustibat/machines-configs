@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.10"
 resolution-markers = [
     "python_full_version >= '3.12' and sys_platform != 'win32'",
@@ -18,7 +18,7 @@ resolution-markers = [
     "python_full_version < '3.11' and sys_platform != 'win32'",
 ]
 dependencies = [
-    { name = "ansible-core", version = "2.17.12", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and sys_platform != 'win32'" },
+    { name = "ansible-core", version = "2.17.13", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d4/64/29fdff6fe7682342adb54802c1cd90b2272d382e1743089af88f90a1d986/ansible-10.7.0.tar.gz", hash = "sha256:59d29e3de1080e740dfa974517d455217601b16d16880314d9be26145c68dc22", size = 41256974, upload-time = "2024-12-03T18:04:25.794Z" }
 wheels = [
@@ -27,18 +27,18 @@ wheels = [
 
 [[package]]
 name = "ansible"
-version = "11.7.0"
+version = "11.8.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.12' and sys_platform != 'win32'",
     "python_full_version == '3.11.*' and sys_platform != 'win32'",
 ]
 dependencies = [
-    { name = "ansible-core", version = "2.18.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'win32'" },
+    { name = "ansible-core", version = "2.18.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/83/31/1fe54cfce344fff6ef17933705c2a5ecf2af29301e8d1af13dd1b3f14e3f/ansible-11.7.0.tar.gz", hash = "sha256:f9df37c71d407f65bcb9c5c06c9918e297d9ea74b5cdaf5926c4c9aa9e44db5f", size = 44365403, upload-time = "2025-06-17T19:38:22.081Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/82/74/b86d14d2c458edf27ddb56d42bf6d07335a0ccfc713f040fb0cbffd30017/ansible-11.8.0.tar.gz", hash = "sha256:28ea032c77f344bb8ea4d7d39f9a5d4e935e6c8b60836c8c8a28b9cf6c9adb1a", size = 44286995, upload-time = "2025-07-16T15:13:22.91Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d4/3a/4e6005176766287496a4bd057b4831a5888d02a94984d822fa5aed5ccec9/ansible-11.7.0-py3-none-any.whl", hash = "sha256:caa56fc92e5bea012abf37f08aa348da27d2fcaf94bf398e24cadcb618a4dc3b", size = 55838653, upload-time = "2025-06-17T19:38:17.421Z" },
+    { url = "https://files.pythonhosted.org/packages/47/47/23fe9f6d9cd533ce4d54f4925cb0b7fdcfd3500b226421aad6166d9aa11c/ansible-11.8.0-py3-none-any.whl", hash = "sha256:a2cd44c0d2c03972f5d676d1b024d09dd3d3edbd418fb0426f4dd356fca9e5b1", size = 56046023, upload-time = "2025-07-16T15:13:17.557Z" },
 ]
 
 [[package]]
@@ -46,8 +46,8 @@ name = "ansible-compat"
 version = "25.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ansible-core", version = "2.17.12", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and sys_platform != 'win32'" },
-    { name = "ansible-core", version = "2.18.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'win32'" },
+    { name = "ansible-core", version = "2.17.13", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and sys_platform != 'win32'" },
+    { name = "ansible-core", version = "2.18.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'win32'" },
     { name = "jsonschema", marker = "sys_platform != 'win32'" },
     { name = "packaging", marker = "sys_platform != 'win32'" },
     { name = "pyyaml", marker = "sys_platform != 'win32'" },
@@ -60,7 +60,7 @@ wheels = [
 
 [[package]]
 name = "ansible-core"
-version = "2.17.12"
+version = "2.17.13"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version < '3.11' and sys_platform != 'win32'",
@@ -72,14 +72,14 @@ dependencies = [
     { name = "pyyaml", marker = "python_full_version < '3.11' and sys_platform != 'win32'" },
     { name = "resolvelib", marker = "python_full_version < '3.11' and sys_platform != 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/19/b2/f662d40226acaa504b185969255846ac5187c02a4bb2631954db5db60159/ansible_core-2.17.12.tar.gz", hash = "sha256:24fb30783fcd3e800b839b15a396a1f9d622c007bc358e98f2992156ace52671", size = 3118286, upload-time = "2025-05-19T17:36:21.935Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/23/9e/cfbe230c214f93c42891e0b87d97d82d6a1085b306056241df68d553a0ba/ansible_core-2.17.13.tar.gz", hash = "sha256:2ecb85b9fc9145a24145a3027ed3c716b27eda8493dd3e1f0330a20571e63f8b", size = 3119881, upload-time = "2025-07-15T17:47:33.891Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5f/89/2887a65bdc2305a191df9f84260a7fdee65e960b5652dbf8ae4c1d7efc5d/ansible_core-2.17.12-py3-none-any.whl", hash = "sha256:cb74f3a148b77fa0c89a284e48e7515d13fda10ad8c789eb92274c72f017a9a0", size = 2188903, upload-time = "2025-05-19T17:36:19.826Z" },
+    { url = "https://files.pythonhosted.org/packages/a5/e6/0fa10e14c2a8addd6ef464c3aec58b4d65dd53aad7402df2c9025604f6c4/ansible_core-2.17.13-py3-none-any.whl", hash = "sha256:4fe5ead1d08152a44ef3994383b1d12e66e2a911621bb7cef868db6864cb14c5", size = 2189172, upload-time = "2025-07-15T17:47:31.979Z" },
 ]
 
 [[package]]
 name = "ansible-core"
-version = "2.18.6"
+version = "2.18.7"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.12' and sys_platform != 'win32'",
@@ -92,19 +92,19 @@ dependencies = [
     { name = "pyyaml", marker = "python_full_version >= '3.11' and sys_platform != 'win32'" },
     { name = "resolvelib", marker = "python_full_version >= '3.11' and sys_platform != 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4c/1e/c5d52171ae2b86689e3ef9e4f578c605a7f53a862d1e9fe8c254deb75fe1/ansible_core-2.18.6.tar.gz", hash = "sha256:25bb20ce1516a1b7307831b263cef684043b3720711466bd9d4164e5fd576557", size = 3088072, upload-time = "2025-05-19T16:59:59.234Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/29/33/cd25e1af669941fbb5c3d7ac4494cf4a288cb11f53225648d552f8bd8e54/ansible_core-2.18.7.tar.gz", hash = "sha256:1a129bf9fcd5dca2b17e83ce77147ee2fbc3c51a4958970152897cc5b6d0aae7", size = 3090256, upload-time = "2025-07-15T17:49:24.074Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/48/b7/2ca5a126486a5323dde87cc43b207e926f3f3bce0b5758395308de3f146d/ansible_core-2.18.6-py3-none-any.whl", hash = "sha256:12a34749a7b20f0f1536bd3e3b2e137341867e4642e351273e96647161f595c0", size = 2208798, upload-time = "2025-05-19T16:59:57.372Z" },
+    { url = "https://files.pythonhosted.org/packages/7e/a7/568e51c20f49c9e76a555a876ed641ecc59df29e93868f24cdf8c3289f6a/ansible_core-2.18.7-py3-none-any.whl", hash = "sha256:ac42ecb480fb98890d338072f7298cd462fb2117da6700d989c7ae688962ba69", size = 2209456, upload-time = "2025-07-15T17:49:22.549Z" },
 ]
 
 [[package]]
 name = "ansible-lint"
-version = "25.6.1"
+version = "25.7.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ansible-compat", marker = "sys_platform != 'win32'" },
-    { name = "ansible-core", version = "2.17.12", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and sys_platform != 'win32'" },
-    { name = "ansible-core", version = "2.18.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'win32'" },
+    { name = "ansible-core", version = "2.17.13", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and sys_platform != 'win32'" },
+    { name = "ansible-core", version = "2.18.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'win32'" },
     { name = "black", marker = "sys_platform != 'win32'" },
     { name = "filelock", marker = "sys_platform != 'win32'" },
     { name = "importlib-metadata", marker = "sys_platform != 'win32'" },
@@ -118,9 +118,9 @@ dependencies = [
     { name = "wcmatch", marker = "sys_platform != 'win32'" },
     { name = "yamllint", marker = "sys_platform != 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5c/27/f04e69b710efbfde20cfdcdb8eec3b3b1d4b6d480a80afa803386304e829/ansible_lint-25.6.1.tar.gz", hash = "sha256:6a1dd2b7a9f3f202c9e92a6c80296ff33ca863348c3acf978f80fb0d4536dce4", size = 559349, upload-time = "2025-06-19T07:34:23.206Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/dc/ab/e6ac95e777d723fe20a7d8888d5d6ab9f75a808a57f2ab42fe353b6fbd9f/ansible_lint-25.7.0.tar.gz", hash = "sha256:9afcf419997ce1ffc57acaa3a56f377bce8ceeb9db10e6ab84fd565d09be408b", size = 577354, upload-time = "2025-07-29T19:57:53.461Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ea/1d/8e4972bc37bc6a2ac87a687076775e631350dd05c3d0517f88e0c46176a6/ansible_lint-25.6.1-py3-none-any.whl", hash = "sha256:69fe294a3cc30d8819b5a30625a7e25225f48558cadb83ad3d4dec597c1b8c2c", size = 316902, upload-time = "2025-06-19T07:34:21.1Z" },
+    { url = "https://files.pythonhosted.org/packages/e8/a4/ae857f480aefd37ca505652bfb4ccd034fbba616b33609aaec9dd8b90f90/ansible_lint-25.7.0-py3-none-any.whl", hash = "sha256:9d9ed35e57abbf6e40f55026ba193e3660930089ae1c65c376281fd84ea19842", size = 326905, upload-time = "2025-07-29T19:57:51.293Z" },
 ]
 
 [[package]]
@@ -305,7 +305,7 @@ wheels = [
 
 [[package]]
 name = "jsonschema"
-version = "4.24.0"
+version = "4.25.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs", marker = "sys_platform != 'win32'" },
@@ -313,9 +313,9 @@ dependencies = [
     { name = "referencing", marker = "sys_platform != 'win32'" },
     { name = "rpds-py", marker = "sys_platform != 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/bf/d3/1cf5326b923a53515d8f3a2cd442e6d7e94fcc444716e879ea70a0ce3177/jsonschema-4.24.0.tar.gz", hash = "sha256:0b4e8069eb12aedfa881333004bccaec24ecef5a8a6a4b6df142b2cc9599d196", size = 353480, upload-time = "2025-05-26T18:48:10.459Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d5/00/a297a868e9d0784450faa7365c2172a7d6110c763e30ba861867c32ae6a9/jsonschema-4.25.0.tar.gz", hash = "sha256:e63acf5c11762c0e6672ffb61482bdf57f0876684d8d249c0fe2d730d48bc55f", size = 356830, upload-time = "2025-07-18T15:39:45.11Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a2/3d/023389198f69c722d039351050738d6755376c8fd343e91dc493ea485905/jsonschema-4.24.0-py3-none-any.whl", hash = "sha256:a462455f19f5faf404a7902952b6f0e3ce868f3ee09a359b05eca6673bd8412d", size = 88709, upload-time = "2025-05-26T18:48:08.417Z" },
+    { url = "https://files.pythonhosted.org/packages/fe/54/c86cd8e011fe98803d7e382fd67c0df5ceab8d2b7ad8c5a81524f791551c/jsonschema-4.25.0-py3-none-any.whl", hash = "sha256:24c2e8da302de79c8b9382fee3e76b355e44d2a4364bb207159ce10b517bd716", size = 89184, upload-time = "2025-07-18T15:39:42.956Z" },
 ]
 
 [[package]]
@@ -336,7 +336,7 @@ version = "0.2.2"
 source = { virtual = "." }
 dependencies = [
     { name = "ansible", version = "10.7.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and sys_platform != 'win32'" },
-    { name = "ansible", version = "11.7.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'win32'" },
+    { name = "ansible", version = "11.8.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'win32'" },
 ]
 
 [package.dev-dependencies]
@@ -663,24 +663,24 @@ wheels = [
 
 [[package]]
 name = "ruff"
-version = "0.12.3"
+version = "0.12.7"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/c3/2a/43955b530c49684d3c38fcda18c43caf91e99204c2a065552528e0552d4f/ruff-0.12.3.tar.gz", hash = "sha256:f1b5a4b6668fd7b7ea3697d8d98857390b40c1320a63a178eee6be0899ea2d77", size = 4459341, upload-time = "2025-07-11T13:21:16.086Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a1/81/0bd3594fa0f690466e41bd033bdcdf86cba8288345ac77ad4afbe5ec743a/ruff-0.12.7.tar.gz", hash = "sha256:1fc3193f238bc2d7968772c82831a4ff69252f673be371fb49663f0068b7ec71", size = 5197814, upload-time = "2025-07-29T22:32:35.877Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e2/fd/b44c5115539de0d598d75232a1cc7201430b6891808df111b8b0506aae43/ruff-0.12.3-py3-none-linux_armv6l.whl", hash = "sha256:47552138f7206454eaf0c4fe827e546e9ddac62c2a3d2585ca54d29a890137a2", size = 10430499, upload-time = "2025-07-11T13:20:26.321Z" },
-    { url = "https://files.pythonhosted.org/packages/43/c5/9eba4f337970d7f639a37077be067e4ec80a2ad359e4cc6c5b56805cbc66/ruff-0.12.3-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:0a9153b000c6fe169bb307f5bd1b691221c4286c133407b8827c406a55282041", size = 11213413, upload-time = "2025-07-11T13:20:30.017Z" },
-    { url = "https://files.pythonhosted.org/packages/e2/2c/fac3016236cf1fe0bdc8e5de4f24c76ce53c6dd9b5f350d902549b7719b2/ruff-0.12.3-py3-none-macosx_11_0_arm64.whl", hash = "sha256:fa6b24600cf3b750e48ddb6057e901dd5b9aa426e316addb2a1af185a7509882", size = 10586941, upload-time = "2025-07-11T13:20:33.046Z" },
-    { url = "https://files.pythonhosted.org/packages/c5/0f/41fec224e9dfa49a139f0b402ad6f5d53696ba1800e0f77b279d55210ca9/ruff-0.12.3-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e2506961bf6ead54887ba3562604d69cb430f59b42133d36976421bc8bd45901", size = 10783001, upload-time = "2025-07-11T13:20:35.534Z" },
-    { url = "https://files.pythonhosted.org/packages/0d/ca/dd64a9ce56d9ed6cad109606ac014860b1c217c883e93bf61536400ba107/ruff-0.12.3-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:c4faaff1f90cea9d3033cbbcdf1acf5d7fb11d8180758feb31337391691f3df0", size = 10269641, upload-time = "2025-07-11T13:20:38.459Z" },
-    { url = "https://files.pythonhosted.org/packages/63/5c/2be545034c6bd5ce5bb740ced3e7014d7916f4c445974be11d2a406d5088/ruff-0.12.3-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:40dced4a79d7c264389de1c59467d5d5cefd79e7e06d1dfa2c75497b5269a5a6", size = 11875059, upload-time = "2025-07-11T13:20:41.517Z" },
-    { url = "https://files.pythonhosted.org/packages/8e/d4/a74ef1e801ceb5855e9527dae105eaff136afcb9cc4d2056d44feb0e4792/ruff-0.12.3-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:0262d50ba2767ed0fe212aa7e62112a1dcbfd46b858c5bf7bbd11f326998bafc", size = 12658890, upload-time = "2025-07-11T13:20:44.442Z" },
-    { url = "https://files.pythonhosted.org/packages/13/c8/1057916416de02e6d7c9bcd550868a49b72df94e3cca0aeb77457dcd9644/ruff-0.12.3-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:12371aec33e1a3758597c5c631bae9a5286f3c963bdfb4d17acdd2d395406687", size = 12232008, upload-time = "2025-07-11T13:20:47.374Z" },
-    { url = "https://files.pythonhosted.org/packages/f5/59/4f7c130cc25220392051fadfe15f63ed70001487eca21d1796db46cbcc04/ruff-0.12.3-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:560f13b6baa49785665276c963edc363f8ad4b4fc910a883e2625bdb14a83a9e", size = 11499096, upload-time = "2025-07-11T13:20:50.348Z" },
-    { url = "https://files.pythonhosted.org/packages/d4/01/a0ad24a5d2ed6be03a312e30d32d4e3904bfdbc1cdbe63c47be9d0e82c79/ruff-0.12.3-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:023040a3499f6f974ae9091bcdd0385dd9e9eb4942f231c23c57708147b06311", size = 11688307, upload-time = "2025-07-11T13:20:52.945Z" },
-    { url = "https://files.pythonhosted.org/packages/93/72/08f9e826085b1f57c9a0226e48acb27643ff19b61516a34c6cab9d6ff3fa/ruff-0.12.3-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:883d844967bffff5ab28bba1a4d246c1a1b2933f48cb9840f3fdc5111c603b07", size = 10661020, upload-time = "2025-07-11T13:20:55.799Z" },
-    { url = "https://files.pythonhosted.org/packages/80/a0/68da1250d12893466c78e54b4a0ff381370a33d848804bb51279367fc688/ruff-0.12.3-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:2120d3aa855ff385e0e562fdee14d564c9675edbe41625c87eeab744a7830d12", size = 10246300, upload-time = "2025-07-11T13:20:58.222Z" },
-    { url = "https://files.pythonhosted.org/packages/6a/22/5f0093d556403e04b6fd0984fc0fb32fbb6f6ce116828fd54306a946f444/ruff-0.12.3-py3-none-musllinux_1_2_i686.whl", hash = "sha256:6b16647cbb470eaf4750d27dddc6ebf7758b918887b56d39e9c22cce2049082b", size = 11263119, upload-time = "2025-07-11T13:21:01.503Z" },
-    { url = "https://files.pythonhosted.org/packages/92/c9/f4c0b69bdaffb9968ba40dd5fa7df354ae0c73d01f988601d8fac0c639b1/ruff-0.12.3-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:e1417051edb436230023575b149e8ff843a324557fe0a265863b7602df86722f", size = 11746990, upload-time = "2025-07-11T13:21:04.524Z" },
+    { url = "https://files.pythonhosted.org/packages/e1/d2/6cb35e9c85e7a91e8d22ab32ae07ac39cc34a71f1009a6f9e4a2a019e602/ruff-0.12.7-py3-none-linux_armv6l.whl", hash = "sha256:76e4f31529899b8c434c3c1dede98c4483b89590e15fb49f2d46183801565303", size = 11852189, upload-time = "2025-07-29T22:31:41.281Z" },
+    { url = "https://files.pythonhosted.org/packages/63/5b/a4136b9921aa84638f1a6be7fb086f8cad0fde538ba76bda3682f2599a2f/ruff-0.12.7-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:789b7a03e72507c54fb3ba6209e4bb36517b90f1a3569ea17084e3fd295500fb", size = 12519389, upload-time = "2025-07-29T22:31:54.265Z" },
+    { url = "https://files.pythonhosted.org/packages/a8/c9/3e24a8472484269b6b1821794141f879c54645a111ded4b6f58f9ab0705f/ruff-0.12.7-py3-none-macosx_11_0_arm64.whl", hash = "sha256:2e1c2a3b8626339bb6369116e7030a4cf194ea48f49b64bb505732a7fce4f4e3", size = 11743384, upload-time = "2025-07-29T22:31:59.575Z" },
+    { url = "https://files.pythonhosted.org/packages/26/7c/458dd25deeb3452c43eaee853c0b17a1e84169f8021a26d500ead77964fd/ruff-0.12.7-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:32dec41817623d388e645612ec70d5757a6d9c035f3744a52c7b195a57e03860", size = 11943759, upload-time = "2025-07-29T22:32:01.95Z" },
+    { url = "https://files.pythonhosted.org/packages/7f/8b/658798472ef260ca050e400ab96ef7e85c366c39cf3dfbef4d0a46a528b6/ruff-0.12.7-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:47ef751f722053a5df5fa48d412dbb54d41ab9b17875c6840a58ec63ff0c247c", size = 11654028, upload-time = "2025-07-29T22:32:04.367Z" },
+    { url = "https://files.pythonhosted.org/packages/a8/86/9c2336f13b2a3326d06d39178fd3448dcc7025f82514d1b15816fe42bfe8/ruff-0.12.7-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:a828a5fc25a3efd3e1ff7b241fd392686c9386f20e5ac90aa9234a5faa12c423", size = 13225209, upload-time = "2025-07-29T22:32:06.952Z" },
+    { url = "https://files.pythonhosted.org/packages/76/69/df73f65f53d6c463b19b6b312fd2391dc36425d926ec237a7ed028a90fc1/ruff-0.12.7-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:5726f59b171111fa6a69d82aef48f00b56598b03a22f0f4170664ff4d8298efb", size = 14182353, upload-time = "2025-07-29T22:32:10.053Z" },
+    { url = "https://files.pythonhosted.org/packages/58/1e/de6cda406d99fea84b66811c189b5ea139814b98125b052424b55d28a41c/ruff-0.12.7-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:74e6f5c04c4dd4aba223f4fe6e7104f79e0eebf7d307e4f9b18c18362124bccd", size = 13631555, upload-time = "2025-07-29T22:32:12.644Z" },
+    { url = "https://files.pythonhosted.org/packages/6f/ae/625d46d5164a6cc9261945a5e89df24457dc8262539ace3ac36c40f0b51e/ruff-0.12.7-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:5d0bfe4e77fba61bf2ccadf8cf005d6133e3ce08793bbe870dd1c734f2699a3e", size = 12667556, upload-time = "2025-07-29T22:32:15.312Z" },
+    { url = "https://files.pythonhosted.org/packages/55/bf/9cb1ea5e3066779e42ade8d0cd3d3b0582a5720a814ae1586f85014656b6/ruff-0.12.7-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:06bfb01e1623bf7f59ea749a841da56f8f653d641bfd046edee32ede7ff6c606", size = 12939784, upload-time = "2025-07-29T22:32:17.69Z" },
+    { url = "https://files.pythonhosted.org/packages/55/7f/7ead2663be5627c04be83754c4f3096603bf5e99ed856c7cd29618c691bd/ruff-0.12.7-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:e41df94a957d50083fd09b916d6e89e497246698c3f3d5c681c8b3e7b9bb4ac8", size = 11771356, upload-time = "2025-07-29T22:32:20.134Z" },
+    { url = "https://files.pythonhosted.org/packages/17/40/a95352ea16edf78cd3a938085dccc55df692a4d8ba1b3af7accbe2c806b0/ruff-0.12.7-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:4000623300563c709458d0ce170c3d0d788c23a058912f28bbadc6f905d67afa", size = 11612124, upload-time = "2025-07-29T22:32:22.645Z" },
+    { url = "https://files.pythonhosted.org/packages/4d/74/633b04871c669e23b8917877e812376827c06df866e1677f15abfadc95cb/ruff-0.12.7-py3-none-musllinux_1_2_i686.whl", hash = "sha256:69ffe0e5f9b2cf2b8e289a3f8945b402a1b19eff24ec389f45f23c42a3dd6fb5", size = 12479945, upload-time = "2025-07-29T22:32:24.765Z" },
+    { url = "https://files.pythonhosted.org/packages/be/34/c3ef2d7799c9778b835a76189c6f53c179d3bdebc8c65288c29032e03613/ruff-0.12.7-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:a07a5c8ffa2611a52732bdc67bf88e243abd84fe2d7f6daef3826b59abbfeda4", size = 12998677, upload-time = "2025-07-29T22:32:27.022Z" },
 ]
 
 [[package]]
