@@ -80,6 +80,14 @@
         name: starship
         tasks_from: update
 
+- name: Update Direnv
+  hosts: all
+  tasks:
+    - name: Add Direnv to ZSH
+      include_role:
+        name: direnv
+        tasks_from: update
+
 - name: Update global pip
   hosts: remote # python is entirely managed by uv on local
   tasks:
