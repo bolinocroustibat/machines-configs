@@ -1,5 +1,7 @@
+{{ ansible_managed | comment }}
+
 Types: deb
 URIs: https://apt.releases.hashicorp.com
-Suites: bookworm
+Suites: {{ debian_distribution }}
 Components: main
 Signed-By: /usr/share/keyrings/hashicorp-archive-keyring.gpg
