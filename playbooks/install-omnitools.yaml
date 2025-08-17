@@ -1,7 +1,0 @@
-- name: Install OmniTools
-  hosts: data-bolino
-  tasks:
-    - name: Install OmniTools
-      include_role:
-        name: omnitools
-        tasks_from: install

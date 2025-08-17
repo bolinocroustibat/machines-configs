@@ -1,7 +1,0 @@
-- name: Install OwnTracks location tracking
-  hosts: data-bolino
-  tasks:
-    - name: Install OwnTracks
-      include_role:
-        name: owntracks
-        tasks_from: install

@@ -1,7 +1,0 @@
-- name: Install WireGuard
-  hosts: data-bolino
-  tasks:
-    - name: Install WireGuard
-      include_role:
-        name: wireguard
-        tasks_from: install
