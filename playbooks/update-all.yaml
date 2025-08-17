@@ -1,5 +1,7 @@
 - name: Update Homebrew and upgrade packages
   hosts: local
+  tags:
+    - macos
   tasks:
     - name: Update Homebrew packages
       include_role:
@@ -8,6 +10,8 @@
 
 - name: Update apt and upgrade packages
   hosts: remote
+  tags:
+    - debian
   tasks:
     - name: Upgrade apt packages
       include_role:
@@ -16,6 +20,8 @@
 
 - name: Update Docker
   hosts: remote
+  tags:
+    - debian
   tasks:
     - name: Update Docker packages
       include_role:
@@ -24,6 +30,8 @@
 
 - name: Update Docker-based services
   hosts: data-bolino
+  tags:
+    - debian
   tasks:
     - name: Include nginx role for handlers
       include_role:
@@ -57,7 +65,8 @@
 
 - name: Prune Docker resources
   hosts: remote
-  tags: docker-prune
+  tags:
+    - debian
   tasks:
     - name: Prune unused Docker resources
       include_role:
@@ -74,6 +83,8 @@
 
 - name: Update Starship
   hosts: remote
+  tags:
+    - debian
   tasks:
     - name: Update Starship prompt
       include_role:
@@ -90,6 +101,8 @@
 
 - name: Update global pip
   hosts: remote # python is entirely managed by uv on local
+  tags:
+    - debian
   tasks:
     - name: Update pip packages
       block:
@@ -101,7 +114,8 @@
 
 - name: Update fail2ban configurations
   hosts: remote
-  tags: fail2ban
+  tags:
+    - debian
   tasks:
     - name: Update fail2ban configurations
       include_role:
