@@ -21,7 +21,7 @@ lint = { extend-select = ["I", "PTH"] }
 
 [tool.uv]
 dev-dependencies = [
-    "ansible-lint>=24.9.2",
+    "ansible-lint>=25.8.0",
     "ruff>=0.12.0",
 ]
 environments = ["platform_system != 'Windows'"]
