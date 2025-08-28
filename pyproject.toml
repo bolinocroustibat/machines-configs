@@ -4,10 +4,10 @@ version = "0.2.2"
 description = "Ansible playbooks for setting up local development and remote machines"
 authors = [{ name = "Adrien Carpentier", email = "me@adriencarpentier.com" }]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = { text = "MIT" }
 dependencies = [
-    "ansible>=10.4.0",
+    "ansible>=11.0.0",
 ]
 
 # Ignore flat-layout
@@ -17,11 +17,11 @@ py-modules = []
 
 [tool.ruff]
 line-length = 100
-lint = { extend-select = ["I"] }
+lint = { extend-select = ["I", "PTH"] }
 
 [tool.uv]
 dev-dependencies = [
     "ansible-lint>=24.9.2",
-    "ruff>=0.6.8",
+    "ruff>=0.12.0",
 ]
 environments = ["platform_system != 'Windows'"]
