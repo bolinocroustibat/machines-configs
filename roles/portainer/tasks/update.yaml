@@ -1,11 +1,11 @@
 - name: Include Portainer secrets
   include_vars: secrets.yaml
 
-- name: Pull latest Portainer image only if needed
+- name: Pull latest Portainer image
   community.docker.docker_image:
     name: portainer/portainer-ce:latest
     source: pull
-    force_source: false
+    force_source: true
   register: portainer_image_result
 
 - name: Recreate Portainer container with new image
@@ -21,4 +21,15 @@
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
   notify: Reload nginx config
+
+- name: Clean up old Portainer images only
+  shell: |
+    # Get the current image ID being used by the container
+    CURRENT_IMAGE=$(docker inspect portainer --format='{{.Image}}')
+
+    # Remove all portainer images except the current one
+    docker images portainer/portainer-ce --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}" | grep -v "$CURRENT_IMAGE" | awk '{print $1}' | xargs -r docker rmi
+  args:
+    executable: /bin/bash
+  ignore_errors: true
   when: portainer_image_result.changed
