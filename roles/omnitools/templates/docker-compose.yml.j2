@@ -6,4 +6,4 @@ services:
     container_name: omni-tools
     restart: unless-stopped
     ports:
-      - "{{ omnitools_web_port }}:80"
+      - "127.0.0.1:{{ omnitools_web_port }}:80"
