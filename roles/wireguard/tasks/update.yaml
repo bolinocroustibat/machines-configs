@@ -13,11 +13,11 @@
     dest: "/opt/wg-easy/docker-compose.yml"
     mode: u=rw,g=r,o=r # 644
 
-- name: Pull latest wg-easy image only if needed
+- name: Pull latest wg-easy image
   community.docker.docker_image:
     name: ghcr.io/wg-easy/wg-easy:latest
     source: pull
-    force_source: false
+    force_source: true
   register: wg_easy_image_result
 
 - name: Stop and remove existing wg-easy container
@@ -36,4 +36,16 @@
     pull: "always"
     recreate: always
   notify: Reload nginx config
+  when: wg_easy_image_result.changed
+
+- name: Clean up old wg-easy images only
+  shell: |
+    # Get the current image ID being used by the container
+    CURRENT_IMAGE=$(docker inspect wg-easy --format='{{.Image}}')
+
+    # Remove all wg-easy images except the current one
+    docker images ghcr.io/wg-easy/wg-easy --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}" | grep -v "$CURRENT_IMAGE" | awk '{print $1}' | xargs -r docker rmi
+  args:
+    executable: /bin/bash
+  ignore_errors: true
   when: wg_easy_image_result.changed
