@@ -6,7 +6,7 @@ services:
     container_name: uptime-kuma
     restart: unless-stopped
     ports:
-      - "{{ uptime_kuma_web_port }}:3001"
+      - "127.0.0.1:{{ uptime_kuma_web_port }}:3001"
     volumes:
       - uptime-kuma:/app/data
 
