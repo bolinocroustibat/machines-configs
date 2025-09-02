@@ -13,11 +13,11 @@
     dest: "/opt/pi-hole/docker-compose.yml"
     mode: u=rw,g=r,o=r # 644
 
-- name: Pull latest Pi-hole image only if needed
+- name: Pull latest Pi-hole image
   community.docker.docker_image:
     name: pihole/pihole:latest
     source: pull
-    force_source: false
+    force_source: true
   register: pihole_image_result
 
 - name: Stop and remove existing Pi-hole container
@@ -36,4 +36,16 @@
     pull: "always"
     recreate: always
   notify: Reload nginx config
+  when: pihole_image_result.changed
+
+- name: Clean up old Pi-hole images only
+  shell: |
+    # Get the current image ID being used by the container
+    CURRENT_IMAGE=$(docker inspect pihole --format='{{.Image}}')
+
+    # Remove all pihole images except the current one
+    docker images pihole/pihole --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}" | grep -v "$CURRENT_IMAGE" | awk '{print $1}' | xargs -r docker rmi
+  args:
+    executable: /bin/bash
+  ignore_errors: true
   when: pihole_image_result.changed
