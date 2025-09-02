@@ -13,11 +13,11 @@
     dest: "/opt/uptime-kuma/docker-compose.yml"
     mode: u=rw,g=r,o=r # 644
 
-- name: Pull latest Uptime Kuma image only if needed
+- name: Pull latest Uptime Kuma image
   community.docker.docker_image:
     name: louislam/uptime-kuma:latest
     source: pull
-    force_source: false
+    force_source: true
   register: uptime_kuma_image_result
 
 - name: Stop and remove existing Uptime Kuma container
@@ -36,4 +36,16 @@
     pull: "always"
     recreate: always
   notify: Reload nginx config
+  when: uptime_kuma_image_result.changed
+
+- name: Clean up old Uptime Kuma images only
+  shell: |
+    # Get the current image ID being used by the container
+    CURRENT_IMAGE=$(docker inspect uptime-kuma --format='{{.Image}}')
+
+    # Remove all uptime-kuma images except the current one
+    docker images louislam/uptime-kuma --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}" | grep -v "$CURRENT_IMAGE" | awk '{print $1}' | xargs -r docker rmi
+  args:
+    executable: /bin/bash
+  ignore_errors: true
   when: uptime_kuma_image_result.changed
