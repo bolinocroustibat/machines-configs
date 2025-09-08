@@ -38,14 +38,14 @@
         name: nginx
         tasks_from: install
 
+    - name: Update OmniTools
+      include_role:
+        name: omnitools
+        tasks_from: update
+
     - name: Update Pi-hole
       include_role:
         name: pi-hole
-        tasks_from: update
-
-    - name: Update WireGuard
-      include_role:
-        name: wireguard
         tasks_from: update
 
     - name: Update Portainer
@@ -58,9 +58,9 @@
         name: uptime-kuma
         tasks_from: update
 
-    - name: Update OmniTools
+    - name: Update WireGuard
       include_role:
-        name: omnitools
+        name: wireguard
         tasks_from: update
 
 - name: Prune Docker resources
