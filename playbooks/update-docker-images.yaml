@@ -1,0 +1,49 @@
+- name: Update all Docker-based services
+  hosts: data-bolino
+  tags:
+    - debian
+  tasks:
+    - name: Include nginx role for handlers
+      include_role:
+        name: nginx
+        tasks_from: install
+
+    - name: Update OmniTools
+      include_role:
+        name: omnitools
+        tasks_from: update
+      ignore_errors: true
+
+    - name: Update Pi-hole
+      include_role:
+        name: pi-hole
+        tasks_from: update
+      ignore_errors: true
+
+    - name: Update Portainer
+      include_role:
+        name: portainer
+        tasks_from: update
+      ignore_errors: true
+
+    - name: Update Uptime Kuma
+      include_role:
+        name: uptime-kuma
+        tasks_from: update
+      ignore_errors: true
+
+    - name: Update WireGuard
+      include_role:
+        name: wireguard
+        tasks_from: update
+      ignore_errors: true
+
+- name: Prune Docker resources
+  hosts: data-bolino
+  tags:
+    - debian
+  tasks:
+    - name: Prune unused Docker resources
+      include_role:
+        name: docker
+        tasks_from: prune
