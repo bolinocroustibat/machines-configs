@@ -1,3 +1,20 @@
+
+## 2. W
+
+- name: Get image version from running container
+  command: docker exec pihole cat /etc/pihole/versions
+  register: pihole_package
+  ignore_errors: true
+
+- name: Extract version
+  set_fact:
+    pihole_version: "{{ pihole_package.stdout.split('\n')[0] | regex_search('v([0-9.]+)', '\\1') | first }}"
+  when: pihole_package.rc == 0
+
+- name: Show current Pi-hole version
+  debug:
+    msg: "Pi-hole is running version {{ pihole_version | default('unknown') }}"
+
 - name: Include Pi-hole secrets
   include_vars: secrets.yaml
 
@@ -20,14 +37,29 @@
     force_source: true
   register: pihole_image_result
 
-- name: Stop and remove existing Pi-hole container
+- name: Get version from latest pulled image
+  command: docker run --rm pihole/pihole:latest cat /etc/pihole/versions
+  register: latest_package
+  when: pihole_image_result.changed
+
+- name: Extract latest version
+  set_fact:
+    latest_version: "{{ latest_package.stdout.split('\n')[0] | regex_search('v([0-9.]+)', '\\1') | first }}"
+  when: pihole_image_result.changed and latest_package.rc == 0
+
+- name: Show latest Pi-hole version
+  debug:
+    msg: "Latest Pi-hole version: {{ latest_version | default('unknown') }} (updating from {{ pihole_version | default('unknown') }})"
+  when: pihole_image_result.changed
+
+- name: "Stop and remove existing Pi-hole container (updating to {{ latest_version | default('latest') }})"
   community.docker.docker_container:
     name: pihole
     state: absent
   ignore_errors: true
   when: pihole_image_result.changed
 
-- name: Recreate Pi-hole container with new image
+- name: "Recreate Pi-hole container with new image (version {{ latest_version | default('latest') }})"
   community.docker.docker_compose_v2:
     project_src: "/opt/pi-hole"
     state: present
@@ -38,10 +70,10 @@
   notify: Reload nginx config
   when: pihole_image_result.changed
 
-- name: Clean up old Pi-hole images only
+- name: "Clean up old Pi-hole images (keeping version {{ latest_version | default('latest') }})"
   shell: |
     # Get the current image ID being used by the container
-    CURRENT_IMAGE=$(docker inspect pihole --format='{{.Image}}')
+    CURRENT_IMAGE=$(docker inspect pihole --format="{{.Image}}")
 
     # Remove all pihole images except the current one
     docker images pihole/pihole --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}" | grep -v "$CURRENT_IMAGE" | awk '{print $1}' | xargs -r docker rmi
