@@ -3,7 +3,7 @@
     name: nginx
     state: reloaded
 
-- name: restart omnitools
+- name: Restart omnitools
   community.docker.docker_container:
     name: omni-tools
     state: started

@@ -2,8 +2,8 @@
   ansible.builtin.git:
     repo: "git@github.com:romkatv/powerlevel10k.git"
     dest: "{{ user_home }}/.config/powerlevel10k/powerlevel10k.zsh-theme"
-    clone: yes
-    update: yes
+    clone: true
+    update: true
 
 - name: Backup existing .zshrc if it exists
   copy:

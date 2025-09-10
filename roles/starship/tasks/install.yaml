@@ -26,7 +26,7 @@
 - name: Get list of users
   getent:
     database: passwd
-  register: users
+  register: starship_users
 
 - name: Configure Starship for users
   include_tasks: configure_user.yaml
@@ -35,4 +35,4 @@
     - { home: "/home/github", user: "github" }
   loop_control:
     loop_var: user_config
-  when: user_config.user in users.ansible_facts.getent_passwd.keys()
+  when: user_config.user in starship_users.ansible_facts.getent_passwd.keys()
