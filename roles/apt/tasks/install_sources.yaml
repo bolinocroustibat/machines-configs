@@ -1,13 +1,13 @@
 - name: Check if sources.list exists
   stat:
     path: /etc/apt/sources.list
-  register: sources_list_stat
+  register: apt_sources_list_stat
   when: ansible_os_family == 'Debian'
 
 - name: Check if sources.list.d directory exists
   stat:
     path: /etc/apt/sources.list.d
-  register: sources_list_d_stat
+  register: apt_sources_list_d_stat
   when: ansible_os_family == 'Debian'
 
 - name: Backup existing sources list
@@ -16,14 +16,14 @@
     src: "/etc/apt/sources.list"
     dest: "/etc/apt/sources.list_{{ ansible_date_time.iso8601 }}.bak"
     mode: preserve
-  when: ansible_os_family == 'Debian' and sources_list_stat.stat.exists
+  when: ansible_os_family == 'Debian' and apt_sources_list_stat.stat.exists
 
 - name: Backup sources.list.d directory
   archive:
     path: /etc/apt/sources.list.d
     dest: "/etc/apt/sources.list.d_{{ ansible_date_time.iso8601 }}.tar.gz"
     format: gz
-  when: ansible_os_family == 'Debian' and sources_list_d_stat.stat.exists
+  when: ansible_os_family == 'Debian' and apt_sources_list_d_stat.stat.exists
 
 - name: Remove old sources.list if exists
   file:

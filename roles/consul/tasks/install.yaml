@@ -69,7 +69,7 @@
 # The token is extracted from the command output using grep and awk
 - name: Bootstrap ACL system
   shell: consul acl bootstrap | grep SecretID | awk '{print $2}'
-  register: bootstrap_token
+  register: consul_bootstrap_token
   changed_when: true
   failed_when: false
   when: inventory_hostname == consul_server_hosts[0]
@@ -80,21 +80,21 @@
 # This token must be copied and added to secrets.yaml
 - name: Display bootstrap token
   debug:
-    msg: "Bootstrap token: {{ bootstrap_token.stdout }}"
-  when: inventory_hostname == consul_server_hosts[0] and bootstrap_token.rc == 0
+    msg: "Bootstrap token: {{ consul_bootstrap_token.stdout }}"
+  when: inventory_hostname == consul_server_hosts[0] and consul_bootstrap_token.rc == 0
 
 # Check if DNS is properly configured
 - name: Check if DNS is properly configured
   command: dig +short {{ consul_domain }}
-  register: dns_check
+  register: consul_dns_check
   changed_when: false
-  failed_when: dns_check.stdout == ""
+  failed_when: consul_dns_check.stdout == ""
 
 # Check if SSL certificate exists
 - name: Check if SSL certificate exists
   stat:
     path: "/etc/letsencrypt/live/{{ consul_domain }}/fullchain.pem"
-  register: ssl_cert_exists
+  register: consul_ssl_cert_exists
 
 # Configure Nginx reverse proxy for web interface (only if SSL doesn't exist)
 - name: Copy Nginx configuration (only if SSL doesn't exist)
@@ -103,7 +103,7 @@
     dest: /etc/nginx/sites-available/{{ consul_domain }}.conf
     mode: u=rw,g=r,o=r # 644
   notify: Reload nginx config
-  when: not ssl_cert_exists.stat.exists
+  when: not consul_ssl_cert_exists.stat.exists
 
 # Enable Nginx site (only if SSL doesn't exist)
 - name: Enable Nginx site (only if SSL doesn't exist)
@@ -112,7 +112,7 @@
     dest: /etc/nginx/sites-enabled/{{ consul_domain }}.conf
     state: link
   notify: Reload nginx config
-  when: not ssl_cert_exists.stat.exists
+  when: not consul_ssl_cert_exists.stat.exists
 
 # Install SSL certificate with Certbot (only if SSL doesn't exist)
 - name: Install SSL certificate with Certbot (only if SSL doesn't exist)
@@ -120,4 +120,4 @@
   args:
     creates: /etc/letsencrypt/live/{{ consul_domain }}/fullchain.pem
   notify: Reload nginx config
-  when: dns_check.stdout != "" and not ssl_cert_exists.stat.exists
+  when: consul_dns_check.stdout != "" and not consul_ssl_cert_exists.stat.exists

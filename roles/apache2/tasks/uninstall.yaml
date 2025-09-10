@@ -45,11 +45,11 @@
       - "apache2*"
       - "apache*"
     file_type: any
-  register: remaining_files
+  register: apache2_remaining_files
 
 - name: Remove remaining Apache2 files
   file:
     path: "{{ item.path }}"
     state: absent
-  with_items: "{{ remaining_files.files }}"
+  with_items: "{{ apache2_remaining_files.files }}"
   ignore_errors: true

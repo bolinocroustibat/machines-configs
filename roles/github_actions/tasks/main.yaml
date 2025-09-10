@@ -29,7 +29,7 @@
     user: "{{ github_actions__user_name }}"
     state: present
     key: "{{ lookup('file', '/home/{{ github_actions__user_name }}/.ssh/id_rsa.pub') }}"
-  register: auth_key_result
+  register: github_actions_auth_key_result
   failed_when:
-    - auth_key_result.failed
-    - "'No such file or directory' not in auth_key_result.msg"
+    - github_actions_auth_key_result.failed
+    - "'No such file or directory' not in github_actions_auth_key_result.msg"

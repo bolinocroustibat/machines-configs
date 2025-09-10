@@ -1,16 +1,16 @@
 - name: Get image version from running container
   command: docker exec uptime-kuma cat /app/package.json
-  register: kuma_package
+  register: uptime_kuma_kuma_package
   ignore_errors: true
 
 - name: Extract version
   set_fact:
-    kuma_version: "{{ (kuma_package.stdout | from_json).version }}"
-  when: kuma_package.rc == 0
+    uptime_kuma_kuma_version: "{{ (uptime_kuma_kuma_package.stdout | from_json).version }}"
+  when: uptime_kuma_kuma_package.rc == 0
 
 - name: Show current Uptime Kuma version
   debug:
-    msg: "Uptime Kuma is running version {{ kuma_version | default('unknown') }}"
+    msg: "Uptime Kuma is running version {{ uptime_kuma_kuma_version | default('unknown') }}"
 
 - name: Include Uptime Kuma secrets
   include_vars: secrets.yaml
@@ -36,17 +36,17 @@
 
 - name: Get version from latest pulled image
   command: docker run --rm louislam/uptime-kuma:latest cat /app/package.json
-  register: latest_package
+  register: uptime_kuma_latest_package
   when: uptime_kuma_image_result.changed
 
 - name: Extract latest version
   set_fact:
-    latest_version: "{{ (latest_package.stdout | from_json).version }}"
-  when: uptime_kuma_image_result.changed and latest_package.rc == 0
+    uptime_kuma_latest_version: "{{ (uptime_kuma_latest_package.stdout | from_json).version }}"
+  when: uptime_kuma_image_result.changed and uptime_kuma_latest_package.rc == 0
 
 - name: Show latest Uptime Kuma version
   debug:
-    msg: "Latest Uptime Kuma version: {{ latest_version | default('unknown') }} (updating from {{ kuma_version | default('unknown') }})"
+    msg: "Latest Uptime Kuma version: {{ uptime_kuma_latest_version | default('unknown') }} (updating from {{ uptime_kuma_kuma_version | default('unknown') }})"
   when: uptime_kuma_image_result.changed
 
 - name: Stop and remove existing Uptime Kuma container

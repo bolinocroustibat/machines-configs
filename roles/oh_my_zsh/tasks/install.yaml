@@ -19,9 +19,9 @@
 
     - name: Install Oh-My-ZSH installation script
       command: sh /tmp/install_ohmyzsh.sh --unattended
-      register: ohmyzsh_result
-      failed_when: "'FAILED' in ohmyzsh_result.stderr"
-      changed_when: ohmyzsh_result.find('The $ZSH folder already exists') == -1
+      register: oh_my_zsh_result
+      failed_when: "'FAILED' in oh_my_zsh_result.stderr"
+      changed_when: oh_my_zsh_result.find('The $ZSH folder already exists') == -1
 
     - name: Remove the temporary file
       file:

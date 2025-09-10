@@ -55,7 +55,7 @@
 
     - name: Update Uptime Kuma
       include_role:
-        name: uptime-kuma
+        name: uptime_kuma
         tasks_from: update
 
     - name: Update WireGuard
@@ -105,12 +105,12 @@
     - debian
   tasks:
     - name: Update pip packages
+      ignore_errors: true # pip may be managed by uv, so we don't want to fail if it is
       block:
         - name: Update pip packages
           include_role:
             name: pip
             tasks_from: update
-      ignore_errors: true # pip may be managed by uv, so we don't want to fail if it is
 
 - name: Update fail2ban configurations
   hosts: remote
