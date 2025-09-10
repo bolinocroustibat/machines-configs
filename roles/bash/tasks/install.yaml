@@ -1,7 +1,7 @@
 - name: Get .bashrc file stat
   ansible.builtin.stat:
     path: "{{ user_home }}/.bashrc"
-  register: bashrc
+  register: bash_bashrc
 
 - name: Backup existing .bashrc if it exists
   ansible.builtin.copy:
@@ -9,7 +9,7 @@
     dest: "{{ user_home }}/.bashrc_{{ ansible_date_time.iso8601 }}.bak"
     mode: preserve
     remote_src: true
-  when: bashrc.stat.exists
+  when: bash_bashrc.stat.exists
 
 - name: Write .bashrc
   ansible.builtin.template:

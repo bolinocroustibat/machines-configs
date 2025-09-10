@@ -78,7 +78,7 @@
 - name: Check if .zshrc exists
   stat:
     path: "{{ user_home }}/.zshrc"
-  register: zshrc_stat
+  register: zsh_zshrc_stat
 
 - name: Backup existing .zshrc if it exists
   copy:
@@ -86,7 +86,7 @@
     src: "{{ user_home }}/.zshrc"
     dest: "{{ user_home }}/.zshrc_{{ ansible_date_time.iso8601 }}.bak"
     mode: preserve # Preserve the file permissions of the original file
-  when: zshrc_stat.stat.exists
+  when: zsh_zshrc_stat.stat.exists
 
 - name: Write .zshrc
   template:

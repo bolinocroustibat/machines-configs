@@ -2,11 +2,11 @@
   getent:
     database: passwd
     key: "{{ user_config.user }}"
-  register: user_exists
+  register: starship_user_exists
   failed_when: false
 
 - name: Configure Starship for user
-  when: user_config.user in user_exists.ansible_facts.getent_passwd.keys()
+  when: user_config.user in starship_user_exists.ansible_facts.getent_passwd.keys()
   block:
     - name: Create .config directory for user
       file:

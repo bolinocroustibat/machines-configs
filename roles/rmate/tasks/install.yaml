@@ -7,8 +7,8 @@
         dest: /usr/local/bin/rmate
         mode: u=rwx,g=rx,o=rx
         validate_certs: true
-      register: download_result
-      failed_when: download_result.status_code is defined and download_result.status_code != 200
+      register: rmate_download_result
+      failed_when: rmate_download_result.status_code is defined and rmate_download_result.status_code != 200
 
     - name: Create symlink from rmate to sublime
       file:
@@ -16,8 +16,8 @@
         dest: /usr/local/bin/sublime
         state: link
         force: true
-      when: download_result is success
+      when: rmate_download_result is success
   rescue:
     - name: Report failure
       fail:
-        msg: "Failed to setup rmate. Download status: {{ download_result.status_code | default('unknown') }}"
+        msg: "Failed to setup rmate. Download status: {{ rmate_download_result.status_code | default('unknown') }}"

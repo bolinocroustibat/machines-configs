@@ -10,7 +10,7 @@
   apt:
     name: bat
     state: present
-    update_cache: yes
+    update_cache: true
 
 - name: Define zshrc alias for bat (replace cat) - macOS
   become: false

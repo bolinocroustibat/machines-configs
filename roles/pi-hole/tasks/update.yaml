@@ -1,6 +1,3 @@
-
-## 2. W
-
 - name: Get image version from running container
   command: docker exec pihole cat /etc/pihole/versions
   register: pihole_package

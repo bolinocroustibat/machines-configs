@@ -44,9 +44,9 @@
 
 - name: Display new system version
   command: cat /etc/debian_version
-  register: debian_version
+  register: apt_debian_version
   changed_when: false
 
 - name: Show new Debian version
   debug:
-    var: debian_version.stdout
+    var: apt_debian_version.stdout

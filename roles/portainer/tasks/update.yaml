@@ -24,20 +24,20 @@
 
 - name: Get version from latest pulled image
   shell: "docker run --rm portainer/portainer-ce:latest /portainer --version 2>&1"
-  register: latest_package
+  register: portainer_latest_package
   when: portainer_image_result.changed
 
 - name: Extract latest version
   set_fact:
-    latest_version: "{{ latest_package.stdout.strip() }}"
-  when: portainer_image_result.changed and latest_package.rc == 0
+    portainer_latest_version: "{{ portainer_latest_package.stdout.strip() }}"
+  when: portainer_image_result.changed and portainer_latest_package.rc == 0
 
 - name: Show latest Portainer version
   debug:
-    msg: "Latest Portainer version: '{{ latest_version | default('unknown') }}' (updating from '{{ portainer_version | default('unknown') }}')"
+    msg: "Latest Portainer version: '{{ portainer_latest_version | default('unknown') }}' (updating from '{{ portainer_version | default('unknown') }}')"
   when: portainer_image_result.changed
 
-- name: "Recreate Portainer container with new image (version {{ latest_version | default('latest') }})"
+- name: "Recreate Portainer container with new image (version {{ portainer_latest_version | default('latest') }})"
   community.docker.docker_container:
     name: portainer
     image: portainer/portainer-ce:latest
@@ -52,7 +52,7 @@
   notify: Reload nginx config
   when: portainer_image_result.changed
 
-- name: "Clean up old Portainer images (keeping version {{ latest_version | default('latest') }})"
+- name: "Clean up old Portainer images (keeping version {{ portainer_latest_version | default('latest') }})"
   shell: |
     # Get the current image ID being used by the container
     CURRENT_IMAGE=$(docker inspect portainer --format="{{.Image}}")

@@ -1,34 +1,34 @@
 - name: Update Homebrew
   command: brew update
-  register: brew_update_result
-  changed_when: "'Already up-to-date' not in brew_update_result.stdout"
+  register: homebrew_brew_update_result
+  changed_when: "'Already up-to-date' not in homebrew_brew_update_result.stdout"
 
 - name: Upgrading Homebrew formulae
   command: brew upgrade
-  register: brew_upgrade_result
-  changed_when: "'Upgrading' in brew_upgrade_result.stdout"
+  register: homebrew_brew_upgrade_result
+  changed_when: "'Upgrading' in homebrew_brew_upgrade_result.stdout"
 
 - name: Upgrading Homebrew casks
   command: brew upgrade --cask --greedy
-  register: brew_upgrade_cask_result
-  changed_when: "'Downloading' in brew_upgrade_cask_result.stdout"
+  register: homebrew_brew_upgrade_cask_result
+  changed_when: "'Downloading' in homebrew_brew_upgrade_cask_result.stdout"
 
 - name: Homebrew autoremove
   command: brew autoremove
-  register: brew_autoremove_result
-  changed_when: "'Uninstalling' in brew_autoremove_result.stdout"
+  register: homebrew_brew_autoremove_result
+  changed_when: "'Uninstalling' in homebrew_brew_autoremove_result.stdout"
 
 - name: Cleanup Homebrew and scrub the cache
   command: brew cleanup -s
-  register: brew_cleanup_result
-  changed_when: "'Purging' in brew_cleanup_result.stdout"
+  register: homebrew_brew_cleanup_result
+  changed_when: "'Purging' in homebrew_brew_cleanup_result.stdout"
 
 # - name: Cleanup Homebrew and remove all cache files
 #   command: brew cleanup --prune
-#   register: brew_cleanup_result
-#   changed_when: "'Pruned' in brew_cleanup_result"
+#   register: homebrew_brew_cleanup_result
+#   changed_when: "'Pruned' in homebrew_brew_cleanup_result"
 
 # - name: Check Homebrew for issues
 #   command: brew doctor
-#   register: brew_doctor_result
-#   changed_when: brew_doctor_result.stdout.find("Your system is ready to brew") == -1
+#   register: homebrew_brew_doctor_result
+#   changed_when: homebrew_brew_doctor_result.stdout.find("Your system is ready to brew") == -1

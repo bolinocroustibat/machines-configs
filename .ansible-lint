@@ -1,6 +1,7 @@
 ---
 # Profiles gradually increase the strictness of rules as your Ansible content lifecycle.
-# We set it to "production" in order to ensure that content meets requirements for inclusion in Ansible Automation Platform (AAP) as validated or certified content.
+# We set it to "production" in order to ensure that content meets requirements for inclusion
+# in Ansible Automation Platform (AAP) as validated or certified content.
 # Possible values are "min", "basic", "moderate", "safety", "shared", "production" (see https://ansible.readthedocs.io/projects/lint/profiles/)
 profile: moderate
 
@@ -17,8 +18,8 @@ warn_list:
 
 # Ansible-lint will skip and ignore the rules or tags listed below
 # Uncomment next two lines in order to disable YAML syntax violations
-#skip_list:
-#  - yaml
+# skip_list:
+#   - yaml
 skip_list:
   # - 'name[casing]' # We don't want to raise an issue also when task name have no capital letter (for profile >= basic)
   - 'package-latest' # We sometimes want to use latest version of packages (for profile >= safety)

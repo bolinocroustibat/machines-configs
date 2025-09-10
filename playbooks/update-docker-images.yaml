@@ -28,7 +28,7 @@
 
     - name: Update Uptime Kuma
       include_role:
-        name: uptime-kuma
+        name: uptime_kuma
         tasks_from: update
       ignore_errors: true
 

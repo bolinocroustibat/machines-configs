@@ -19,19 +19,19 @@
     accept_hostkey: true
     update: true
     version: main
-  register: git_clone
+  register: minecraft_server_git_clone
 
 - name: Make minecraft-backup.sh executable
   file:
     path: "{{ user_home }}/minecraft-server/minecraft-backup.sh"
     mode: u=rwx,g=rx,o=rx # 755
-  when: git_clone.changed
+  when: minecraft_server_git_clone.changed
 
 - name: Start Minecraft server
   docker_compose:
     project_src: "{{ user_home }}/minecraft-server"
     state: present
-  register: output
+  register: minecraft_server_output
 
 - name: Add Minecraft backup cron job
   cron:

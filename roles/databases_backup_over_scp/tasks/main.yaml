@@ -2,7 +2,7 @@
   git:
     repo: git@github.com:bolinocroustibat/databases-backup-over-scp.git
     dest: "{{ user_home }}/"
-    update: yes
+    update: true
 
 - name: Create virtualenv and install requirements
   command: "uv sync"
@@ -32,4 +32,6 @@
     minute: "0"
     hour: "3"
     day: "1"
-    job: 'find {{ dabatase_backup_over_scp__local_backup_path }} -type f -mtime +30 -exec rm -f {} \; >> {{ user_home }}/databases-backup-over-scp/cron_{{ ansible_date_time.iso8601 }}.log'
+    job: >
+      find {{ dabatase_backup_over_scp__local_backup_path }} -type f -mtime +30 -exec rm -f {} \;
+      >> {{ user_home }}/databases-backup-over-scp/cron_{{ ansible_date_time.iso8601 }}.log

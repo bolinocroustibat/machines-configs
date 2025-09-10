@@ -46,9 +46,10 @@
         var: system_status.stdout_lines
 
     - name: Check for failed services
-      shell: systemctl list-units --state=failed
+      command: systemctl list-units --state=failed
       register: failed_services
       changed_when: false
+      failed_when: false
 
     - name: Display failed services
       debug:
