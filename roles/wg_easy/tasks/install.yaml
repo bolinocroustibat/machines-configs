@@ -24,35 +24,35 @@
     recreate: always
 
 - name: Check if DNS is properly configured
-  command: dig +short {{ wireguard_domain }}
-  register: wireguard_dns_check
+  command: dig +short {{ wg_easy_domain }}
+  register: wg_easy_dns_check
   changed_when: false
-  failed_when: wireguard_dns_check.stdout == ""
+  failed_when: wg_easy_dns_check.stdout == ""
 
 - name: Check if SSL certificate exists
   stat:
-    path: "/etc/letsencrypt/live/{{ wireguard_domain }}/fullchain.pem"
-  register: wireguard_ssl_cert_exists
+    path: "/etc/letsencrypt/live/{{ wg_easy_domain }}/fullchain.pem"
+  register: wg_easy_ssl_cert_exists
 
-- name: Deploy Nginx vhost for WireGuard (only if SSL doesn't exist)
+- name: Deploy Nginx vhost for Wg-Easy (only if SSL doesn't exist)
   template:
-    src: "{{ wireguard_domain }}.conf.j2"
-    dest: "/etc/nginx/sites-available/{{ wireguard_domain }}.conf"
+    src: "{{ wg_easy_domain }}.conf.j2"
+    dest: "/etc/nginx/sites-available/{{ wg_easy_domain }}.conf"
     mode: u=rw,g=r,o=r  # 644
   notify: Reload nginx config
-  when: not wireguard_ssl_cert_exists.stat.exists
+  when: not wg_easy_ssl_cert_exists.stat.exists
 
-- name: Enable Nginx vhost for WireGuard (only if SSL doesn't exist)
+- name: Enable Nginx vhost for Wg-Easy (only if SSL doesn't exist)
   file:
-    src: "/etc/nginx/sites-available/{{ wireguard_domain }}.conf"
-    dest: "/etc/nginx/sites-enabled/{{ wireguard_domain }}.conf"
+    src: "/etc/nginx/sites-available/{{ wg_easy_domain }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ wg_easy_domain }}.conf"
     state: link
     force: true
   notify: Reload nginx config
-  when: not wireguard_ssl_cert_exists.stat.exists
+  when: not wg_easy_ssl_cert_exists.stat.exists
 
 - name: Configure SSL with Certbot (only if SSL doesn't exist)
-  command: certbot --nginx -d {{ wireguard_domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
+  command: certbot --nginx -d {{ wg_easy_domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
   args:
-    creates: "/etc/letsencrypt/live/{{ wireguard_domain }}/fullchain.pem"
-  when: wireguard_dns_check.stdout != "" and not wireguard_ssl_cert_exists.stat.exists
+    creates: "/etc/letsencrypt/live/{{ wg_easy_domain }}/fullchain.pem"
+  when: wg_easy_dns_check.stdout != "" and not wg_easy_ssl_cert_exists.stat.exists

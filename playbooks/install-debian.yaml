@@ -175,7 +175,7 @@
   tasks:
     - name: Install WireGuard
       include_role:
-        name: wireguard
+        name: wg_easy
         tasks_from: install
 
 - name: Install Portainer

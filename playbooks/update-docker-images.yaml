@@ -34,7 +34,7 @@
 
     - name: Update WireGuard
       include_role:
-        name: wireguard
+        name: wg_easy
         tasks_from: update
       ignore_errors: true
 
