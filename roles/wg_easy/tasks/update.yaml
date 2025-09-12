@@ -1,21 +1,21 @@
 - name: Get image version from running container
   command: docker exec wg-easy cat /app/package.json
-  register: wireguard_wg_package
+  register: wg_easy_wg_package
   ignore_errors: true
 
 - name: Extract version
   set_fact:
-    wireguard_wg_version: "{{ (wireguard_wg_package.stdout | from_json).version }}"
-  when: wireguard_wg_package.rc == 0
+    wg_easy_wg_version: "{{ (wg_easy_wg_package.stdout | from_json).version }}"
+  when: wg_easy_wg_package.rc == 0
 
-- name: Show current WireGuard version
+- name: Show current Wg-Easy version
   debug:
-    msg: "WireGuard is running version {{ wireguard_wg_version | default('unknown') }}"
+    msg: "Wg-Easy is running version {{ wg_easy_wg_version | default('unknown') }}"
 
-- name: Include WireGuard secrets
+- name: Include Wg-Easy secrets
   include_vars: secrets.yaml
 
-- name: Ensure WireGuard directory exists
+- name: Ensure Wg-Easy directory exists
   file:
     path: "/opt/wg-easy"
     state: directory
@@ -32,31 +32,31 @@
     name: ghcr.io/wg-easy/wg-easy:latest
     source: pull
     force_source: true
-  register: wireguard_wg_easy_image_result
+  register: wg_easy_wg_easy_image_result
 
 - name: Get version from latest pulled image
   command: docker run --rm ghcr.io/wg-easy/wg-easy:latest cat /app/package.json
-  register: wireguard_latest_package
-  when: wireguard_wg_easy_image_result.changed
+  register: wg_easy_latest_package
+  when: wg_easy_wg_easy_image_result.changed
 
 - name: Extract latest version
   set_fact:
-    wireguard_latest_version: "{{ (wireguard_latest_package.stdout | from_json).version }}"
-  when: wireguard_wg_easy_image_result.changed and wireguard_latest_package.rc == 0
+    wg_easy_latest_version: "{{ (wg_easy_latest_package.stdout | from_json).version }}"
+  when: wg_easy_wg_easy_image_result.changed and wg_easy_latest_package.rc == 0
 
-- name: Show latest WireGuard version
+- name: Show latest Wg-Easy version
   debug:
-    msg: "Latest WireGuard version: {{ wireguard_latest_version | default('unknown') }} (updating from {{ wireguard_wg_version | default('unknown') }})"
-  when: wireguard_wg_easy_image_result.changed
+    msg: "Latest Wg-Easy version: {{ wg_easy_latest_version | default('unknown') }} (updating from {{ wg_easy_wg_version | default('unknown') }})"
+  when: wg_easy_wg_easy_image_result.changed
 
-- name: "Stop and remove existing wg-easy container (updating to {{ wireguard_latest_version | default('latest') }})"
+- name: "Stop and remove existing wg-easy container (updating to {{ wg_easy_latest_version | default('latest') }})"
   community.docker.docker_container:
     name: wg-easy
     state: absent
   ignore_errors: true
-  when: wireguard_wg_easy_image_result.changed
+  when: wg_easy_wg_easy_image_result.changed
 
-- name: "Recreate WireGuard container with new image (version {{ wireguard_latest_version | default('latest') }})"
+- name: "Recreate Wg-Easy container with new image (version {{ wg_easy_latest_version | default('latest') }})"
   community.docker.docker_compose_v2:
     project_src: "/opt/wg-easy"
     state: present
@@ -65,9 +65,9 @@
     pull: "always"
     recreate: always
   notify: Reload nginx config
-  when: wireguard_wg_easy_image_result.changed
+  when: wg_easy_wg_easy_image_result.changed
 
-- name: "Clean up old wg-easy images (keeping version {{ wireguard_latest_version | default('latest') }})"
+- name: "Clean up old wg-easy images (keeping version {{ wg_easy_latest_version | default('latest') }})"
   shell: |
     # Get the current image ID being used by the container
     CURRENT_IMAGE=$(docker inspect wg-easy --format="{{.Image}}")
@@ -77,4 +77,4 @@
   args:
     executable: /bin/bash
   ignore_errors: true
-  when: wireguard_wg_easy_image_result.changed
+  when: wg_easy_wg_easy_image_result.changed
