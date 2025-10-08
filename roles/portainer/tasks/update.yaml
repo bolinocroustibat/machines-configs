@@ -23,7 +23,7 @@
   register: portainer_image_result
 
 - name: Get version from latest pulled image
-  shell: "docker run --rm portainer/portainer-ce:latest /portainer --version 2>&1"
+  shell: "docker run --rm portainer/portainer-ce:latest portainer --version 2>&1"
   register: portainer_latest_package
   when: portainer_image_result.changed
 
