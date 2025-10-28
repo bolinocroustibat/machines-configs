@@ -1,16 +1,3 @@
-- name: Get image version from running container
-  shell: "docker exec portainer /portainer --version 2>&1"
-  register: portainer_package
-  ignore_errors: true
-
-- name: Extract version
-  set_fact:
-    portainer_version: "{{ portainer_package.stdout.strip() }}"
-  when: portainer_package.rc == 0
-
-- name: Show current Portainer version
-  debug:
-    msg: "Portainer is running version '{{ portainer_version | default('unknown') }}'"
 
 - name: Include Portainer secrets
   include_vars: secrets.yaml
@@ -20,24 +7,8 @@
     name: portainer/portainer-ce:latest
     source: pull
     force_source: true
-  register: portainer_image_result
 
-- name: Get version from latest pulled image
-  shell: "docker run --rm portainer/portainer-ce:latest /portainer --version 2>&1"
-  register: portainer_latest_package
-  when: portainer_image_result.changed
-
-- name: Extract latest version
-  set_fact:
-    portainer_latest_version: "{{ portainer_latest_package.stdout.strip() }}"
-  when: portainer_image_result.changed and portainer_latest_package.rc == 0
-
-- name: Show latest Portainer version
-  debug:
-    msg: "Latest Portainer version: '{{ portainer_latest_version | default('unknown') }}' (updating from '{{ portainer_version | default('unknown') }}')"
-  when: portainer_image_result.changed
-
-- name: "Recreate Portainer container with new image (version {{ portainer_latest_version | default('latest') }})"
+- name: "Recreate Portainer container with new image"
   community.docker.docker_container:
     name: portainer
     image: portainer/portainer-ce:latest
@@ -49,17 +20,3 @@
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
-  notify: Reload nginx config
-  when: portainer_image_result.changed
-
-- name: "Clean up old Portainer images (keeping version {{ portainer_latest_version | default('latest') }})"
-  shell: |
-    # Get the current image ID being used by the container
-    CURRENT_IMAGE=$(docker inspect portainer --format="{{.Image}}")
-
-    # Remove all portainer images except the current one
-    docker images portainer/portainer-ce --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}" | grep -v "$CURRENT_IMAGE" | awk '{print $1}' | xargs -r docker rmi
-  args:
-    executable: /bin/bash
-  ignore_errors: true
-  when: portainer_image_result.changed
