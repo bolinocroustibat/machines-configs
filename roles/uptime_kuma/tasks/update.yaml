@@ -1,16 +1,3 @@
-- name: Get image version from running container
-  command: docker exec uptime-kuma cat /app/package.json
-  register: uptime_kuma_kuma_package
-  ignore_errors: true
-
-- name: Extract version
-  set_fact:
-    uptime_kuma_kuma_version: "{{ (uptime_kuma_kuma_package.stdout | from_json).version }}"
-  when: uptime_kuma_kuma_package.rc == 0
-
-- name: Show current Uptime Kuma version
-  debug:
-    msg: "Uptime Kuma is running version {{ uptime_kuma_kuma_version | default('unknown') }}"
 
 - name: Include Uptime Kuma secrets
   include_vars: secrets.yaml
@@ -27,34 +14,17 @@
     dest: "/opt/uptime-kuma/docker-compose.yml"
     mode: u=rw,g=r,o=r # 644
 
-- name: Pull latest Uptime Kuma image
+- name: Pull Uptime Kuma image
   community.docker.docker_image:
-    name: louislam/uptime-kuma:latest
+    name: louislam/uptime-kuma:2.0.2
     source: pull
     force_source: true
-  register: uptime_kuma_image_result
-
-- name: Get version from latest pulled image
-  command: docker run --rm louislam/uptime-kuma:latest cat /app/package.json
-  register: uptime_kuma_latest_package
-  when: uptime_kuma_image_result.changed
-
-- name: Extract latest version
-  set_fact:
-    uptime_kuma_latest_version: "{{ (uptime_kuma_latest_package.stdout | from_json).version }}"
-  when: uptime_kuma_image_result.changed and uptime_kuma_latest_package.rc == 0
-
-- name: Show latest Uptime Kuma version
-  debug:
-    msg: "Latest Uptime Kuma version: {{ uptime_kuma_latest_version | default('unknown') }} (updating from {{ uptime_kuma_kuma_version | default('unknown') }})"
-  when: uptime_kuma_image_result.changed
 
 - name: Stop and remove existing Uptime Kuma container
   community.docker.docker_container:
     name: uptime-kuma
     state: absent
   ignore_errors: true
-  when: uptime_kuma_image_result.changed
 
 - name: Recreate Uptime Kuma container with new image
   community.docker.docker_compose_v2:
@@ -64,17 +34,3 @@
     build: "never"
     pull: "always"
     recreate: always
-  notify: Reload nginx config
-  when: uptime_kuma_image_result.changed
-
-- name: Clean up old Uptime Kuma images only
-  shell: |
-    # Get the current image ID being used by the container
-    CURRENT_IMAGE=$(docker inspect uptime-kuma --format="{{.Image}}")
-
-    # Remove all uptime-kuma images except the current one
-    docker images louislam/uptime-kuma --format "table {{.Repository}}:{{.Tag}}\t{{.ID}}" | grep -v "$CURRENT_IMAGE" | awk '{print $1}' | xargs -r docker rmi
-  args:
-    executable: /bin/bash
-  ignore_errors: true
-  when: uptime_kuma_image_result.changed
