@@ -2,7 +2,7 @@
 
 services:
   uptime-kuma:
-    image: louislam/uptime-kuma:1
+    image: louislam/uptime-kuma:{{ uptime_kuma_image_tag }}
     container_name: uptime-kuma
     restart: unless-stopped
     ports:

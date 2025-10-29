@@ -2,7 +2,7 @@
 
 services:
   omni-tools:
-    image: iib0011/omni-tools:latest
+    image: iib0011/omni-tools:{{ omnitools_image_tag }}
     container_name: omni-tools
     restart: unless-stopped
     ports:
