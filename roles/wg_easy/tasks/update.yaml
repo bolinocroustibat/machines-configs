@@ -14,12 +14,6 @@
     dest: "/opt/wg-easy/docker-compose.yml"
     mode: u=rw,g=r,o=r # 644
 
-- name: Pull latest wg-easy image
-  community.docker.docker_image:
-    name: ghcr.io/wg-easy/wg-easy:latest
-    source: pull
-    force_source: true
-
 - name: "Stop and remove existing wg-easy container"
   community.docker.docker_container:
     name: wg-easy

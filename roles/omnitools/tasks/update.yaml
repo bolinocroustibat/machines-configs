@@ -13,12 +13,6 @@
     dest: "/opt/omnitools/docker-compose.yml"
     mode: u=rw,g=r,o=r # 644
 
-- name: Pull latest OmniTools image
-  community.docker.docker_image:
-    name: iib0011/omni-tools:latest
-    source: pull
-    force_source: true
-
 - name: Stop and remove existing OmniTools container
   community.docker.docker_container:
     name: omni-tools

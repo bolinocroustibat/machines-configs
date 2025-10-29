@@ -14,12 +14,6 @@
     dest: "/opt/pi-hole/docker-compose.yml"
     mode: u=rw,g=r,o=r # 644
 
-- name: Pull latest Pi-hole image
-  community.docker.docker_image:
-    name: pihole/pihole:latest
-    source: pull
-    force_source: true
-
 - name: "Stop and remove existing Pi-hole container"
   community.docker.docker_container:
     name: pihole

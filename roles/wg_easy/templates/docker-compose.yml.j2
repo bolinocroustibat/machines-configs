@@ -1,7 +1,7 @@
 services:
   wg-easy:
     container_name: wg-easy
-    image: ghcr.io/wg-easy/wg-easy:latest
+    image: ghcr.io/wg-easy/wg-easy:{{ wg_easy_image_tag }}
     environment:
       WG_HOST: "{{ wg_easy_domain }}"
       PASSWORD_HASH: "{{ wg_easy_admin_password_hash | replace('$', '$$') }}"
