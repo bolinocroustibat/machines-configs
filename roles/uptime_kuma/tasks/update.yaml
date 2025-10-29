@@ -14,12 +14,6 @@
     dest: "/opt/uptime-kuma/docker-compose.yml"
     mode: u=rw,g=r,o=r # 644
 
-- name: Pull Uptime Kuma image
-  community.docker.docker_image:
-    name: louislam/uptime-kuma:2.0.2
-    source: pull
-    force_source: true
-
 - name: Stop and remove existing Uptime Kuma container
   community.docker.docker_container:
     name: uptime-kuma

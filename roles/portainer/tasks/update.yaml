@@ -2,16 +2,16 @@
 - name: Include Portainer secrets
   include_vars: secrets.yaml
 
-- name: Pull latest Portainer image
+- name: Pull Portainer image
   community.docker.docker_image:
-    name: portainer/portainer-ce:latest
+    name: "portainer/portainer-ce:{{ portainer_image_tag }}"
     source: pull
     force_source: true
 
 - name: "Recreate Portainer container with new image"
   community.docker.docker_container:
     name: portainer
-    image: portainer/portainer-ce:latest
+    image: "portainer/portainer-ce:{{ portainer_image_tag }}"
     state: started
     restart_policy: always
     ports:
