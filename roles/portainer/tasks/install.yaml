@@ -7,7 +7,7 @@
     - name: Create Portainer container
       community.docker.docker_container:
         name: portainer
-        image: portainer/portainer-ce:latest
+        image: "portainer/portainer-ce:{{ portainer_image_tag }}"
         state: started
         restart_policy: always
         ports:
@@ -23,7 +23,7 @@
     - name: Create Portainer Agent container
       community.docker.docker_container:
         name: portainer_agent
-        image: portainer/agent:latest
+        image: "portainer/agent:{{ portainer_image_tag }}"
         state: started
         restart_policy: always
         ports:
