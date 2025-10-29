@@ -28,7 +28,7 @@
         name: docker
         tasks_from: update
 
-- name: Update Docker-based services
+- name: Update Docker-based services on data-bolino
   hosts: data-bolino
   tags:
     - debian
@@ -48,11 +48,6 @@
         name: pi-hole
         tasks_from: update
 
-    - name: Update Portainer
-      include_role:
-        name: portainer
-        tasks_from: update
-
     - name: Update Uptime Kuma
       include_role:
         name: uptime_kuma
@@ -61,6 +56,21 @@
     - name: Update WireGuard
       include_role:
         name: wg_easy
+        tasks_from: update
+
+- name: Update Portainer
+  hosts: remote
+  tags:
+    - debian
+  tasks:
+    - name: Include nginx role for handlers
+      include_role:
+        name: nginx
+        tasks_from: install
+
+    - name: Update Portainer
+      include_role:
+        name: portainer
         tasks_from: update
 
 - name: Prune Docker resources
