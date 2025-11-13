@@ -141,7 +141,7 @@
         tasks_from: update
 
 - name: Update Bun
-  hosts: all
+  hosts: local
   tasks:
     - name: Update Bun package manager
       include_role:
