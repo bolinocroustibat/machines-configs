@@ -15,7 +15,7 @@
 - name: Define zshrc alias for bat (replace cat) - macOS
   become: false
   vars:
-    zshrc_path: "{{ ansible_env.HOME }}/.zshrc"
+    zshrc_path: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
   blockinfile:
     path: "{{ zshrc_path }}"
     marker: "# {mark} bat alias added by ansible"
@@ -26,7 +26,7 @@
 - name: Define zshrc alias for batcat (replace cat) - Debian
   become: false
   vars:
-    zshrc_path: "{{ ansible_env.HOME }}/.zshrc"
+    zshrc_path: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
   blockinfile:
     path: "{{ zshrc_path }}"
     marker: "# {mark} bat alias added by ansible"

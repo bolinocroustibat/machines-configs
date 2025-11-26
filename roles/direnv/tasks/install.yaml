@@ -25,7 +25,7 @@
   copy:
     remote_src: true
     src: "{{ user_home }}/.config/direnv/direnv.toml"
-    dest: "{{ user_home }}/.config/direnv/direnv.toml_{{ ansible_date_time.iso8601 }}.bak"
+    dest: "{{ user_home }}/.config/direnv/direnv.toml_{{ ansible_facts['date_time']['iso8601'] }}.bak"
     mode: preserve # Preserve the file permissions of the original file
   when: direnv_config.stat.exists
 
@@ -38,7 +38,7 @@
 - name: Configure direnv in .zshrc
   become: false
   vars:
-    zshrc_path: "{{ ansible_env.HOME }}/.zshrc"
+    zshrc_path: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
   blockinfile:
     path: "{{ zshrc_path }}"
     marker: "# {mark} direnv hook added by ansible. See https://direnv.net/"

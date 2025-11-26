@@ -28,7 +28,7 @@
   copy:
     remote_src: true
     src: "{{ user_home }}/.config/micro/settings.json"
-    dest: "{{ user_home }}/.config/micro/settings.json_{{ ansible_date_time.iso8601 }}.bak"
+    dest: "{{ user_home }}/.config/micro/settings.json_{{ ansible_facts['date_time']['iso8601'] }}.bak"
     mode: preserve
     owner: "{{ ansible_user }}"
   when: micro_config.stat.exists

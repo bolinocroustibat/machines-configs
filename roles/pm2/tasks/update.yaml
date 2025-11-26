@@ -6,7 +6,7 @@
   become: false
 
 - name: Update PM2 in-memory
-  command: "{{ ansible_env.HOME }}/.npm-global/bin/pm2 update"
+  command: "{{ ansible_facts['env']['HOME'] }}/.npm-global/bin/pm2 update"
   register: pm2_update
   changed_when: "'All PM2 processes have been restarted' in pm2_update.stdout"
   become: false
