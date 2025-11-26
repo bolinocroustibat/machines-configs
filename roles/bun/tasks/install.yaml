@@ -3,7 +3,7 @@
     name: bun
     state: present
   become: false
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts["os_family"] == "Darwin"
 
 - name: Download Bun installer (Debian)
   get_url:
@@ -11,14 +11,14 @@
     dest: /tmp/bun-installer.sh
     mode: u=rwx,g=rx,o=rx # 755
   become: false
-  when: ansible_os_family == "Debian"
+  when: ansible_facts["os_family"] == "Debian"
 
 - name: Install Bun (Debian)
   command: "/tmp/bun-installer.sh"
   args:
     creates: "{{ ansible_env.HOME }}/.bun/bin/bun"
   become: false
-  when: ansible_os_family == "Debian"
+  when: ansible_facts["os_family"] == "Debian"
 
 - name: Configure bun in .zshrc
   become: false

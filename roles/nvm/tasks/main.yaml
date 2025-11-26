@@ -1,11 +1,11 @@
 - name: Install NVM
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts["os_family"] == "Darwin"
   homebrew:
     name: nvm
     state: latest
 
 - name: Install/select node version with NVM
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts["os_family"] == "Darwin"
   command: nvm install {{ nvm_default_node_version }}
   register: nvm_install
   changed_when: nvm_install.find('already installed') == -1
