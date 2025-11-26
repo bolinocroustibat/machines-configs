@@ -2,14 +2,14 @@
   homebrew:
     name: uv
     state: latest
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts["os_family"] == "Darwin"
 
 - name: Download uv installation script
   get_url:
     url: 'https://astral.sh/uv/install.sh'
     dest: "/tmp/uv_install.sh"
     mode: u=rwx,g=rx,o=rx # 755 (make the file executable)
-  when: ansible_os_family == "Debian"
+  when: ansible_facts["os_family"] == "Debian"
 
 - name: Execute uv installation script
   command: sh /tmp/uv_install.sh
@@ -18,13 +18,13 @@
   register: uv_result
   failed_when: "'FAILED' in uv_result.stderr"
   changed_when: "'installed!' in uv_result.stdout"
-  when: ansible_os_family == "Debian"
+  when: ansible_facts["os_family"] == "Debian"
 
 - name: Delete uv install script
   file:
     path: "/tmp/uv_install.sh"
     state: absent
-  when: ansible_os_family == "Debian"
+  when: ansible_facts["os_family"] == "Debian"
 
 - name: Install Python 3.12 with uv
   command: "{{ uv_install_dir }}/uv python install 3.12"
