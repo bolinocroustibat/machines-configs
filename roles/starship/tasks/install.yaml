@@ -1,24 +1,24 @@
 - name: Install Starship
   block:
     - name: Install Starship with homebrew
-      when: ansible_os_family == "Darwin"
+      when: ansible_facts["os_family"] == "Darwin"
       homebrew:
         name: starship
         state: present
 
     - name: Download Starship install script
-      when: ansible_os_family == "Debian"
+      when: ansible_facts["os_family"] == "Debian"
       get_url:
         url: "https://starship.rs/install.sh"
         dest: "/tmp/starship_install.sh"
         mode: u=rwx,g=rx,o=rx
 
     - name: Install Starship system-wide
-      when: ansible_os_family == "Debian"
+      when: ansible_facts["os_family"] == "Debian"
       command: "sh /tmp/starship_install.sh --bin-dir /usr/local/bin -y"
 
     - name: Delete Starship install script
-      when: ansible_os_family == "Debian"
+      when: ansible_facts["os_family"] == "Debian"
       file:
         path: "/tmp/starship_install.sh"
         state: absent

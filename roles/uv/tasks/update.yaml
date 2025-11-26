@@ -1,7 +1,7 @@
 # For MacOS ("Darwin") systems, uv is updated as a Homebrew package.
 
 - name: Update uv
-  when: ansible_os_family == "Debian"
+  when: ansible_facts["os_family"] == "Debian"
   command: "{{ uv_install_dir }}/uv self update"
   register: uv_result
   changed_when: "'on the latest version of uv' not in uv_result.stderr"

@@ -6,18 +6,18 @@
     upgrade: true
     force_apt_get: true
   become: true
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts["os_family"] == 'Debian'
 
 - name: Remove unused packages
   apt:
     autoremove: true
     force_apt_get: true
   become: true
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts["os_family"] == 'Debian'
 
 - name: Clean package cache
   apt:
     autoclean: true
     force_apt_get: true
   become: true
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts["os_family"] == 'Debian'

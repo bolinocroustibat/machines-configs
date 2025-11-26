@@ -3,14 +3,14 @@
     name: bun
     state: latest
   become: false
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts["os_family"] == "Darwin"
 
 - name: Check if Bun is installed (Debian)
   command: which bun
   register: bun_location
   changed_when: false
   become: false
-  when: ansible_os_family == "Debian"
+  when: ansible_facts["os_family"] == "Debian"
   ignore_errors: true
 
 - name: Upgrade Bun (Debian)
@@ -19,5 +19,5 @@
   changed_when: "'Already up to date' not in bun_upgrade.stdout"
   become: false
   when:
-    - ansible_os_family == "Debian"
+    - ansible_facts["os_family"] == "Debian"
     - bun_location.rc == 0

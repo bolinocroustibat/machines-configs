@@ -2,14 +2,14 @@
   homebrew:
     name: micro
     state: latest
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts["os_family"] == "Darwin"
 
 - name: Install Micro text editor with apt
   apt:
     name: micro
     state: latest
     update_cache: true
-  when: ansible_os_family == "Debian"
+  when: ansible_facts["os_family"] == "Debian"
 
 - name: Ensure micro config directory exists
   file:

@@ -1,11 +1,11 @@
 - name: Install bat via Homebrew (MacOS)
-  when: ansible_os_family == 'Darwin'
+  when: ansible_facts["os_family"] == 'Darwin'
   community.general.homebrew:
     name: bat
     state: present
 
 - name: Install bat via apt (Debian)
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts["os_family"] == 'Debian'
   become: true
   apt:
     name: bat
@@ -21,7 +21,7 @@
     marker: "# {mark} bat alias added by ansible"
     block: |
       alias cat='bat'
-  when: ansible_os_family == 'Darwin'
+  when: ansible_facts["os_family"] == 'Darwin'
 
 - name: Define zshrc alias for batcat (replace cat) - Debian
   become: false
@@ -32,4 +32,4 @@
     marker: "# {mark} bat alias added by ansible"
     block: |
       alias cat='batcat'
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts["os_family"] == 'Debian'
