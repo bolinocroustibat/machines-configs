@@ -19,7 +19,7 @@
       copy:
         remote_src: true
         src: "{{ user_config.home }}/.config/starship.toml"
-        dest: "{{ user_config.home }}/.config/starship.toml_{{ ansible_date_time.iso8601 }}.bak"
+        dest: "{{ user_config.home }}/.config/starship.toml_{{ ansible_facts['date_time']['iso8601'] }}.bak"
         mode: preserve
       failed_when: false
 

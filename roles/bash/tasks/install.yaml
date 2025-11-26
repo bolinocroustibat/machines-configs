@@ -6,7 +6,7 @@
 - name: Backup existing .bashrc if it exists
   ansible.builtin.copy:
     src: "{{ user_home }}/.bashrc"
-    dest: "{{ user_home }}/.bashrc_{{ ansible_date_time.iso8601 }}.bak"
+    dest: "{{ user_home }}/.bashrc_{{ ansible_facts['date_time']['iso8601'] }}.bak"
     mode: preserve
     remote_src: true
   when: bash_bashrc.stat.exists

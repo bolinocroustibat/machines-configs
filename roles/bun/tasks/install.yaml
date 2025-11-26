@@ -16,19 +16,19 @@
 - name: Install Bun (Debian)
   command: "/tmp/bun-installer.sh"
   args:
-    creates: "{{ ansible_env.HOME }}/.bun/bin/bun"
+    creates: "{{ ansible_facts['env']['HOME'] }}/.bun/bin/bun"
   become: false
   when: ansible_facts["os_family"] == "Debian"
 
 - name: Configure bun in .zshrc
   become: false
   vars:
-    zshrc_path: "{{ ansible_env.HOME }}/.zshrc"
+    zshrc_path: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
   blockinfile:
     path: "{{ zshrc_path }}"
     marker: "# {mark} bun configuration added by ansible"
     block: |
-      export BUN_INSTALL="{{ ansible_env.HOME }}/.bun"
+      export BUN_INSTALL="{{ ansible_facts['env']['HOME'] }}/.bun"
       export PATH="$BUN_INSTALL/bin:$PATH"
       # bun completions
-      [ -s "{{ ansible_env.HOME }}/.bun/_bun" ] && source "{{ ansible_env.HOME }}/.bun/_bun"
+      [ -s "{{ ansible_facts['env']['HOME'] }}/.bun/_bun" ] && source "{{ ansible_facts['env']['HOME'] }}/.bun/_bun"

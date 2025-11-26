@@ -3,7 +3,7 @@
     - name: Backup existing vhost
       copy:
         src: "{{ nginx_conf_path }}/{{ item.domain }}.conf"
-        dest: "{{ nginx_conf_path }}/{{ item.domain }}.conf.bak_{{ ansible_date_time.iso8601 }}"
+        dest: "{{ nginx_conf_path }}/{{ item.domain }}.conf.bak_{{ ansible_facts['date_time']['iso8601'] }}"
         mode: preserve
       loop: "{{ websites_media }}"
       ignore_errors: true
