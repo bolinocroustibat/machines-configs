@@ -14,14 +14,14 @@
   copy:
     remote_src: true
     src: "/etc/apt/sources.list"
-    dest: "/etc/apt/sources.list_{{ ansible_date_time.iso8601 }}.bak"
+    dest: "/etc/apt/sources.list_{{ ansible_facts['date_time']['iso8601'] }}.bak"
     mode: preserve
   when: ansible_facts["os_family"] == 'Debian' and apt_sources_list_stat.stat.exists
 
 - name: Backup sources.list.d directory
   archive:
     path: /etc/apt/sources.list.d
-    dest: "/etc/apt/sources.list.d_{{ ansible_date_time.iso8601 }}.tar.gz"
+    dest: "/etc/apt/sources.list.d_{{ ansible_facts['date_time']['iso8601'] }}.tar.gz"
     format: gz
   when: ansible_facts["os_family"] == 'Debian' and apt_sources_list_d_stat.stat.exists
 

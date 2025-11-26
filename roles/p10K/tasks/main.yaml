@@ -9,7 +9,7 @@
   copy:
     remote_src: true
     src: "{{ user_home }}/.zshrc"
-    dest: "{{ user_home }}/.zshrc_{{ ansible_date_time.iso8601 }}.bak"
+    dest: "{{ user_home }}/.zshrc_{{ ansible_facts['date_time']['iso8601'] }}.bak"
     mode: preserve # Preserve the file permissions of the original file
 
 - name: Add p10k startup command to .zshrc
