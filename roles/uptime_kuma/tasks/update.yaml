@@ -1,4 +1,3 @@
-
 - name: Include Uptime Kuma secrets
   include_vars: secrets.yaml
 
