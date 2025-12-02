@@ -38,6 +38,9 @@ var/
 .DS_Store
 Thumbs.db
 
+# Ansible
+.ansible/
+
 # Secrets files
 # Generic secrets files
 /inventory.*
