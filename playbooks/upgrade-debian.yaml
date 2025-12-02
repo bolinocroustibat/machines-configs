@@ -46,7 +46,9 @@
         var: system_status.stdout_lines
 
     - name: Check for failed services
-      command: systemctl list-units --state=failed
+      ansible.builtin.systemd:
+        state: list
+        status: failed
       register: failed_services
       changed_when: false
       failed_when: false

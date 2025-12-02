@@ -1,4 +1,3 @@
-
 - name: Include Wg-Easy secrets
   include_vars: secrets.yaml
 

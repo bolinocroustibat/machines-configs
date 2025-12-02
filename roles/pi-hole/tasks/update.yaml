@@ -1,4 +1,3 @@
-
 - name: Include Pi-hole secrets
   include_vars: secrets.yaml
 
