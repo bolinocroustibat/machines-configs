@@ -4,6 +4,7 @@
     port: "{{ transmission_daemon_rpc_port | default(9091) }}"
     proto: tcp
     comment: 'Transmission web interface'
+  become: true
 
 - name: Allow Transmission peer connections
   ufw:
@@ -11,7 +12,9 @@
     port: "{{ transmission_daemon_peer_port | default(51413) }}"
     proto: "{{ transmission_daemon_peer_proto | default('tcp') }}"
     comment: 'Transmission peer connections'
+  become: true
 
 - name: Reload UFW
   ufw:
     state: reloaded
+  become: true
