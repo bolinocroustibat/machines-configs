@@ -1,3 +1,16 @@
+- name: Remove old Transmission UFW rules by comment
+  shell: |
+    # ufw status numbered has format "[ 3]" with spaces, so regex must handle that
+    ufw status numbered | grep "{{ item.comment }}" | sed -E 's/^[[:space:]]*\[[[:space:]]*([0-9]+)[[:space:]]*\].*/\1/' | sort -rn | while read num; do
+      [ ! -z "$num" ] && echo "y" | ufw delete $num 2>/dev/null || true
+    done
+  loop:
+    - { comment: 'Transmission web interface' }
+    - { comment: 'Transmission peer connections' }
+  become: true
+  ignore_errors: true
+  changed_when: false
+
 - name: Allow Transmission web interface
   ufw:
     rule: allow

@@ -1,3 +1,15 @@
+- name: Remove old UFW rules by comment
+  shell: |
+    # ufw status numbered has format "[ 3]" with spaces, so regex must handle that
+    ufw status numbered | grep "{{ item.comment }}" | sed -E 's/^[[:space:]]*\[[[:space:]]*([0-9]+)[[:space:]]*\].*/\1/' | sort -rn | while read num; do
+      [ ! -z "$num" ] && echo "y" | ufw delete $num 2>/dev/null || true
+    done
+  loop: "{{ ufw_rules }}"
+  when: ufw_rules | length > 0
+  become: true
+  ignore_errors: true
+  changed_when: false
+
 - name: Configure UFW rules
   ufw:
     rule: allow
