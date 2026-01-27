@@ -38,7 +38,7 @@ show_always = true
 
 [hostname]
 ssh_only = false
-format = '@[$hostname]({{ starship_host_color }})($style)'
+format = '@[$hostname]({{ starship_host_color | default('bold white') }})($style)'
 trim_at = ''
 
 [directory]

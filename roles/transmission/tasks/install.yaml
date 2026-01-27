@@ -1,0 +1,15 @@
+- name: Install transmission-daemon (Debian)
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  apt:
+    name: transmission-daemon
+    state: present
+    update_cache: true
+
+- name: Ensure transmission-daemon service is enabled and running (Debian)
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  service:
+    name: transmission-daemon
+    enabled: "{{ transmission_daemon_service_enabled }}"
+    state: "{{ transmission_daemon_service_state }}"

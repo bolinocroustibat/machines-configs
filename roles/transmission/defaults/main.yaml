@@ -1,0 +1,2 @@
+transmission_daemon_service_enabled: true
+transmission_daemon_service_state: started

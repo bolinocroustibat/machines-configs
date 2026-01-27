@@ -1,0 +1,113 @@
+- name: Add SSH keys
+  hosts: bolino-pi
+  tasks:
+    - name: Configure SSH keys and settings
+      include_role:
+        name: ssh
+        tasks_from: install
+
+- name: Update apt and upgrade packages
+  hosts: bolino-pi
+  tasks:
+    - name: Upgrade all packages
+      include_role:
+        name: apt
+        tasks_from: upgrade
+
+- name: Install Git
+  hosts: bolino-pi
+  tasks:
+    - name: Install Git
+      include_role:
+        name: git
+        tasks_from: install
+
+- name: Configure .bashrc
+  hosts: bolino-pi
+  tasks:
+    - name: Configure bash environment
+      include_role:
+        name: bash
+        tasks_from: install
+
+- name: Install zsh
+  hosts: bolino-pi
+  tasks:
+    - name: Install and configure zsh shell
+      include_role:
+        name: zsh
+        tasks_from: install
+
+- name: Install and configure Starship
+  hosts: bolino-pi
+  tasks:
+    - name: Install Starship prompt
+      include_role:
+        name: starship
+        tasks_from: install
+
+- name: Install and configure Micro
+  hosts: bolino-pi
+  tasks:
+    - name: Install Micro editor
+      include_role:
+        name: micro
+        tasks_from: install
+
+- name: Install bat
+  hosts: bolino-pi
+  tasks:
+    - name: Install bat command-line tool
+      include_role:
+        name: bat
+        tasks_from: install
+
+- name: Install and configure uv
+  hosts: bolino-pi
+  tasks:
+    - name: Install uv package manager
+      include_role:
+        name: uv
+        tasks_from: install
+
+- name: Install and configure direnv
+  hosts: bolino-pi
+  tasks:
+    - name: Install and configure direnv
+      include_role:
+        name: direnv
+        tasks_from: install
+
+- name: Install and configure fail2ban
+  hosts: bolino-pi
+  tasks:
+    - name: Set up fail2ban intrusion prevention
+      include_role:
+        name: fail2ban
+        tasks_from: install
+
+- name: Install and configure UFW
+  hosts: bolino-pi
+  tasks:
+    - name: Install UFW
+      include_role:
+        name: ufw
+        tasks_from: install
+
+    - name: Configure UFW rules
+      include_role:
+        name: ufw
+        tasks_from: rules
+
+- name: Install transmission-daemon
+  hosts: bolino-pi
+  tags: transmission
+  tasks:
+    - name: Install and run transmission-daemon
+      include_role:
+        name: transmission
+        tasks_from: install
+    - name: Configure UFW rules for Transmission
+      include_role:
+        name: transmission
+        tasks_from: ufw
