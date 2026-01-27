@@ -9,6 +9,7 @@
     name: direnv
     state: latest
   when: ansible_facts["os_family"] == "Debian"
+  become: true
 
 - name: Create direnv config directory
   file:

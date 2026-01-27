@@ -19,6 +19,7 @@
   failed_when: "'FAILED' in uv_result.stderr"
   changed_when: "'installed!' in uv_result.stdout"
   when: ansible_facts["os_family"] == "Debian"
+  become: true
 
 - name: Delete uv install script
   file:

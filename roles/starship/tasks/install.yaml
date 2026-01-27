@@ -16,6 +16,7 @@
     - name: Install Starship system-wide
       when: ansible_facts["os_family"] == "Debian"
       command: "sh /tmp/starship_install.sh --bin-dir /usr/local/bin -y"
+      become: true
 
     - name: Delete Starship install script
       when: ansible_facts["os_family"] == "Debian"
@@ -30,9 +31,7 @@
 
 - name: Configure Starship for users
   include_tasks: configure_user.yaml
-  loop:
-    - { home: "/root", user: "root" }
-    - { home: "/home/github", user: "github" }
+  loop: "{{ starship_users_list }}"
   loop_control:
     loop_var: user_config
   when: user_config.user in starship_users.ansible_facts.getent_passwd.keys()
