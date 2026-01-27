@@ -7,11 +7,13 @@
   apt:
     name: nginx
     state: latest
+  become: true
 
 - name: Ensure openssl is installed
   apt:
     pkg: openssl
     state: latest
+  become: true
 
 - name: Ensure all folders exist
   file:
@@ -25,6 +27,7 @@
     - sites-enabled
     - conf.d
     - snippets
+  become: true
 
 - name: Copy .htpasswd file
   template:
@@ -34,6 +37,7 @@
     owner: www-data
     group: www-data
   notify: Reload nginx config
+  become: true
 
 - name: Copy PHP snippet
   template:
@@ -41,17 +45,19 @@
     dest: /etc/nginx/snippets/php.conf
     mode: u=rw,g=r,o=r # 644
   notify: Reload nginx config
+  become: true
 
 - name: Ensure configuration is set
   template:
     src: "{{ item.src }}"
-    dest: /etc/nginx/{{ item.path }}
+    dest: /etc/nginx/{{ item.path }}"
     mode: u=rw,g=r,o=r # 644
   when: item.state == 'file'
   loop_control:
     label: "{{ item.path }}"
   notify: Reload nginx config
   loop: "{{ nginx_config_items | default([]) }}"
+  become: true
 
 - name: Ensure cache dir exists
   file:
@@ -59,21 +65,25 @@
     state: directory
     owner: www-data
     mode: u=rwx,g=,o= # 700 (only the user can read, write and execute)
+  become: true
 
 - name: Ensure service is started and enabled at boot
   service:
     name: nginx
     state: started
     enabled: true
+  become: true
 
 - name: Ensure www-data user exists
   user:
     name: www-data
     state: present
     system: true
+  become: true
 
 - name: Ensure user www-data is in the www-data group
   user:
     name: www-data
     groups: www-data
     append: true
+  become: true
