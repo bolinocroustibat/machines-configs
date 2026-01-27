@@ -1,2 +1,7 @@
 transmission_daemon_service_enabled: true
 transmission_daemon_service_state: started
+
+# Transmission daemon ports configuration
+transmission_daemon_rpc_port: 9091
+transmission_daemon_peer_port: 51413
+transmission_daemon_peer_proto: tcp
