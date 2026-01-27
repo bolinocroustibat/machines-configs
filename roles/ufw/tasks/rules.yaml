@@ -1,43 +1,11 @@
-- name: Allow SSH
-  ufw:
-    rule: allow
-    port: ssh
-    proto: tcp
-    comment: "Allow SSH access for remote administration"
-
-- name: Allow HTTP
-  ufw:
-    rule: allow
-    port: http
-    proto: tcp
-    comment: "Allow HTTP traffic for web servers"
-
-- name: Allow HTTPS
-  ufw:
-    rule: allow
-    port: https
-    proto: tcp
-    comment: "Allow HTTPS traffic for secure web servers"
-
-- name: Allow QUIC
-  ufw:
-    rule: allow
-    port: 443
-    proto: udp
-    comment: "Allow QUIC protocol for HTTP/3"
-
-- name: Configure media server specific rules
+- name: Configure UFW rules
   ufw:
     rule: allow
     port: "{{ item.port }}"
     proto: "{{ item.proto | default('tcp') }}"
     comment: "{{ item.comment }}"
-  loop:
-    - { port: 4443, comment: "Allow Syncthing web interface" }
-    - { port: 9091, comment: "Allow Transmission web interface" }
-    - { port: 51413, comment: "Allow Transmission peer connections" }
-    - { port: 25565, proto: tcp, comment: "Allow Minecraft server" }
-  when: inventory_hostname == 'data-bolino'
+  loop: "{{ ufw_rules }}"
+  when: ufw_rules | length > 0
 
 - name: Reload UFW
   ufw:

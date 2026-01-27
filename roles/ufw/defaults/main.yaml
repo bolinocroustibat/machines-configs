@@ -1,0 +1,9 @@
+# UFW rules per host
+# SSH is configured in install.yaml to ensure it's opened first
+# Each rule should have: port, proto (default: tcp), and comment
+# Example:
+# ufw_rules:
+#   - { port: http, proto: tcp, comment: "Allow HTTP traffic for web servers" }
+#   - { port: https, proto: tcp, comment: "Allow HTTPS traffic for secure web servers" }
+#   - { port: 9091, proto: tcp, comment: "Allow Transmission web interface" }
+ufw_rules: []
