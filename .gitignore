@@ -44,7 +44,7 @@ Thumbs.db
 # Secrets files
 # Generic secrets files
 /inventory.*
-/hosts_vars/*
+/host_vars/*
 roles/**/vars/secrets.yml
 roles/**/vars/secrets.yaml
 vault.yml
