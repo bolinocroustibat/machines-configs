@@ -3,6 +3,7 @@
     name: fail2ban
     state: present
     update_cache: true
+  become: true
 
 - name: Add jail.local file
   template:
@@ -12,6 +13,7 @@
     group: root
     mode: u=rw,g=r,o=r # 644
   notify: restart fail2ban
+  become: true
 
 - name: Add jail.d/* files
   template:
@@ -22,6 +24,7 @@
     mode: u=rw,g=r,o=r # 644
   loop: "{{ fail2ban_jails }}"
   notify: restart fail2ban
+  become: true
 
 - name: Add filter.d/* files
   template:
@@ -32,8 +35,10 @@
     mode: u=rw,g=r,o=r # 644
   loop: "{{ fail2ban_filters }}"
   notify: restart fail2ban
+  become: true
 
 - name: Enable fail2ban service
   service:
     name: fail2ban
     enabled: true
+  become: true

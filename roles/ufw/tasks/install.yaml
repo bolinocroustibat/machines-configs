@@ -3,11 +3,13 @@
     name: ufw
     state: present
     update_cache: true
+  become: true
 
 - name: Enable UFW
   ufw:
     state: enabled
     policy: deny
+  become: true
 
 - name: Set default policies
   community.general.ufw:
@@ -15,19 +17,23 @@
   loop:
     - deny
     - allow
+  become: true
 
 - name: Allow SSH
   community.general.ufw:
     rule: allow
     name: ssh
+  become: true
 
 - name: Enable UFW and persist across reboots
   community.general.ufw:
     state: enabled
     logging: 'on'
   register: ufw_enable
+  become: true
 
 - name: Reload UFW
   community.general.ufw:
     state: reloaded
   when: ufw_enable.changed
+  become: true

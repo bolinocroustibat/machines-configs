@@ -6,7 +6,9 @@
     comment: "{{ item.comment }}"
   loop: "{{ ufw_rules }}"
   when: ufw_rules | length > 0
+  become: true
 
 - name: Reload UFW
   ufw:
     state: reloaded
+  become: true
