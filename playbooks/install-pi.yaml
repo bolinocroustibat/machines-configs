@@ -46,6 +46,27 @@
         name: starship
         tasks_from: install
 
+- name: Install and configure fail2ban
+  hosts: bolino-pi
+  tasks:
+    - name: Set up fail2ban intrusion prevention
+      include_role:
+        name: fail2ban
+        tasks_from: install
+
+- name: Install and configure UFW
+  hosts: bolino-pi
+  tasks:
+    - name: Install UFW
+      include_role:
+        name: ufw
+        tasks_from: install
+
+    - name: Configure UFW rules
+      include_role:
+        name: ufw
+        tasks_from: rules
+
 - name: Install and configure Micro
   hosts: bolino-pi
   tasks:
@@ -78,26 +99,25 @@
         name: direnv
         tasks_from: install
 
-- name: Install and configure fail2ban
+- name: Install and configure Nginx
   hosts: bolino-pi
   tasks:
-    - name: Set up fail2ban intrusion prevention
+    - name: Install and configure Nginx web server
       include_role:
-        name: fail2ban
+        name: nginx
         tasks_from: install
+    - name: Backup Nginx virtual hosts configuration
+      include_role:
+        name: nginx
+        tasks_from: backup_vhosts
 
-- name: Install and configure UFW
+- name: Install Certbot
   hosts: bolino-pi
   tasks:
-    - name: Install UFW
+    - name: Install Certbot and Nginx plugin
       include_role:
-        name: ufw
+        name: certbot
         tasks_from: install
-
-    - name: Configure UFW rules
-      include_role:
-        name: ufw
-        tasks_from: rules
 
 - name: Install transmission-daemon
   hosts: bolino-pi
@@ -111,3 +131,7 @@
       include_role:
         name: transmission
         tasks_from: ufw
+    - name: Configure Transmission web server (Nginx + Certbot)
+      include_role:
+        name: transmission
+        tasks_from: web

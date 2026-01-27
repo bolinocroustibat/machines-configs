@@ -6,6 +6,25 @@
     state: present
     update_cache: true
 
+- name: Stop transmission-daemon before configuration
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  service:
+    name: transmission-daemon
+    state: stopped
+  ignore_errors: true
+
+- name: Deploy Transmission settings.json
+  when: ansible_facts["os_family"] == "Debian"
+  template:
+    src: settings.json.j2
+    dest: /etc/transmission-daemon/settings.json
+    mode: u=rw,g=r,o=r  # 644
+    owner: debian-transmission
+    group: debian-transmission
+  become: true
+  notify: restart transmission-daemon
+
 - name: Ensure transmission-daemon service is enabled and running (Debian)
   when: ansible_facts["os_family"] == "Debian"
   become: true
