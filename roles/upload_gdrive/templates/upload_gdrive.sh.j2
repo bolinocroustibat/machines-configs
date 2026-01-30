@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Configuration
+LOCAL_DIR="{{ upload_gdrive_local_dir }}"
+REMOTE_NAME="{{ upload_gdrive_remote_name }}"
+REMOTE_DIR="{{ upload_gdrive_remote_dir }}"
+
+# Using 'move' to free space on the Pi; use 'copy' if you want to keep a local copy
+echo "Starting upload to Google Drive..."
+
+rclone move "$LOCAL_DIR" "$REMOTE_NAME:$REMOTE_DIR" \
+    --transfers 4 \
+    --checkers 8 \
+    --log-file {{ upload_gdrive_log_file }} \
+    --log-level INFO \
+    --stats 5s \
+    --stats-one-line \
+    --delete-empty-src-dirs
+
+echo "Upload finished."
