@@ -10,6 +10,7 @@
 
 - name: Update apt and upgrade packages
   hosts: remote
+  become: true
   tags:
     - debian
   tasks:
@@ -20,6 +21,7 @@
 
 - name: Update Docker
   hosts: remote
+  become: true
   tags:
     - debian
   tasks:
@@ -30,6 +32,7 @@
 
 - name: Update Docker-based services on data-bolino
   hosts: data-bolino
+  become: true
   tags:
     - debian
   tasks:
@@ -60,6 +63,7 @@
 
 - name: Update Portainer
   hosts: remote
+  become: true
   tags:
     - debian
   tasks:
@@ -75,6 +79,7 @@
 
 - name: Prune Docker resources
   hosts: remote
+  become: true
   tags:
     - debian
   tasks:
@@ -93,6 +98,7 @@
 
 - name: Update Starship
   hosts: remote
+  become: true
   tags:
     - debian
   tasks:
@@ -111,6 +117,7 @@
 
 - name: Update global pip
   hosts: remote # python is entirely managed by uv on local
+  become: true
   tags:
     - debian
   tasks:
@@ -124,6 +131,7 @@
 
 - name: Update fail2ban configurations
   hosts: remote
+  become: true
   tags:
     - debian
   tasks:
