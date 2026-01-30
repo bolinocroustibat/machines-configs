@@ -25,14 +25,35 @@
         path: "/tmp/starship_install.sh"
         state: absent
 
-- name: Get list of users
+- name: Get list of users (Debian)
   getent:
     database: passwd
   register: starship_users
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Get existing users (Darwin)
+  when: ansible_facts['os_family'] == 'Darwin'
+  block:
+    - name: Check home directories exist
+      ansible.builtin.stat:
+        path: "{{ item.home }}"
+      loop: "{{ starship_users_list }}"
+      register: starship_darwin_homes
+      loop_control:
+        label: "{{ item.user }}"
+
+    - name: Set list of existing users (Darwin)
+      ansible.builtin.set_fact:
+        starship_users_ok: "{{ starship_darwin_homes.results | selectattr('stat.exists') | map(attribute='item.user') | list }}"
+
+- name: Set list of existing users (Debian)
+  ansible.builtin.set_fact:
+    starship_users_ok: "{{ starship_users.ansible_facts.getent_passwd.keys() | list }}"
+  when: ansible_facts['os_family'] == 'Debian'
 
 - name: Configure Starship for users
   include_tasks: configure_user.yaml
   loop: "{{ starship_users_list }}"
   loop_control:
     loop_var: user_config
-  when: user_config.user in starship_users.ansible_facts.getent_passwd.keys()
+  when: user_config.user in starship_users_ok

@@ -1,20 +1,29 @@
-- name: Check if user exists
+- name: Check if user exists (Debian)
   getent:
     database: passwd
     key: "{{ user_config.user }}"
   register: starship_user_exists
   failed_when: false
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Check if user home exists (Darwin)
+  ansible.builtin.stat:
+    path: "{{ user_config.home }}"
+  register: starship_user_exists_darwin
+  when: ansible_facts['os_family'] == 'Darwin'
 
 - name: Configure Starship for user
-  when: user_config.user in starship_user_exists.ansible_facts.getent_passwd.keys()
+  when: >
+    (ansible_facts['os_family'] == 'Debian' and user_config.user in (starship_user_exists.get('ansible_facts', {}).get('getent_passwd', {}).keys() | default([])))
+    or (ansible_facts['os_family'] == 'Darwin' and (starship_user_exists_darwin.stat.exists | default(false)))
   block:
     - name: Create .config directory for user
       ansible.builtin.file:
         path: "{{ user_config.home }}/.config"
         state: directory
-        mode: u=rwx,g=rx,o=rx # 755
+        mode: u=rwx,g=,o= # 700
         owner: "{{ user_config.user }}"
-      become: true
+      become: "{{ user_config.user != ansible_user }}"
 
     - name: Backup existing starship.toml if exists
       ansible.builtin.copy:
@@ -23,7 +32,7 @@
         dest: "{{ user_config.home }}/.config/starship.toml_{{ ansible_facts['date_time']['iso8601'] }}.bak"
         mode: preserve
       failed_when: false
-      become: true
+      become: "{{ user_config.user != ansible_user }}"
 
     - name: Add starship.toml config file
       ansible.builtin.template:
@@ -31,7 +40,7 @@
         dest: "{{ user_config.home }}/.config/starship.toml"
         mode: u=rw,g=r,o=r # 644 (read access for everyone and also write access for the owner of the file)
         owner: "{{ user_config.user }}"
-      become: true
+      become: "{{ user_config.user != ansible_user }}"
 
     - name: Add Starship to user's .zshrc file
       ansible.builtin.blockinfile:
@@ -41,4 +50,4 @@
         mode: u=rw,g=r,o=r # 644 (read access for everyone and also write access for the owner of the file)
         create: true
         owner: "{{ user_config.user }}"
-      become: true
+      become: "{{ user_config.user != ansible_user }}"
