@@ -20,7 +20,7 @@
 
 - name: Deploy Nginx vhost for Transmission (only if SSL doesn't exist)
   template:
-    src: "{{ transmission_domain }}.conf.j2"
+    src: transmission_vhost.conf.j2
     dest: "/etc/nginx/sites-available/{{ transmission_domain }}.conf"
     mode: u=rw,g=r,o=r  # 644
   notify: Reload nginx config

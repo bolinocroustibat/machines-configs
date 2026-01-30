@@ -1,0 +1,33 @@
+{{ ansible_managed | comment }}
+
+server {
+	server_name {{ transmission_domain }};
+	listen 80;
+
+	# Forbid everything except /transmission/
+	location / {
+		return 403;
+	}
+
+	# Transmission proxy
+	location /transmission/ {
+		auth_basic off;  # Deactivated if RPC password suffices
+		proxy_pass http://127.0.0.1:{{ transmission_daemon_rpc_port }}/transmission/;
+		proxy_http_version 1.1;
+
+		proxy_set_header Host 127.0.0.1;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+
+		# Crucial pour éviter les boucles de session CSRF
+		proxy_pass_header X-Transmission-Session-Id;
+		proxy_set_header Origin "";
+
+		proxy_buffering off;
+	}
+
+	# Logging
+	access_log /var/log/nginx/{{ transmission_domain }}.access.log;
+	error_log /var/log/nginx/{{ transmission_domain }}.error.log;
+}
