@@ -11,6 +11,23 @@
         name: ssh
         tasks_from: sshd_allow_users
 
+- name: Set hostname (when prompt_hostname is defined in host_vars)
+  hosts: remote
+  become: true
+  tasks:
+    - name: Set system hostname
+      ansible.builtin.hostname:
+        name: "{{ prompt_hostname }}"
+      when: prompt_hostname is defined and prompt_hostname | length > 0
+
+    - name: Ensure hostname resolves in /etc/hosts (127.0.1.1)
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        line: "127.0.1.1 {{ prompt_hostname }}"
+        insertafter: '^127\.0\.0\.1\s+localhost'
+        state: present
+      when: prompt_hostname is defined and prompt_hostname | length > 0
+
 - name: Update apt and upgrade packages
   hosts: remote
   vars:
