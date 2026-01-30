@@ -96,11 +96,17 @@
         name: zsh
         tasks_from: update
 
-- name: Update Starship
+- name: Update Starship (local)
+  hosts: local
+  tasks:
+    - name: Update Starship prompt
+      include_role:
+        name: starship
+        tasks_from: update
+
+- name: Update Starship (remote)
   hosts: remote
   become: true
-  tags:
-    - debian
   tasks:
     - name: Update Starship prompt
       include_role:
