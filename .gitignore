@@ -57,4 +57,3 @@ vault.yml
 /roles/cron/templates/*
 /roles/ssh/templates/*
 /roles/websites/templates/*
-/roles/transmission/templates/*.conf.j2
