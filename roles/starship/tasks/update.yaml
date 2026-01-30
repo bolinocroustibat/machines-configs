@@ -24,3 +24,15 @@
       file:
         path: "/tmp/starship_install.sh"
         state: absent
+
+- name: Get list of users
+  getent:
+    database: passwd
+  register: starship_users
+
+- name: Configure Starship for users
+  include_tasks: configure_user.yaml
+  loop: "{{ starship_users_list }}"
+  loop_control:
+    loop_var: user_config
+  when: user_config.user in starship_users.ansible_facts.getent_passwd.keys()
