@@ -1,3 +1,7 @@
+# Optional custom hostname shown in the prompt for ALL users with Starship.
+# When set (e.g. in host_vars), overrides the system hostname in the prompt.
+# prompt_hostname:
+
 # Default list of users for Starship configuration
 # Can be overridden in host_vars or playbooks
 starship_users_list:
