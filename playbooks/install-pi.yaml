@@ -6,6 +6,11 @@
         name: ssh
         tasks_from: install
 
+    - name: Configure AllowUsers
+      include_role:
+        name: ssh
+        tasks_from: sshd_allow_users
+
 - name: Update apt and upgrade packages
   hosts: bolino-pi
   tasks:

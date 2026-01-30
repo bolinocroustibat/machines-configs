@@ -33,3 +33,32 @@
   failed_when:
     - github_actions_auth_key_result.failed
     - "'No such file or directory' not in github_actions_auth_key_result.msg"
+
+# If this role runs, add the user to AllowUsers so the runner can connect via SSH.
+- name: Check if AllowUsers config exists
+  ansible.builtin.stat:
+    path: /etc/ssh/sshd_config.d/99-allow-users.conf
+  register: _allow_users_stat
+
+- name: Read current AllowUsers config
+  ansible.builtin.slurp:
+    src: /etc/ssh/sshd_config.d/99-allow-users.conf
+  register: _allow_users_file
+  when: _allow_users_stat.stat.exists | default(false) | bool
+
+- name: Add GitHub Actions user to AllowUsers
+  ansible.builtin.replace:
+    path: /etc/ssh/sshd_config.d/99-allow-users.conf
+    regexp: '^(\s*AllowUsers\s+)(.*)$'
+    replace: '\1\2 {{ github_actions__user_name }}'
+  register: _allow_users_updated
+  when:
+    - _allow_users_stat.stat.exists | default(false) | bool
+    - _allow_users_file.content is defined
+    - github_actions__user_name not in (_allow_users_file.content | b64decode | trim)
+
+- name: Restart ssh after adding user to AllowUsers
+  ansible.builtin.service:
+    name: ssh
+    state: restarted
+  when: _allow_users_updated is changed | default(false) | bool

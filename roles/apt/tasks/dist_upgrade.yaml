@@ -1,52 +1,60 @@
 - name: Update package lists
-  apt:
+  ansible.builtin.apt:
     update_cache: true
     upgrade: full
     autoremove: true
     autoclean: true
+  become: true
 
 - name: Install required packages for dist-upgrade
-  apt:
+  ansible.builtin.apt:
     name:
       - debian-keyring
       - debian-archive-keyring
     state: latest
+  become: true
 
 - name: Update sources for new distribution
-  template:
+  ansible.builtin.template:
     src: debian.sources.j2
     dest: /etc/apt/sources.list.d/debian.sources
   vars:
     debian_distribution: "{{ apt_debian_target_distribution }}"
+  become: true
 
 - name: Update package list for new distribution
-  apt:
+  ansible.builtin.apt:
     update_cache: true
+  become: true
 
 - name: Perform minimal system upgrade
-  apt:
+  ansible.builtin.apt:
     upgrade: true
     force_apt_get: true
+  become: true
 
 - name: Perform full distribution upgrade
-  apt:
+  ansible.builtin.apt:
     upgrade: dist
     force_apt_get: true
+  become: true
 
 - name: Clean up old packages
-  apt:
+  ansible.builtin.apt:
     autoremove: true
     purge: true
+  become: true
 
 - name: Wait for system to be ready
-  wait_for_connection:
+  ansible.builtin.wait_for_connection:
     timeout: 60
 
 - name: Display new system version
-  command: cat /etc/debian_version
+  ansible.builtin.command: cat /etc/debian_version
   register: apt_debian_version
   changed_when: false
+  become: true
 
 - name: Show new Debian version
-  debug:
+  ansible.builtin.debug:
     var: apt_debian_version.stdout
