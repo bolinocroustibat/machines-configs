@@ -1,52 +1,60 @@
 - name: Check if sources.list exists
-  stat:
+  ansible.builtin.stat:
     path: /etc/apt/sources.list
   register: apt_sources_list_stat
   when: ansible_facts["os_family"] == 'Debian'
+  become: true
 
 - name: Check if sources.list.d directory exists
-  stat:
+  ansible.builtin.stat:
     path: /etc/apt/sources.list.d
   register: apt_sources_list_d_stat
   when: ansible_facts["os_family"] == 'Debian'
+  become: true
 
 - name: Backup existing sources list
-  copy:
+  ansible.builtin.copy:
     remote_src: true
     src: "/etc/apt/sources.list"
     dest: "/etc/apt/sources.list_{{ ansible_facts['date_time']['iso8601'] }}.bak"
     mode: preserve
   when: ansible_facts["os_family"] == 'Debian' and apt_sources_list_stat.stat.exists
+  become: true
 
 - name: Backup sources.list.d directory
-  archive:
+  ansible.builtin.archive:
     path: /etc/apt/sources.list.d
     dest: "/etc/apt/sources.list.d_{{ ansible_facts['date_time']['iso8601'] }}.tar.gz"
     format: gz
   when: ansible_facts["os_family"] == 'Debian' and apt_sources_list_d_stat.stat.exists
+  become: true
 
 - name: Remove old sources.list if exists
-  file:
+  ansible.builtin.file:
     path: /etc/apt/sources.list
     state: absent
   when: ansible_facts["os_family"] == 'Debian'
+  become: true
 
 - name: Ensure sources.list.d directory exists
-  file:
+  ansible.builtin.file:
     path: /etc/apt/sources.list.d
     state: directory
     mode: u=rwx,g=rx,o=rx # 755
   when: ansible_facts["os_family"] == 'Debian'
+  become: true
 
 - name: Install Debian sources
-  template:
+  ansible.builtin.template:
     src: debian.sources.j2
     dest: /etc/apt/sources.list.d/debian.sources
     mode: u=rw,g=r,o=r # 644
     backup: true
   when: ansible_facts["os_family"] == 'Debian'
+  become: true
 
 - name: Update apt cache
-  apt:
+  ansible.builtin.apt:
     update_cache: true
   when: ansible_facts["os_family"] == 'Debian'
+  become: true
