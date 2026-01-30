@@ -31,7 +31,7 @@ $shell\
 $character"""
 
 [username]
-style_user = 'purple bold'
+style_user = '{{ "yellow bold" if user_config.user == ansible_user else "green bold" }}'
 style_root = 'red bold'
 format = '[$user]($style)'
 show_always = true
