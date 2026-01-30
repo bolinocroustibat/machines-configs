@@ -157,3 +157,11 @@
       include_role:
         name: transmission
         tasks_from: web
+
+- name: Install upload_gdrive
+  hosts: pi-bolino
+  tasks:
+    - name: Install rclone and deploy upload script
+      include_role:
+        name: upload_gdrive
+        tasks_from: install
