@@ -2,6 +2,7 @@
   apt:
     update_cache: true
     cache_valid_time: 3600
+  become: true
 
 - name: Install required packages
   apt:
@@ -13,24 +14,28 @@
       - lsb-release
     state: present
     update_cache: true
+  become: true
 
 - name: Create Docker GPG key directory
   file:
     path: /etc/apt/keyrings
     state: directory
     mode: u=rwx,g=rx,o=rx # 755
+  become: true
 
 - name: Download Docker GPG key
   get_url:
     url: https://download.docker.com/linux/debian/gpg
     dest: /etc/apt/keyrings/docker.asc
     mode: u=rw,g=r,o=r # 644
+  become: true
 
 - name: Install Docker sources
   template:
     src: docker.sources.j2
     dest: /etc/apt/sources.list.d/docker.sources
     mode: u=rw,g=r,o=r # 644
+  become: true
 
 - name: Install Docker packages
   apt:
@@ -43,6 +48,7 @@
     state: present
     update_cache: true
   notify: restart docker
+  become: true
 
 - name: Ensure Docker service is enabled and started
   systemd:
@@ -50,12 +56,14 @@
     state: started
     enabled: true
     daemon_reload: true
+  become: true
 
 - name: Verify Docker installation
   command: docker run hello-world
   register: docker_hello
   changed_when: false
   failed_when: false
+  become: true
 
 - name: Display Docker verification result
   debug:
