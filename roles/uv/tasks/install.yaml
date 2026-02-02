@@ -27,14 +27,9 @@
     state: absent
   when: ansible_facts["os_family"] == "Debian"
 
-- name: Install Python 3.12 with uv
-  command: "{{ uv_install_dir }}/uv python install 3.12"
+- name: Install Python versions with uv
+  command: "{{ uv_install_dir }}/uv python install {{ item }}"
+  loop: "{{ uv_python_versions }}"
   register: uv_python_result
-  changed_when: "'Installed Python 3.12' in uv_python_result.stdout"
-  failed_when: uv_python_result.rc != 0
-
-- name: Install Python 3.13 with uv
-  command: "{{ uv_install_dir }}/uv python install 3.13"
-  register: uv_python_result
-  changed_when: "'Installed Python 3.13' in uv_python_result.stdout"
+  changed_when: "('Installed Python ' ~ item) in uv_python_result.results[-1].stdout"
   failed_when: uv_python_result.rc != 0
