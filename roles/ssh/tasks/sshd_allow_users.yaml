@@ -15,12 +15,12 @@
     dest: /etc/ssh/sshd_config.d/99-allow-users.conf
     content: "AllowUsers {{ ssh_allow_users | join(' ') }}\n"
     mode: "0644"
-  register: sshd_allow_users_file
+  register: ssh_allow_users_file
   become: true
 
 - name: Restart ssh so AllowUsers takes effect
   ansible.builtin.service:
     name: ssh
     state: restarted
-  when: sshd_allow_users_file is changed
+  when: ssh_allow_users_file is changed
   become: true

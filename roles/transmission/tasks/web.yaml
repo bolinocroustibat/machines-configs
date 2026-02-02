@@ -44,9 +44,11 @@
   when: transmission_dns_check.stdout != "" and not transmission_ssl_cert_exists.stat.exists
   become: true
   ignore_errors: true
-  register: certbot_result
+  register: transmission_certbot_result
 
 - name: Display Certbot error if failed
   debug:
-    msg: "Certbot failed. Check DNS configuration and firewall rules (HTTP port 80 must be open). Error: {{ certbot_result.stderr_lines | default(['Unknown error']) }}"
-  when: certbot_result.rc is defined and certbot_result.rc != 0
+    msg: >-
+      Certbot failed. Check DNS configuration and firewall rules
+      (HTTP port 80 must be open). Error: {{ transmission_certbot_result.stderr_lines | default(['Unknown error']) }}
+  when: transmission_certbot_result.rc is defined and transmission_certbot_result.rc != 0
