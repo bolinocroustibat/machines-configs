@@ -13,7 +13,7 @@ Ansible playbooks for setting up local development and remote machines.
 Use [uv](https://docs.astral.sh/uv/) to install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) from the locked requirements:
 
 ```bash
-cd dotfiles
+cd machines-configs
 uv sync
 ```
 
