@@ -31,5 +31,5 @@
   command: "{{ uv_install_dir }}/uv python install {{ item }}"
   loop: "{{ uv_python_versions }}"
   register: uv_python_result
-  changed_when: "('Installed Python ' ~ item) in uv_python_result.results[-1].stdout"
+  changed_when: "'Installed Python ' in (uv_python_result.stderr | default(''))"
   failed_when: uv_python_result.rc != 0
