@@ -4,7 +4,7 @@
     state: reloaded
   become: true
 
-- name: restart transmission-daemon
+- name: Restart transmission-daemon
   ansible.builtin.service:
     name: transmission-daemon
     state: restarted

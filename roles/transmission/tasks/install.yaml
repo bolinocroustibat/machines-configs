@@ -23,7 +23,7 @@
     owner: debian-transmission
     group: debian-transmission
   become: true
-  notify: restart transmission-daemon
+  notify: Restart transmission-daemon
 
 - name: Ensure transmission-daemon service is enabled and running (Debian)
   when: ansible_facts["os_family"] == "Debian"

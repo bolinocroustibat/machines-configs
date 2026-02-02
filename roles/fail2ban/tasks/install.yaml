@@ -12,7 +12,7 @@
     owner: root
     group: root
     mode: u=rw,g=r,o=r # 644
-  notify: restart fail2ban
+  notify: Restart fail2ban
   become: true
 
 - name: Add jail.d/* files
@@ -23,7 +23,7 @@
     group: root
     mode: u=rw,g=r,o=r # 644
   loop: "{{ fail2ban_jails }}"
-  notify: restart fail2ban
+  notify: Restart fail2ban
   become: true
 
 - name: Add filter.d/* files
@@ -34,7 +34,7 @@
     group: root
     mode: u=rw,g=r,o=r # 644
   loop: "{{ fail2ban_filters }}"
-  notify: restart fail2ban
+  notify: Restart fail2ban
   become: true
 
 - name: Enable and start fail2ban service

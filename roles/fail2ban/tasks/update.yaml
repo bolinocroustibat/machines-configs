@@ -5,7 +5,7 @@
     owner: root
     group: root
     mode: u=rw,g=r,o=r # 644
-  notify: restart fail2ban
+  notify: Restart fail2ban
 
 - name: Update jail.d/* files
   template:
@@ -15,7 +15,7 @@
     group: root
     mode: u=rw,g=r,o=r # 644
   loop: "{{ fail2ban_jails }}"
-  notify: restart fail2ban
+  notify: Restart fail2ban
 
 - name: Update filter.d/* files
   template:
@@ -25,4 +25,4 @@
     group: root
     mode: u=rw,g=r,o=r # 644
   loop: "{{ fail2ban_filters }}"
-  notify: restart fail2ban
+  notify: Restart fail2ban
