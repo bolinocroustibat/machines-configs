@@ -24,35 +24,35 @@
     recreate: always
 
 - name: Check if DNS is properly configured
-  command: dig +short {{ owntracks_domain }}
+  command: dig +short {{ owntracks__domain }}
   register: owntracks_dns_check
   changed_when: false
   failed_when: owntracks_dns_check.stdout == ""
 
 - name: Check if SSL certificate exists
   stat:
-    path: "/etc/letsencrypt/live/{{ owntracks_domain }}/fullchain.pem"
+    path: "/etc/letsencrypt/live/{{ owntracks__domain }}/fullchain.pem"
   register: owntracks_ssl_cert_exists
 
 - name: Deploy Nginx vhost for OwnTracks (only if SSL doesn't exist)
   template:
-    src: "{{ owntracks_domain }}.conf.j2"
-    dest: "/etc/nginx/sites-available/{{ owntracks_domain }}.conf"
+    src: "{{ owntracks__domain }}.conf.j2"
+    dest: "/etc/nginx/sites-available/{{ owntracks__domain }}.conf"
     mode: u=rw,g=r,o=r  # 644
   notify: Reload nginx config
   when: not owntracks_ssl_cert_exists.stat.exists
 
 - name: Enable Nginx vhost for OwnTracks (only if SSL doesn't exist)
   file:
-    src: "/etc/nginx/sites-available/{{ owntracks_domain }}.conf"
-    dest: "/etc/nginx/sites-enabled/{{ owntracks_domain }}.conf"
+    src: "/etc/nginx/sites-available/{{ owntracks__domain }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ owntracks__domain }}.conf"
     state: link
     force: true
   notify: Reload nginx config
   when: not owntracks_ssl_cert_exists.stat.exists
 
 - name: Configure SSL with Certbot (only if SSL doesn't exist)
-  command: certbot --nginx -d {{ owntracks_domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
+  command: certbot --nginx -d {{ owntracks__domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
   args:
-    creates: "/etc/letsencrypt/live/{{ owntracks_domain }}/fullchain.pem"
+    creates: "/etc/letsencrypt/live/{{ owntracks__domain }}/fullchain.pem"
   when: owntracks_dns_check.stdout != "" and not owntracks_ssl_cert_exists.stat.exists

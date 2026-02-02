@@ -4,8 +4,8 @@
     ufw status numbered | grep "{{ item.comment }}" | sed -E 's/^[[:space:]]*\[[[:space:]]*([0-9]+)[[:space:]]*\].*/\1/' | sort -rn | while read num; do
       [ ! -z "$num" ] && echo "y" | ufw delete $num 2>/dev/null || true
     done
-  loop: "{{ ufw_rules }}"
-  when: ufw_rules | length > 0
+  loop: "{{ ufw__rules }}"
+  when: ufw__rules | length > 0
   become: true
   ignore_errors: true
   changed_when: false
@@ -16,8 +16,8 @@
     port: "{{ item.port }}"
     proto: "{{ item.proto | default('tcp') }}"
     comment: "{{ item.comment }}"
-  loop: "{{ ufw_rules }}"
-  when: ufw_rules | length > 0
+  loop: "{{ ufw__rules }}"
+  when: ufw__rules | length > 0
   become: true
 
 - name: Reload UFW

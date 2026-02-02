@@ -14,7 +14,7 @@
 - name: Allow Transmission web interface
   ufw:
     rule: allow
-    port: "{{ transmission_daemon_rpc_port | default(9091) }}"
+    port: "{{ transmission__daemon_rpc_port | default(9091) }}"
     proto: tcp
     comment: 'Transmission web interface'
   become: true
@@ -22,8 +22,8 @@
 - name: Allow Transmission peer connections
   ufw:
     rule: allow
-    port: "{{ transmission_daemon_peer_port | default(51413) }}"
-    proto: "{{ transmission_daemon_peer_proto | default('tcp') }}"
+    port: "{{ transmission__daemon_peer_port | default(51413) }}"
+    proto: "{{ transmission__daemon_peer_proto | default('tcp') }}"
     comment: 'Transmission peer connections'
   become: true
 

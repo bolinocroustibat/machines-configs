@@ -1,9 +1,9 @@
 server {
 	listen 80;
-	server_name {{ uptime_kuma_domain }};
+	server_name {{ uptime_kuma__domain }};
 
 	location / {
-		proxy_pass http://127.0.0.1:{{ uptime_kuma_web_port }};
+		proxy_pass http://127.0.0.1:{{ uptime_kuma__web_port }};
 		proxy_http_version 1.1;
 		proxy_set_header Upgrade $http_upgrade;
 		proxy_set_header Connection "upgrade";
@@ -13,5 +13,5 @@ server {
 		proxy_set_header X-Forwarded-Proto $scheme;
 	}
 
-	error_log /var/www/{{ uptime_kuma_domain }}.log;
+	error_log /var/www/{{ uptime_kuma__domain }}.log;
 }

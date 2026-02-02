@@ -7,12 +7,12 @@
     - name: Create Portainer container
       community.docker.docker_container:
         name: portainer
-        image: "portainer/portainer-ce:{{ portainer_image_tag }}"
+        image: "portainer/portainer-ce:{{ portainer__image_tag }}"
         state: started
         restart_policy: always
         ports:
           - "8000:8000"
-          - "{{ portainer_web_port }}:9443"
+          - "{{ portainer__web_port }}:9443"
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
           - portainer_data:/data
@@ -23,45 +23,45 @@
     - name: Create Portainer Agent container
       community.docker.docker_container:
         name: portainer_agent
-        image: "portainer/agent:{{ portainer_image_tag }}"
+        image: "portainer/agent:{{ portainer__image_tag }}"
         state: started
         restart_policy: always
         ports:
-          - "{{ portainer_agent_port }}:9001"
+          - "{{ portainer__agent_port }}:9001"
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
           - portainer_agent_data:/data
 
 - name: Check if DNS is properly configured
-  command: dig +short {{ portainer_domain }}
+  command: dig +short {{ portainer__domain }}
   register: portainer_dns_check
   changed_when: false
   failed_when: portainer_dns_check.stdout == ""
 
 - name: Check if SSL certificate exists
   stat:
-    path: "/etc/letsencrypt/live/{{ portainer_domain }}/fullchain.pem"
+    path: "/etc/letsencrypt/live/{{ portainer__domain }}/fullchain.pem"
   register: portainer_ssl_cert_exists
 
 - name: Deploy Nginx vhost for Portainer (only if SSL doesn't exist)
   template:
-    src: "{{ portainer_domain }}.conf.j2"
-    dest: "/etc/nginx/sites-available/{{ portainer_domain }}.conf"
+    src: "{{ portainer__domain }}.conf.j2"
+    dest: "/etc/nginx/sites-available/{{ portainer__domain }}.conf"
     mode: u=rw,g=r,o=r  # 644
   notify: Reload nginx config
   when: not portainer_ssl_cert_exists.stat.exists
 
 - name: Enable Nginx vhost for Portainer (only if SSL doesn't exist)
   file:
-    src: "/etc/nginx/sites-available/{{ portainer_domain }}.conf"
-    dest: "/etc/nginx/sites-enabled/{{ portainer_domain }}.conf"
+    src: "/etc/nginx/sites-available/{{ portainer__domain }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ portainer__domain }}.conf"
     state: link
     force: true
   notify: Reload nginx config
   when: not portainer_ssl_cert_exists.stat.exists
 
 - name: Configure SSL with Certbot (only if SSL doesn't exist)
-  command: certbot --nginx -d {{ portainer_domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
+  command: certbot --nginx -d {{ portainer__domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
   args:
-    creates: "/etc/letsencrypt/live/{{ portainer_domain }}/fullchain.pem"
+    creates: "/etc/letsencrypt/live/{{ portainer__domain }}/fullchain.pem"
   when: portainer_dns_check.stdout != "" and not portainer_ssl_cert_exists.stat.exists

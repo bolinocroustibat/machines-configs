@@ -2,8 +2,8 @@
 
 services:
   omni-tools:
-    image: iib0011/omni-tools:{{ omnitools_image_tag }}
+    image: iib0011/omni-tools:{{ omnitools__image_tag }}
     container_name: omni-tools
     restart: unless-stopped
     ports:
-      - "127.0.0.1:{{ omnitools_web_port }}:80"
+      - "127.0.0.1:{{ omnitools__web_port }}:80"

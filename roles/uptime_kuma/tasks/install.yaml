@@ -24,35 +24,35 @@
     recreate: always
 
 - name: Check if DNS is properly configured
-  command: dig +short {{ uptime_kuma_domain }}
+  command: dig +short {{ uptime_kuma__domain }}
   register: uptime_kuma_dns_check
   changed_when: false
   failed_when: uptime_kuma_dns_check.stdout == ""
 
 - name: Check if SSL certificate exists
   stat:
-    path: "/etc/letsencrypt/live/{{ uptime_kuma_domain }}/fullchain.pem"
+    path: "/etc/letsencrypt/live/{{ uptime_kuma__domain }}/fullchain.pem"
   register: uptime_kuma_ssl_cert_exists
 
 - name: Deploy Nginx vhost for Uptime Kuma (only if SSL doesn't exist)
   template:
-    src: "{{ uptime_kuma_domain }}.conf.j2"
-    dest: "/etc/nginx/sites-available/{{ uptime_kuma_domain }}.conf"
+    src: "{{ uptime_kuma__domain }}.conf.j2"
+    dest: "/etc/nginx/sites-available/{{ uptime_kuma__domain }}.conf"
     mode: u=rw,g=r,o=r  # 644
   notify: Reload nginx config
   when: not uptime_kuma_ssl_cert_exists.stat.exists
 
 - name: Enable Nginx vhost for Uptime Kuma (only if SSL doesn't exist)
   file:
-    src: "/etc/nginx/sites-available/{{ uptime_kuma_domain }}.conf"
-    dest: "/etc/nginx/sites-enabled/{{ uptime_kuma_domain }}.conf"
+    src: "/etc/nginx/sites-available/{{ uptime_kuma__domain }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ uptime_kuma__domain }}.conf"
     state: link
     force: true
   notify: Reload nginx config
   when: not uptime_kuma_ssl_cert_exists.stat.exists
 
 - name: Configure SSL with Certbot (only if SSL doesn't exist)
-  command: certbot --nginx -d {{ uptime_kuma_domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
+  command: certbot --nginx -d {{ uptime_kuma__domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
   args:
-    creates: "/etc/letsencrypt/live/{{ uptime_kuma_domain }}/fullchain.pem"
+    creates: "/etc/letsencrypt/live/{{ uptime_kuma__domain }}/fullchain.pem"
   when: uptime_kuma_dns_check.stdout != "" and not uptime_kuma_ssl_cert_exists.stat.exists

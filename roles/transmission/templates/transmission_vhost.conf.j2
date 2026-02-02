@@ -1,7 +1,7 @@
 {{ ansible_managed | comment }}
 
 server {
-	server_name {{ transmission_domain }};
+	server_name {{ transmission__domain }};
 	listen 80;
 
 	# Forbid everything except /transmission/
@@ -12,7 +12,7 @@ server {
 	# Transmission proxy
 	location /transmission/ {
 		auth_basic off;  # Deactivated if RPC password suffices
-		proxy_pass http://127.0.0.1:{{ transmission_daemon_rpc_port }}/transmission/;
+		proxy_pass http://127.0.0.1:{{ transmission__daemon_rpc_port }}/transmission/;
 		proxy_http_version 1.1;
 
 		proxy_set_header Host 127.0.0.1;
@@ -28,6 +28,6 @@ server {
 	}
 
 	# Logging
-	access_log /var/log/nginx/{{ transmission_domain }}.access.log;
-	error_log /var/log/nginx/{{ transmission_domain }}.error.log;
+	access_log /var/log/nginx/{{ transmission__domain }}.access.log;
+	error_log /var/log/nginx/{{ transmission__domain }}.error.log;
 }

@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Configuration
-LOCAL_DIR="{{ upload_gdrive_local_dir }}"
-REMOTE_NAME="{{ upload_gdrive_remote_name }}"
-REMOTE_DIR="{{ upload_gdrive_remote_dir }}"
+LOCAL_DIR="{{ upload_gdrive__local_dir }}"
+REMOTE_NAME="{{ upload_gdrive__remote_name }}"
+REMOTE_DIR="{{ upload_gdrive__remote_dir }}"
 
 # When called by Transmission (script-torrent-done), use only the finished torrent dir
 # Otherwise (manual run) upload the whole local dir
@@ -23,7 +23,7 @@ rclone move "$UPLOAD_SRC" "$REMOTE_NAME:$REMOTE_DIR" \
     --transfers 4 \
     --checkers 8 \
     --exclude "*.part" \
-    --log-file {{ upload_gdrive_log_file }} \
+    --log-file {{ upload_gdrive__log_file }} \
     --log-level INFO \
     --stats 60s \
     --stats-one-line \

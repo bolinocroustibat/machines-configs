@@ -6,7 +6,7 @@
   block:
     - name: Pull Portainer CE image
       community.docker.docker_image:
-        name: "portainer/portainer-ce:{{ portainer_image_tag }}"
+        name: "portainer/portainer-ce:{{ portainer__image_tag }}"
         source: pull
         force_source: true
 
@@ -19,12 +19,12 @@
     - name: Recreate Portainer container with new image
       community.docker.docker_container:
         name: portainer
-        image: "portainer/portainer-ce:{{ portainer_image_tag }}"
+        image: "portainer/portainer-ce:{{ portainer__image_tag }}"
         state: started
         restart_policy: always
         ports:
           - "8000:8000"
-          - "{{ portainer_web_port }}:9443"
+          - "{{ portainer__web_port }}:9443"
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
           - portainer_data:/data
@@ -34,7 +34,7 @@
   block:
     - name: Pull Portainer Agent image
       community.docker.docker_image:
-        name: "portainer/agent:{{ portainer_image_tag }}"
+        name: "portainer/agent:{{ portainer__image_tag }}"
         source: pull
         force_source: true
 
@@ -47,11 +47,11 @@
     - name: Recreate Portainer Agent container with new image
       community.docker.docker_container:
         name: portainer_agent
-        image: "portainer/agent:{{ portainer_image_tag }}"
+        image: "portainer/agent:{{ portainer__image_tag }}"
         state: started
         restart_policy: always
         ports:
-          - "{{ portainer_agent_port }}:9001"
+          - "{{ portainer__agent_port }}:9001"
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock
           - portainer_agent_data:/data

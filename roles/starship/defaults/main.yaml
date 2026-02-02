@@ -4,6 +4,6 @@
 
 # Default list of users for Starship configuration
 # Can be overridden in host_vars or playbooks
-starship_users_list:
+starship__users_list:
   - { home: '/root', user: 'root' }
   - { home: '/home/github', user: 'github' }

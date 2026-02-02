@@ -22,7 +22,7 @@
     owner: root
     group: root
     mode: u=rw,g=r,o=r # 644
-  loop: "{{ fail2ban_jails }}"
+  loop: "{{ fail2ban__jails }}"
   notify: Restart fail2ban
   become: true
 
@@ -33,7 +33,7 @@
     owner: root
     group: root
     mode: u=rw,g=r,o=r # 644
-  loop: "{{ fail2ban_filters }}"
+  loop: "{{ fail2ban__filters }}"
   notify: Restart fail2ban
   become: true
 

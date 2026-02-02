@@ -1,4 +1,4 @@
 # Users allowed to connect via SSH (sshd AllowUsers).
 # Default: bolino only (no root — use bolino + sudo). Override per host if needed (e.g. web-bolino adds github).
-ssh_allow_users:
+ssh__allow_users:
   - bolino

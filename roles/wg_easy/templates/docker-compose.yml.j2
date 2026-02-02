@@ -1,16 +1,16 @@
 services:
   wg-easy:
     container_name: wg-easy
-    image: ghcr.io/wg-easy/wg-easy:{{ wg_easy_image_tag }}
+    image: ghcr.io/wg-easy/wg-easy:{{ wg_easy__image_tag }}
     environment:
-      WG_HOST: "{{ wg_easy_domain }}"
-      PASSWORD_HASH: "{{ wg_easy_admin_password_hash | replace('$', '$$') }}"
-      WG_DEFAULT_DNS: "{{ wg_easy_default_dns }}"
+      WG_HOST: "{{ wg_easy__domain }}"
+      PASSWORD_HASH: "{{ wg_easy__admin_password_hash | replace('$', '$$') }}"
+      WG_DEFAULT_DNS: "{{ wg_easy__default_dns }}"
     volumes:
       - "/opt/wg-easy:/etc/wireguard"
     ports:
       - "51820:51820/udp"
-      - "127.0.0.1:{{ wg_easy_web_port }}:51821/tcp"
+      - "127.0.0.1:{{ wg_easy__web_port }}:51821/tcp"
     cap_add:
       - NET_ADMIN
       - SYS_MODULE

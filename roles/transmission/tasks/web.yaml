@@ -6,7 +6,7 @@
   become: true
 
 - name: Check if DNS is properly configured
-  command: dig +short {{ transmission_domain }}
+  command: dig +short {{ transmission__domain }}
   register: transmission_dns_check
   changed_when: false
   failed_when: transmission_dns_check.stdout == ""
@@ -14,14 +14,14 @@
 
 - name: Check if SSL certificate exists
   stat:
-    path: "/etc/letsencrypt/live/{{ transmission_domain }}/fullchain.pem"
+    path: "/etc/letsencrypt/live/{{ transmission__domain }}/fullchain.pem"
   register: transmission_ssl_cert_exists
   become: true
 
 - name: Deploy Nginx vhost for Transmission (only if SSL doesn't exist)
   template:
     src: transmission_vhost.conf.j2
-    dest: "/etc/nginx/sites-available/{{ transmission_domain }}.conf"
+    dest: "/etc/nginx/sites-available/{{ transmission__domain }}.conf"
     mode: u=rw,g=r,o=r  # 644
   notify: Reload nginx config
   when: not transmission_ssl_cert_exists.stat.exists
@@ -29,8 +29,8 @@
 
 - name: Enable Nginx vhost for Transmission (only if SSL doesn't exist)
   file:
-    src: "/etc/nginx/sites-available/{{ transmission_domain }}.conf"
-    dest: "/etc/nginx/sites-enabled/{{ transmission_domain }}.conf"
+    src: "/etc/nginx/sites-available/{{ transmission__domain }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ transmission__domain }}.conf"
     state: link
     force: true
   notify: Reload nginx config
@@ -38,9 +38,9 @@
   become: true
 
 - name: Configure SSL with Certbot (only if SSL doesn't exist)
-  command: certbot --nginx -d {{ transmission_domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
+  command: certbot --nginx -d {{ transmission__domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
   args:
-    creates: "/etc/letsencrypt/live/{{ transmission_domain }}/fullchain.pem"
+    creates: "/etc/letsencrypt/live/{{ transmission__domain }}/fullchain.pem"
   when: transmission_dns_check.stdout != "" and not transmission_ssl_cert_exists.stat.exists
   become: true
   ignore_errors: true

@@ -2,11 +2,11 @@
 
 services:
   uptime-kuma:
-    image: louislam/uptime-kuma:{{ uptime_kuma_image_tag }}
+    image: louislam/uptime-kuma:{{ uptime_kuma__image_tag }}
     container_name: uptime-kuma
     restart: unless-stopped
     ports:
-      - "127.0.0.1:{{ uptime_kuma_web_port }}:3001"
+      - "127.0.0.1:{{ uptime_kuma__web_port }}:3001"
     volumes:
       - uptime-kuma:/app/data
 

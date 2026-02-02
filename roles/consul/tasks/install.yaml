@@ -44,7 +44,7 @@
     dest: /etc/consul.d/server.hcl
     mode: u=rw,g=r,o=r # 644
   notify: restart consul
-  when: inventory_hostname in consul_server_hosts
+  when: inventory_hostname in consul__server_hosts
 
 # Configure Consul clients (bolino-vm3)
 # Clients automatically connect to servers
@@ -54,7 +54,7 @@
     dest: /etc/consul.d/client.hcl
     mode: u=rw,g=r,o=r # 644
   notify: restart consul
-  when: inventory_hostname not in consul_server_hosts
+  when: inventory_hostname not in consul__server_hosts
 
 # Wait for Consul to start before continuing
 # Required for ACL system initialization
@@ -62,7 +62,7 @@
   wait_for:
     port: 8500
     timeout: 60
-  when: inventory_hostname in consul_server_hosts
+  when: inventory_hostname in consul__server_hosts
 
 # Initialize ACL system on first server only
 # This command generates a bootstrap token which is an admin token
@@ -72,7 +72,7 @@
   register: consul_bootstrap_token
   changed_when: true
   failed_when: false
-  when: inventory_hostname == consul_server_hosts[0]
+  when: inventory_hostname == consul__server_hosts[0]
   # Ignore error if ACL system is already initialized
   ignore_errors: true
 
@@ -81,11 +81,11 @@
 - name: Display bootstrap token
   debug:
     msg: "Bootstrap token: {{ consul_bootstrap_token.stdout }}"
-  when: inventory_hostname == consul_server_hosts[0] and consul_bootstrap_token.rc == 0
+  when: inventory_hostname == consul__server_hosts[0] and consul_bootstrap_token.rc == 0
 
 # Check if DNS is properly configured
 - name: Check if DNS is properly configured
-  command: dig +short {{ consul_domain }}
+  command: dig +short {{ consul__domain }}
   register: consul_dns_check
   changed_when: false
   failed_when: consul_dns_check.stdout == ""
@@ -93,14 +93,14 @@
 # Check if SSL certificate exists
 - name: Check if SSL certificate exists
   stat:
-    path: "/etc/letsencrypt/live/{{ consul_domain }}/fullchain.pem"
+    path: "/etc/letsencrypt/live/{{ consul__domain }}/fullchain.pem"
   register: consul_ssl_cert_exists
 
 # Configure Nginx reverse proxy for web interface (only if SSL doesn't exist)
 - name: Copy Nginx configuration (only if SSL doesn't exist)
   template:
     src: consul.adriencarpentier.com.conf.j2
-    dest: /etc/nginx/sites-available/{{ consul_domain }}.conf
+    dest: /etc/nginx/sites-available/{{ consul__domain }}.conf
     mode: u=rw,g=r,o=r # 644
   notify: Reload nginx config
   when: not consul_ssl_cert_exists.stat.exists
@@ -108,16 +108,16 @@
 # Enable Nginx site (only if SSL doesn't exist)
 - name: Enable Nginx site (only if SSL doesn't exist)
   file:
-    src: /etc/nginx/sites-available/{{ consul_domain }}.conf
-    dest: /etc/nginx/sites-enabled/{{ consul_domain }}.conf
+    src: /etc/nginx/sites-available/{{ consul__domain }}.conf
+    dest: /etc/nginx/sites-enabled/{{ consul__domain }}.conf
     state: link
   notify: Reload nginx config
   when: not consul_ssl_cert_exists.stat.exists
 
 # Install SSL certificate with Certbot (only if SSL doesn't exist)
 - name: Install SSL certificate with Certbot (only if SSL doesn't exist)
-  command: certbot --nginx -d {{ consul_domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
+  command: certbot --nginx -d {{ consul__domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
   args:
-    creates: /etc/letsencrypt/live/{{ consul_domain }}/fullchain.pem
+    creates: /etc/letsencrypt/live/{{ consul__domain }}/fullchain.pem
   notify: Reload nginx config
   when: consul_dns_check.stdout != "" and not consul_ssl_cert_exists.stat.exists

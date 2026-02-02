@@ -1,15 +1,15 @@
-transmission_daemon_service_enabled: true
-transmission_daemon_service_state: started
+transmission__daemon_service_enabled: true
+transmission__daemon_service_state: started
 
 # Transmission daemon ports configuration
-transmission_daemon_rpc_port: 9091
-transmission_daemon_peer_port: 51413
-transmission_daemon_peer_proto: tcp
+transmission__daemon_rpc_port: 9091
+transmission__daemon_peer_port: 51413
+transmission__daemon_peer_proto: tcp
 
 # Transmission RPC authentication
 # Must be defined in host_vars or playbooks (not in defaults for security)
-# transmission_daemon_rpc_username: <username>
-# transmission_daemon_rpc_password: "{hashed_password}"
+# transmission__daemon_rpc_username: <username>
+# transmission__daemon_rpc_password: "{hashed_password}"
 # Note: Password must be hashed in Transmission format (starts with { and ends with })
 # To generate the hash, run on the server:
 #   transmission-daemon -t -u <username> -v <password>
@@ -17,4 +17,4 @@ transmission_daemon_peer_proto: tcp
 
 # Transmission domain for Nginx reverse proxy
 # Must be defined in host_vars or playbooks (not in defaults for security)
-# transmission_domain: <domain>
+# transmission__domain: <domain>

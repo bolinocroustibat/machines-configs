@@ -30,5 +30,5 @@
   become: true
   service:
     name: transmission-daemon
-    enabled: "{{ transmission_daemon_service_enabled }}"
-    state: "{{ transmission_daemon_service_state }}"
+    enabled: "{{ transmission__daemon_service_enabled }}"
+    state: "{{ transmission__daemon_service_state }}"

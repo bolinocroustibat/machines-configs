@@ -14,7 +14,7 @@
 - name: Execute uv installation script
   command: sh /tmp/uv_install.sh
   environment:
-    UV_INSTALL_DIR: "{{ uv_install_dir }}"
+    UV_INSTALL_DIR: "{{ uv__install_dir }}"
   register: uv_result
   failed_when: "'FAILED' in uv_result.stderr"
   changed_when: "'installed!' in uv_result.stdout"
@@ -28,8 +28,8 @@
   when: ansible_facts["os_family"] == "Debian"
 
 - name: Install Python versions with uv
-  command: "{{ uv_install_dir }}/uv python install {{ item }}"
-  loop: "{{ uv_python_versions }}"
+  command: "{{ uv__install_dir }}/uv python install {{ item }}"
+  loop: "{{ uv__python_versions }}"
   register: uv_python_result
   changed_when: "'Installed Python ' in (uv_python_result.stderr | default(''))"
   failed_when: uv_python_result.rc != 0

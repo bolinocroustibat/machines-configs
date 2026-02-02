@@ -2,7 +2,7 @@
 
 - name: Update uv
   when: ansible_facts["os_family"] == "Debian"
-  command: "{{ uv_install_dir }}/uv self update"
+  command: "{{ uv__install_dir }}/uv self update"
   register: uv_result
   changed_when: "'on the latest version of uv' not in uv_result.stderr"
   failed_when: "'Err' in uv_result.msg"

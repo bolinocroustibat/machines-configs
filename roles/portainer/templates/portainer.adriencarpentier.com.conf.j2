@@ -1,9 +1,9 @@
 server {
 	listen 80;
-	server_name {{ portainer_domain }};
+	server_name {{ portainer__domain }};
 
 	location / {
-		proxy_pass https://127.0.0.1:{{ portainer_web_port }};
+		proxy_pass https://127.0.0.1:{{ portainer__web_port }};
 		proxy_ssl_verify off;
 		proxy_http_version 1.1;
 		proxy_set_header Upgrade $http_upgrade;
@@ -14,5 +14,5 @@ server {
 		proxy_set_header X-Forwarded-Proto $scheme;
 	}
 
-	error_log /var/www/{{ portainer_domain }}.log;
+	error_log /var/www/{{ portainer__domain }}.log;
 }

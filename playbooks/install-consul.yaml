@@ -1,10 +1,10 @@
 - name: Install Consul
   hosts: web-bolino,data-bolino,bolino-vm3
   vars:
-    consul_server_hosts:
+    consul__server_hosts:
       - "web-bolino"
       - "data-bolino"
-    consul_servers:
+    consul__servers:
       - "web-bolino"
       - "data-bolino"
   tasks:

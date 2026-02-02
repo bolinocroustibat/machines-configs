@@ -1,9 +1,9 @@
 server {
 	listen 80;
-	server_name {{ omnitools_domain }};
+	server_name {{ omnitools__domain }};
 
 	location / {
-		proxy_pass http://127.0.0.1:{{ omnitools_web_port }};
+		proxy_pass http://127.0.0.1:{{ omnitools__web_port }};
 		proxy_http_version 1.1;
 		proxy_set_header Upgrade $http_upgrade;
 		proxy_set_header Connection "upgrade";
@@ -13,5 +13,5 @@ server {
 		proxy_set_header X-Forwarded-Proto $scheme;
 	}
 
-	error_log /var/www/{{ omnitools_domain }}.log;
+	error_log /var/www/{{ omnitools__domain }}.log;
 }

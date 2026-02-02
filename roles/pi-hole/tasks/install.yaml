@@ -24,35 +24,35 @@
     recreate: always
 
 - name: Check if DNS is properly configured
-  command: dig +short {{ pihole_domain }}
+  command: dig +short {{ pihole__domain }}
   register: dns_check
   changed_when: false
   failed_when: dns_check.stdout == ""
 
 - name: Check if SSL certificate exists
   stat:
-    path: "/etc/letsencrypt/live/{{ pihole_domain }}/fullchain.pem"
+    path: "/etc/letsencrypt/live/{{ pihole__domain }}/fullchain.pem"
   register: ssl_cert_exists
 
 - name: Deploy Nginx vhost for Pi-hole (only if SSL doesn't exist)
   template:
-    src: "{{ pihole_domain }}.conf.j2"
-    dest: "/etc/nginx/sites-available/{{ pihole_domain }}.conf"
+    src: "{{ pihole__domain }}.conf.j2"
+    dest: "/etc/nginx/sites-available/{{ pihole__domain }}.conf"
     mode: u=rw,g=r,o=r  # 644
   notify: Reload nginx config
   when: not ssl_cert_exists.stat.exists
 
 - name: Enable Nginx vhost for Pi-hole (only if SSL doesn't exist)
   file:
-    src: "/etc/nginx/sites-available/{{ pihole_domain }}.conf"
-    dest: "/etc/nginx/sites-enabled/{{ pihole_domain }}.conf"
+    src: "/etc/nginx/sites-available/{{ pihole__domain }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ pihole__domain }}.conf"
     state: link
     force: true
   notify: Reload nginx config
   when: not ssl_cert_exists.stat.exists
 
 - name: Configure SSL with Certbot (only if SSL doesn't exist)
-  command: certbot --nginx -d {{ pihole_domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
+  command: certbot --nginx -d {{ pihole__domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
   args:
-    creates: "/etc/letsencrypt/live/{{ pihole_domain }}/fullchain.pem"
+    creates: "/etc/letsencrypt/live/{{ pihole__domain }}/fullchain.pem"
   when: dns_check.stdout != "" and not ssl_cert_exists.stat.exists
