@@ -28,4 +28,4 @@ transmission__peer_proto: tcp
 # Can be overridden to use upload_gdrive.sh for move behavior
 # - sync_gdrive.sh: /var/lib/transmission-daemon/sync_gdrive.sh (bidirectional sync)
 # - upload_gdrive.sh: /var/lib/transmission-daemon/upload_gdrive.sh (unidirectional move)
-transmission__script_torrent_done_filename: "/var/lib/transmission-daemon/sync_gdrive.sh"
+transmission__script_torrent_done_filename: "/var/lib/transmission-daemon/upload_gdrive.sh"

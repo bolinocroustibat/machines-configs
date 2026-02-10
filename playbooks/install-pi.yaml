@@ -166,10 +166,10 @@
         name: transmission
         tasks_from: web
 
-- name: Install gdrive sync
+- name: Install gdrive upload
   hosts: pi-bolino
   tasks:
-    - name: Install rclone and deploy sync script
+    - name: Install rclone and deploy upload script
       include_role:
         name: gdrive
-        tasks_from: sync
+        tasks_from: upload
