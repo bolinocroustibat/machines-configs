@@ -65,3 +65,12 @@ format = '[$symbol$version]($style)'
 [python]
 format = ' [${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
 python_binary = ['.venv/bin/python', '.venv/bin/python3', '.venv/bin/python2']
+# Only show python if a requirements.txt, .python-version, or pyproject.toml exists
+# This prevents it from running 'python3 --version' in every single folder
+detect_extensions = ['py']
+detect_files = [
+    '.python-version',
+    'requirements.txt',
+    'pyproject.toml',
+    'uv.lock',
+]
