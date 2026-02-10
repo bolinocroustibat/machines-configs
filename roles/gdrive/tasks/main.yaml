@@ -1,0 +1,56 @@
+# Common setup tasks for gdrive role
+# This file contains shared configuration needed by both upload and sync tasks
+
+- name: Install rclone via apt (Debian)
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  ansible.builtin.apt:
+    name: rclone
+    state: present
+    update_cache: true
+
+- name: Get home directory of gdrive user (rclone config owner)
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ gdrive__user }}"
+  register: gdrive_user_ent
+
+- name: Get home directory of gdrive script user
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ gdrive__script_user }}"
+  register: gdrive_script_user_ent
+
+- name: Ensure script user has .config/rclone directory
+  when: ansible_facts["os_family"] == "Debian"
+  ansible.builtin.file:
+    path: "{{ gdrive_script_user_ent.ansible_facts.getent_passwd[gdrive__script_user][4] }}/.config/rclone"
+    state: directory
+    owner: "{{ gdrive__script_user }}"
+    group: "{{ gdrive__script_user }}"
+    mode: u=rwx,g=,o= # 700
+  become: true
+
+- name: Copy rclone config from config owner to script user
+  when: ansible_facts["os_family"] == "Debian"
+  ansible.builtin.copy:
+    remote_src: true
+    src: "{{ gdrive_user_ent.ansible_facts.getent_passwd[gdrive__user][4] }}/.config/rclone/rclone.conf"
+    dest: "{{ gdrive_script_user_ent.ansible_facts.getent_passwd[gdrive__script_user][4] }}/.config/rclone/rclone.conf"
+    owner: "{{ gdrive__script_user }}"
+    group: "{{ gdrive__script_user }}"
+    mode: u=rw,g=,o= # 600
+  become: true
+
+- name: Ensure rclone log files exist and are writable by script user
+  when: ansible_facts["os_family"] == "Debian"
+  ansible.builtin.file:
+    path: "{{ gdrive_script_user_ent.ansible_facts.getent_passwd[gdrive__script_user][4] }}/{{ item }}"
+    state: touch
+    owner: "{{ gdrive__script_user }}"
+    group: "{{ gdrive__script_user }}"
+    mode: u=rw,g=r,o=r # 644
+  loop:
+    - "rclone_upload.log"
+    - "rclone_sync.log"
+  become: true

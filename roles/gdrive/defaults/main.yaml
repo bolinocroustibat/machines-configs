@@ -1,0 +1,12 @@
+# User who has rclone config (ran rclone config); config is copied from this user to script user
+gdrive__user: "{{ ansible_user }}"
+
+# User who runs the script (script is deployed in their home)
+gdrive__script_user: "debian-transmission"
+
+# rclone remote name (used in the scripts)
+# Override in host_vars if different
+gdrive__remote_name: "gdrive"
+
+# Enable/disable cron job for regular bidirectional sync
+gdrive__cron_enabled: true

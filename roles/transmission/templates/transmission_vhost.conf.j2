@@ -12,7 +12,7 @@ server {
 	# Transmission proxy
 	location /transmission/ {
 		auth_basic off;  # Deactivated if RPC password suffices
-		proxy_pass http://127.0.0.1:{{ transmission__daemon_rpc_port }}/transmission/;
+		proxy_pass http://127.0.0.1:{{ transmission__rpc_port }}/transmission/;
 		proxy_http_version 1.1;
 
 		proxy_set_header Host 127.0.0.1;

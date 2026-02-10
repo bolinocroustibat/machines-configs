@@ -1,15 +1,18 @@
-transmission__daemon_service_enabled: true
-transmission__daemon_service_state: started
+transmission__service_enabled: true
+transmission__service_state: started
 
-# Transmission daemon ports configuration
-transmission__daemon_rpc_port: 9091
-transmission__daemon_peer_port: 51413
-transmission__daemon_peer_proto: tcp
+# Transmission download directory
+transmission__download_dir: "/mnt/medias/DL"
+
+# Transmission ports configuration
+transmission__rpc_port: 9091
+transmission__peer_port: 51413
+transmission__peer_proto: tcp
 
 # Transmission RPC authentication
 # Must be defined in host_vars or playbooks (not in defaults for security)
-# transmission__daemon_rpc_username: <username>
-# transmission__daemon_rpc_password: "{hashed_password}"
+# transmission__rpc_username: <username>
+# transmission__rpc_password: "{hashed_password}"
 # Note: Password must be hashed in Transmission format (starts with { and ends with })
 # To generate the hash, run on the server:
 #   transmission-daemon -t -u <username> -v <password>
@@ -18,3 +21,11 @@ transmission__daemon_peer_proto: tcp
 # Transmission domain for Nginx reverse proxy
 # Must be defined in host_vars or playbooks (not in defaults for security)
 # transmission__domain: <domain>
+
+# Transmission script-torrent-done hook
+# Path to script executed when a torrent finishes downloading
+# Default uses sync_gdrive.sh for bidirectional sync (recommended)
+# Can be overridden to use upload_gdrive.sh for move behavior
+# - sync_gdrive.sh: /var/lib/transmission-daemon/sync_gdrive.sh (bidirectional sync)
+# - upload_gdrive.sh: /var/lib/transmission-daemon/upload_gdrive.sh (unidirectional move)
+transmission__script_torrent_done_filename: "/var/lib/transmission-daemon/sync_gdrive.sh"

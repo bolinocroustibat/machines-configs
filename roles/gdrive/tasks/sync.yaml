@@ -1,0 +1,33 @@
+# Deploy sync_gdrive.sh script (bidirectional sync)
+# This script synchronizes files bidirectionally, keeping files on both sides
+# This is the recommended approach for regular use
+
+- name: Include main setup tasks
+  ansible.builtin.include_tasks: main.yaml
+
+- name: Deploy sync_gdrive script in script user home
+  when: ansible_facts["os_family"] == "Debian"
+  ansible.builtin.template:
+    src: sync_gdrive.sh.j2
+    dest: "{{ gdrive_script_user_ent.ansible_facts.getent_passwd[gdrive__script_user][4] }}/sync_gdrive.sh"
+    mode: u=rwx,g=rx,o= # 750
+    owner: "{{ gdrive__script_user }}"
+    group: "{{ gdrive__script_user }}"
+  become: true
+
+- name: Add cron job for regular bidirectional sync
+  when:
+    - ansible_facts["os_family"] == "Debian"
+    - gdrive__cron_enabled | default(true) | bool
+  cron:
+    name: "Sync Google Drive DL folder bidirectionally"
+    minute: "0"
+    hour: "*/4"  # Every 4 hours
+    day: "*"
+    month: "*"
+    weekday: "*"
+    job: >-
+      {{ gdrive_script_user_ent.ansible_facts.getent_passwd[gdrive__script_user][4] }}/sync_gdrive.sh
+      >> {{ gdrive_script_user_ent.ansible_facts.getent_passwd[gdrive__script_user][4] }}/rclone_sync.log 2>&1
+    user: "{{ gdrive__script_user }}"
+  become: true

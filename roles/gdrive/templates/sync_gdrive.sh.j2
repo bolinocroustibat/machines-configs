@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# Configuration
+LOCAL_DIR="{{ gdrive__local_dir }}"
+REMOTE_NAME="{{ gdrive__remote_name }}"
+REMOTE_DIR="{{ gdrive__remote_dir }}"
+LOG_FILE="${HOME}/rclone_upload.log"
+
+# When called by Transmission (script-torrent-done), sync only the finished torrent dir
+# Otherwise (cron or manual run) sync the whole directory bidirectionally
+if [[ -n "${TR_TORRENT_DIR:-}" ]]; then
+    SYNC_SRC="$TR_TORRENT_DIR"
+    echo "Syncing finished torrent: $TR_TORRENT_NAME (${TR_TORRENT_DIR})"
+    echo "Timestamp: $(date)"
+
+    # For Transmission hook: sync only this specific directory (unidirectional upload)
+    rclone sync "$SYNC_SRC" "$REMOTE_NAME:$REMOTE_DIR" \
+        --transfers 4 \
+        --checkers 8 \
+        --exclude "*.part" \
+        --log-file "$LOG_FILE" \
+        --log-level INFO \
+        --stats 60s \
+        --stats-one-line
+
+    echo "Sync finished: $TR_TORRENT_NAME -> $REMOTE_NAME:$REMOTE_DIR"
+else
+    # Full bidirectional sync for cron or manual runs
+    echo "Starting bidirectional sync: $LOCAL_DIR <-> $REMOTE_NAME:$REMOTE_DIR"
+    echo "Timestamp: $(date)"
+
+    # Use bisync for bidirectional synchronization (rclone 1.58+)
+    # Falls back to sync if bisync is not available
+    if rclone bisync --help > /dev/null 2>&1; then
+        echo "Using rclone bisync for bidirectional synchronization"
+        rclone bisync "$LOCAL_DIR" "$REMOTE_NAME:$REMOTE_DIR" \
+            --transfers 4 \
+            --checkers 8 \
+            --exclude "*.part" \
+            --log-file "$LOG_FILE" \
+            --log-level INFO \
+            --stats 60s \
+            --stats-one-line
+    else
+        echo "bisync not available, using sync in both directions"
+        # Sync local to remote first
+        echo "Syncing local -> remote..."
+        rclone sync "$LOCAL_DIR" "$REMOTE_NAME:$REMOTE_DIR" \
+            --transfers 4 \
+            --checkers 8 \
+            --exclude "*.part" \
+            --log-file "$LOG_FILE" \
+            --log-level INFO \
+            --stats 60s \
+            --stats-one-line
+
+        # Then sync remote to local to get any files added on Google Drive
+        echo "Syncing remote -> local..."
+        rclone sync "$REMOTE_NAME:$REMOTE_DIR" "$LOCAL_DIR" \
+            --transfers 4 \
+            --checkers 8 \
+            --exclude "*.part" \
+            --log-file "$LOG_FILE" \
+            --log-level INFO \
+            --stats 60s \
+            --stats-one-line
+    fi
+
+    echo "Sync finished: $(date)"
+fi

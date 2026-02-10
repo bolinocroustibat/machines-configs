@@ -1,0 +1,16 @@
+# Deploy upload_gdrive.sh script (unidirectional upload with move)
+# This script moves files from local to Google Drive, freeing local space
+# Use this if you want the old behavior where files are removed after upload
+
+- name: Include main setup tasks
+  ansible.builtin.include_tasks: main.yaml
+
+- name: Deploy upload_gdrive script in script user home
+  when: ansible_facts["os_family"] == "Debian"
+  ansible.builtin.template:
+    src: upload_gdrive.sh.j2
+    dest: "{{ gdrive_script_user_ent.ansible_facts.getent_passwd[gdrive__script_user][4] }}/upload_gdrive.sh"
+    mode: u=rwx,g=rx,o= # 750
+    owner: "{{ gdrive__script_user }}"
+    group: "{{ gdrive__script_user }}"
+  become: true
