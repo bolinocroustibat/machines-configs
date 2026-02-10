@@ -141,6 +141,14 @@
         name: certbot
         tasks_from: install
 
+- name: Setup storage media disk
+  hosts: pi-bolino
+  tasks:
+    - name: Setup storage media disk mount and directories
+      include_role:
+        name: storage-media
+        tasks_from: main
+
 - name: Install transmission-daemon
   hosts: pi-bolino
   tags: transmission

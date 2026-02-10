@@ -1,0 +1,5 @@
+# Storage media disk configuration
+storage_media__ssd_uuid: "d417b1e8-86db-401a-b6e3-dee0b73c1f41"
+storage_media__mount_point: "/mnt/medias"
+storage_media__owner: "debian-transmission"
+storage_media__group: "debian-transmission"

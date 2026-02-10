@@ -1,0 +1,44 @@
+- name: Create mount point directory
+  become: true
+  file:
+    path: "{{ storage_media__mount_point }}"
+    state: directory
+    owner: "{{ storage_media__owner }}"
+    group: "{{ storage_media__group }}"
+    mode: u=rwx,g=rx,o=rx # 755
+
+- name: Check if disk exists
+  become: true
+  stat:
+    path: "/dev/disk/by-uuid/{{ storage_media__ssd_uuid }}"
+  register: disk_check
+
+- name: Mount partition via fstab
+  become: true
+  mount:
+    path: "{{ storage_media__mount_point }}"
+    src: "UUID={{ storage_media__ssd_uuid }}"
+    fstype: ext4
+    opts: defaults,noatime
+    state: mounted
+  when: disk_check.stat.exists
+
+- name: Ensure permissions are correct after mount
+  become: true
+  file:
+    path: "{{ storage_media__mount_point }}"
+    state: directory
+    owner: "{{ storage_media__owner }}"
+    group: "{{ storage_media__group }}"
+    recurse: false
+  when: disk_check.stat.exists
+
+- name: Create DL directory for downloads
+  become: true
+  file:
+    path: "{{ storage_media__mount_point }}/DL"
+    state: directory
+    owner: "{{ storage_media__owner }}"
+    group: "{{ storage_media__group }}"
+    mode: u=rwx,g=rx,o=rx # 755
+  when: disk_check.stat.exists
