@@ -48,6 +48,10 @@ Rules for AI agents (Cursor, Claude, etc.) working on this Ansible project.
   - ❌ `ansible-playbook playbooks/install-pi.yaml --limit pi-bolino` (incorrect)
 - **Check linting after modifications**: run `uv run ansible-lint <file_or_directory>` to verify code quality
 
+## Host-Specific and Personal Data
+- **Never write host-specific or personal config in committed files**: no usernames, hostnames, paths like `/home/foo` or `/Users/foo`, IPs, or other machine/user-specific examples in comments, docs, or code.
+- Use generic placeholders or refer to variables (e.g. `user_home` from host_vars) without concrete examples that could identify a specific host or user.
+
 ## Ansible Best Practices
 - Use descriptive task names in English
 - Include comments explaining non-obvious logic
