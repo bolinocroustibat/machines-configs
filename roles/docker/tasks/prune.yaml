@@ -1,37 +1,55 @@
-- name: Prune all unused Docker images
-  command: docker image prune -a --force
-  register: docker_prune_output
+- name: Check if Docker is available
+  command: docker --version
+  register: docker_available
+  failed_when: false
+  become: true
 
-- name: Display prune results
+- name: Prune all unused Docker images
+  community.docker.docker_prune:
+    images: true
+    images_filters:
+      dangling: false
+  register: docker_prune_images
+  when: docker_available.rc == 0
+  become: true
+
+- name: Display pruned images
   debug:
-    var: docker_prune_output.stdout_lines
+    var: docker_prune_images.images_deleted
+  when: docker_available.rc == 0 and docker_prune_images.images_deleted is defined
 
 - name: Prune unused Docker containers
-  docker_prune:
+  community.docker.docker_prune:
     containers: true
   register: docker_prune_containers
+  when: docker_available.rc == 0
+  become: true
 
 - name: Display pruned containers
   debug:
     var: docker_prune_containers.containers_deleted
-  when: docker_prune_containers.containers_deleted is defined
+  when: docker_available.rc == 0 and docker_prune_containers.containers_deleted is defined
 
 - name: Prune unused Docker volumes
-  docker_prune:
+  community.docker.docker_prune:
     volumes: true
   register: docker_prune_volumes
+  when: docker_available.rc == 0
+  become: true
 
 - name: Display pruned volumes
   debug:
     var: docker_prune_volumes.volumes_deleted
-  when: docker_prune_volumes.volumes_deleted is defined
+  when: docker_available.rc == 0 and docker_prune_volumes.volumes_deleted is defined
 
 - name: Prune unused Docker networks
-  docker_prune:
+  community.docker.docker_prune:
     networks: true
   register: docker_prune_networks
+  when: docker_available.rc == 0
+  become: true
 
 - name: Display pruned networks
   debug:
     var: docker_prune_networks.networks_deleted
-  when: docker_prune_networks.networks_deleted is defined
+  when: docker_available.rc == 0 and docker_prune_networks.networks_deleted is defined
