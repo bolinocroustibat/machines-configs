@@ -99,11 +99,11 @@
 
 - name: Install bat
   hosts: pi-bolino
+  become: true
   tasks:
     - name: Install bat command-line tool
       include_role:
         name: bat
-        tasks_from: install
 
 - name: Install and configure uv
   hosts: pi-bolino

@@ -12,24 +12,27 @@
     state: present
     update_cache: true
 
+# Uses user_home from host_vars - same as other roles (zsh, direnv, etc.)
+- name: Ensure .zshrc exists for bat alias
+  become: false
+  file:
+    path: "{{ user_home }}/.zshrc"
+    state: touch
+
 - name: Define zshrc alias for bat (replace cat) - macOS
   become: false
-  vars:
-    zshrc_path: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
   blockinfile:
-    path: "{{ zshrc_path }}"
+    path: "{{ user_home }}/.zshrc"
     marker: "# {mark} bat alias added by ansible"
     block: |
-      alias cat='bat'
+      alias cat='bat --style=plain --paging=never' # Disable paging and no lines numbers
   when: ansible_facts["os_family"] == 'Darwin'
 
 - name: Define zshrc alias for batcat (replace cat) - Debian
   become: false
-  vars:
-    zshrc_path: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
   blockinfile:
-    path: "{{ zshrc_path }}"
+    path: "{{ user_home }}/.zshrc"
     marker: "# {mark} bat alias added by ansible"
     block: |
-      alias cat='batcat'
+      alias cat='batcat --style=plain --paging=never' # Disable paging and no lines numbers
   when: ansible_facts["os_family"] == 'Debian'

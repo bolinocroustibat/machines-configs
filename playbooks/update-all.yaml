@@ -96,6 +96,25 @@
         name: zsh
         tasks_from: update
 
+- name: Update bat (local)
+  hosts: local
+  tags:
+    - macos
+  tasks:
+    - name: Install or upgrade bat
+      include_role:
+        name: bat
+
+- name: Update bat (remote)
+  hosts: remote
+  become: true
+  tags:
+    - debian
+  tasks:
+    - name: Install or upgrade bat
+      include_role:
+        name: bat
+
 - name: Update Starship (local)
   hosts: local
   tasks:
