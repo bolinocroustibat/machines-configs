@@ -1,4 +1,4 @@
-ansible_managed: "Ansible managed: %U %Y-%m-%d %H:%M:%S %Z"
+ansible_managed: "Ansible managed - DO NOT EDIT"
 
 nginx_available_path: /etc/nginx/sites-available
 nginx_enabled_path: /etc/nginx/sites-enabled
