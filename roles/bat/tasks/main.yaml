@@ -1,3 +1,5 @@
+# System-level bat installation, then per-user alias configuration.
+
 - name: Install bat via Homebrew (MacOS)
   when: ansible_facts["os_family"] == 'Darwin'
   community.general.homebrew:
@@ -12,27 +14,9 @@
     state: present
     update_cache: true
 
-# Uses user_home from host_vars - same as other roles (zsh, direnv, etc.)
-- name: Ensure .zshrc exists for bat alias
-  become: false
-  file:
-    path: "{{ user_home }}/.zshrc"
-    state: touch
-
-- name: Define zshrc alias for bat (replace cat) - macOS
-  become: false
-  blockinfile:
-    path: "{{ user_home }}/.zshrc"
-    marker: "# {mark} bat alias added by ansible"
-    block: |
-      alias cat='bat --style=plain --paging=never' # Disable paging and no lines numbers
-  when: ansible_facts["os_family"] == 'Darwin'
-
-- name: Define zshrc alias for batcat (replace cat) - Debian
-  become: false
-  blockinfile:
-    path: "{{ user_home }}/.zshrc"
-    marker: "# {mark} bat alias added by ansible"
-    block: |
-      alias cat='batcat --style=plain --paging=never' # Disable paging and no lines numbers
-  when: ansible_facts["os_family"] == 'Debian'
+# Per-user configuration: add cat alias to .zshrc
+- name: Configure bat alias for users
+  include_tasks: configure_user.yaml
+  loop: "{{ shell_users_list }}"
+  loop_control:
+    loop_var: user_config

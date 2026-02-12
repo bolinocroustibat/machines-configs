@@ -1,0 +1,50 @@
+# Per-user bat configuration: add cat alias to .zshrc.
+# Called from main.yaml with loop_var: user_config.
+
+- name: Check if user exists (Debian)
+  getent:
+    database: passwd
+    key: "{{ user_config.user }}"
+  register: bat_user_exists
+  failed_when: false
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Check if user home exists (Darwin)
+  ansible.builtin.stat:
+    path: "{{ user_config.home }}"
+  register: bat_user_exists_darwin
+  when: ansible_facts['os_family'] == 'Darwin'
+
+- name: Configure bat alias for user
+  when: >-
+    (ansible_facts['os_family'] == 'Debian'
+    and user_config.user in (bat_user_exists.get('ansible_facts', {}).get('getent_passwd', {}).keys() | default([])))
+    or (ansible_facts['os_family'] == 'Darwin' and (bat_user_exists_darwin.stat.exists | default(false)))
+  block:
+    - name: Ensure .zshrc exists for bat alias
+      ansible.builtin.file:
+        path: "{{ user_config.home }}/.zshrc"
+        state: touch
+        mode: u=rw,g=r,o=r # 644
+        owner: "{{ user_config.user }}"
+      become: "{{ user_config.user != ansible_user }}"
+
+    - name: Define zshrc alias for bat (replace cat) - macOS
+      ansible.builtin.blockinfile:
+        path: "{{ user_config.home }}/.zshrc"
+        marker: "# {mark} bat alias added by ansible"
+        block: |
+          alias cat='bat --style=plain --paging=never' # Disable paging and no lines numbers
+        owner: "{{ user_config.user }}"
+      become: "{{ user_config.user != ansible_user }}"
+      when: ansible_facts["os_family"] == 'Darwin'
+
+    - name: Define zshrc alias for batcat (replace cat) - Debian
+      ansible.builtin.blockinfile:
+        path: "{{ user_config.home }}/.zshrc"
+        marker: "# {mark} bat alias added by ansible"
+        block: |
+          alias cat='batcat --style=plain --paging=never' # Disable paging and no lines numbers
+        owner: "{{ user_config.user }}"
+      become: "{{ user_config.user != ansible_user }}"
+      when: ansible_facts["os_family"] == 'Debian'
