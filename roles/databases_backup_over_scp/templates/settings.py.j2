@@ -2,48 +2,55 @@
 
 # Logging settings
 LOG_LEVEL = "DEBUG"  # Available levels: DEBUG, INFO, WARNING, ERROR, SUCCESS
-LOGFILE = "log_last_script.log"  # log file will be created in the script's directory (relative path)
 
 # PostgreSQL database details to which backup to be done.
 # Used only by backup-postgresql.py script.
-POSTGRES_DEFAULT_PORT = 5432
 POSTGRES_DEFAULT_USER = "{{ postgres__local_user }}"  # make sure this system user has enough privileges to take all databases backup.
 POSTGRES_DEFAULT_PASSWORD = "{{ postgres__local_user_password }}"
+POSTGRES_DEFAULT_PORT = 5432
 
 POSTGRES_DATABASES = {
-{% for website in websites_web %}
-{% if website.database is defined and website.database == 'postgres' %}
-    "{{ website.name }}_django": {
+{% for db in databases_backup_over_scp__postgres_databases | default([]) %}
+    "{{ db }}": {
         "user": POSTGRES_DEFAULT_USER,
         "password": POSTGRES_DEFAULT_PASSWORD,
-        "port": {{ website.db_port | default(POSTGRES_DEFAULT_PORT) }},
+        "port": POSTGRES_DEFAULT_PORT,
     },
-{% endif %}
 {% endfor %}
 }
 
 # MySQL database details to which backup to be done.
 # Used only by backup-mysql.py script.
-MYSQL_DEFAULT_USER = "{{ mysql__local_user }}"  # make sure this MySQL user has enough privileges to take all databases backup.
-MYSQL_DEFAULT_PASSWORD = "{{ mysql__local_user_password }}"
+MYSQL_DEFAULT_USER = "{{ databases_backup_over_scp__mysql_local_user }}"  # make sure this MySQL user has enough privileges to take all databases backup.
+MYSQL_DEFAULT_PASSWORD = "{{ databases_backup_over_scp__mysql_local_user_password }}"
 MYSQL_DEFAULT_PORT = 3306
 
 MYSQL_DATABASES = {
-{% for website in websites_web %}
-{% if website.database is defined and website.database == 'mariadb' %}
-    "{{ website.name }}_wp": {
+{% for db in databases_backup_over_scp__mysql_databases | default([]) %}
+    "{{ db }}": {
         "user": MYSQL_DEFAULT_USER,
         "password": MYSQL_DEFAULT_PASSWORD,
-        "port": {{ website.db_port | default(MYSQL_DEFAULT_PORT) }},
+        "port": MYSQL_DEFAULT_PORT,
     },
-{% endif %}
 {% endfor %}
 }
 
 # Local setting
-LOCAL_PATH = "{{ dabatase_backup_over_scp__local_backup_path }}"  # local path where dumps will be saved, relative to the script's directory
+LOCAL_PATH = "{{ databases_backup_over_scp__local_backup_path }}"  # local path where dumps will be saved, relative to the script's directory
 
 # Remote settings
-REMOTE_HOST = "{{ dabatase_backup_over_scp__remote_host }}"  # leave blank if you don't want to save remotely.
-REMOTE_USER = "{{ dabatase_backup_over_scp__remote_user }}"  # you need to be authorized on remote with your user SSH keys.
-REMOTE_PATH = "{{ dabatase_backup_over_scp__remote_backup_path }}"  # full remote path where dumps will be saved.
+REMOTE_HOST = "{{ databases_backup_over_scp__remote_host }}"  # leave blank if you don't want to save remotely.
+REMOTE_USER = "{{ databases_backup_over_scp__remote_user }}"  # you need to be authorized on remote with your user SSH keys.
+REMOTE_PATH = "{{ databases_backup_over_scp__remote_backup_path }}"  # full remote path where dumps will be saved.
+
+# GFS retention (Grandfather-Father-Son). Applied after each backup if RETENTION_ENABLED is True.
+# Son (daily): one backup per day, keep the last N days.
+# Father (weekly): backup on RETENTION_WEEKLY_DAY (e.g. Sunday), keep the last N weeks.
+# Grandfather (monthly): backup on the 1st of the month, keep the last N months.
+# Great-grandfather (yearly): backup on 1st January, keep the last N years. Use 0 to disable.
+RETENTION_ENABLED = True
+RETENTION_DAILY_DAYS = 7
+RETENTION_WEEKLY_WEEKS = 0
+RETENTION_WEEKLY_DAY = 6  # 0=Monday, 6=Sunday
+RETENTION_MONTHLY_MONTHS = 6
+RETENTION_YEARLY_YEARS = 4

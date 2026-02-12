@@ -220,12 +220,12 @@
         name: postgres
         tasks_from: install
 
-- name: Install databases-remote-backup-scripts
+- name: Install databases backup over SCP
   hosts: web-bolino
   tasks:
     - name: Set up database backup scripts
       include_role:
-        name: databases-remote-backup-scripts
+        name: databases_backup_over_scp
         tasks_from: install
 
 - name: Install websites

@@ -180,3 +180,10 @@
       include_role:
         name: bun
         tasks_from: update
+
+- name: Install databases backup over SCP
+  hosts: web-bolino
+  tasks:
+    - name: Set up database backup scripts
+      include_role:
+        name: databases_backup_over_scp
