@@ -1,5 +1,8 @@
 ansible_managed: "Ansible managed - DO NOT EDIT"
 
+# Home directory of the connection user, derived from inventory ansible_user
+user_home: "{{ '/Users/' + ansible_user if ansible_os_family == 'Darwin' else '/home/' + ansible_user }}"
+
 nginx_available_path: /etc/nginx/sites-available
 nginx_enabled_path: /etc/nginx/sites-enabled
 
