@@ -20,7 +20,7 @@
         tasks_from: upgrade
 
 - name: Update Docker
-  hosts: remote
+  hosts: web-bolino, data-bolino
   become: true
   tags:
     - debian
