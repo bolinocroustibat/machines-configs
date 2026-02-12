@@ -75,3 +75,5 @@
         name: "{{ user_config.user }}"
         shell: /bin/zsh
       become: true
+      # On macOS, ZSH is already the default shell and chsh requires an interactive password
+      when: ansible_facts['os_family'] == 'Debian'
