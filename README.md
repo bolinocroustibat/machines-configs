@@ -39,7 +39,9 @@ uv run ansible-playbook playbooks/install-local-macos.yaml
 
 This repo uses exclusively [git-crypt](https://www.agwa.name/projects/git-crypt/) to encrypt and decrypt secrets.
 
-Encrypted files are defined in `.gitattributes` files.
+Encrypted files are defined in `.gitattributes`.
+
+**One-time setup:** run `git-crypt init` once in the repo (e.g. when creating it or when enabling encryption). After cloning, use the shared key and run `git-crypt unlock` to decrypt secrets locally.
 
 To get the git-crypt status:
 ```bash

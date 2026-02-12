@@ -42,18 +42,14 @@ Thumbs.db
 .ansible/
 
 # Secrets files
-# Generic secrets files
-/inventory.*
-/host_vars/*
-roles/**/vars/secrets.yml
-roles/**/vars/secrets.yaml
+# (committed encrypted with git-crypt)
+# /inventory.*
+# /host_vars/*
+# roles/**/vars/secrets.yml
+# roles/**/vars/secrets.yaml
 vault.yml
 *.vault
 .vault_pass
-# Example secrets files
+# Example secrets files (not encrypted, committed in plaintext)
 !roles/**/vars/secrets.yml.example
 !roles/**/vars/secrets.yaml.example
-# Specific secrets (#TODO: to be made generic)
-/roles/cron/templates/*
-/roles/ssh/templates/*
-/roles/websites/templates/*
