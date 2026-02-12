@@ -47,7 +47,7 @@
       ansible.builtin.blockinfile:
         dest: "{{ user_config.home }}/.zshrc"
         block: "{{ lookup('template', '.zshrc.j2') }}"
-        marker: "### {mark} Starship (Ansible-managed) ### "
+        marker: "### {mark} Starship (Ansible-managed) ###"
         mode: u=rw,g=r,o=r # 644 (read access for everyone and also write access for the owner of the file)
         create: true
         owner: "{{ user_config.user }}"

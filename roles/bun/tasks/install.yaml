@@ -26,7 +26,7 @@
     zshrc_path: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
   blockinfile:
     path: "{{ zshrc_path }}"
-    marker: "# {mark} bun configuration added by ansible"
+    marker: "### {mark} bun (Ansible-managed) ###"
     block: |
       export BUN_INSTALL="{{ ansible_facts['env']['HOME'] }}/.bun"
       export PATH="$BUN_INSTALL/bin:$PATH"
