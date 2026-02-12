@@ -48,7 +48,7 @@
     - name: Install Micro editor
       include_role:
         name: micro
-        tasks_from: main
+        tasks_from: install
 
 - name: Configure Git
   hosts: local

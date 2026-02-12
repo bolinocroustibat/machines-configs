@@ -1,0 +1,47 @@
+# Per-user Micro configuration: deploy settings.json.
+# Called from install.yaml with loop_var: user_config.
+
+- name: Check if user exists (Debian)
+  getent:
+    database: passwd
+    key: "{{ user_config.user }}"
+  register: micro_user_exists
+  failed_when: false
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Check if user home exists (Darwin)
+  ansible.builtin.stat:
+    path: "{{ user_config.home }}"
+  register: micro_user_exists_darwin
+  when: ansible_facts['os_family'] == 'Darwin'
+
+- name: Configure Micro for user
+  when: >-
+    (ansible_facts['os_family'] == 'Debian'
+    and user_config.user in (micro_user_exists.get('ansible_facts', {}).get('getent_passwd', {}).keys() | default([])))
+    or (ansible_facts['os_family'] == 'Darwin' and (micro_user_exists_darwin.stat.exists | default(false)))
+  block:
+    - name: Ensure micro config directory exists
+      ansible.builtin.file:
+        path: "{{ user_config.home }}/.config/micro"
+        state: directory
+        mode: u=rwx,g=rx,o=rx # 755
+        owner: "{{ user_config.user }}"
+      become: "{{ user_config.user != ansible_user }}"
+
+    - name: Backup existing config file if it exists
+      ansible.builtin.copy:
+        remote_src: true
+        src: "{{ user_config.home }}/.config/micro/settings.json"
+        dest: "{{ user_config.home }}/.config/micro/settings.json_{{ ansible_facts['date_time']['iso8601'] }}.bak"
+        mode: preserve
+      failed_when: false
+      become: "{{ user_config.user != ansible_user }}"
+
+    - name: Copy config file
+      ansible.builtin.template:
+        src: settings.json.j2
+        dest: "{{ user_config.home }}/.config/micro/settings.json"
+        mode: u=rw,g=r,o=r # 644
+        owner: "{{ user_config.user }}"
+      become: "{{ user_config.user != ansible_user }}"

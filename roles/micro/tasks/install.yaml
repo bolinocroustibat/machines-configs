@@ -1,3 +1,5 @@
+# System-level Micro installation, then per-user configuration.
+
 - name: Install Micro text editor with homebrew
   homebrew:
     name: micro
@@ -12,31 +14,9 @@
   when: ansible_facts["os_family"] == "Debian"
   become: true
 
-- name: Ensure micro config directory exists
-  file:
-    path: "{{ user_home }}/.config/micro"
-    state: directory
-    mode: u=rwx,g=rx,o=rx # 755
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-
-- name: Check if config file exists
-  stat:
-    path: "{{ user_home }}/.config/micro/settings.json"
-  register: micro_config
-
-- name: Backup existing config file if it exists
-  copy:
-    remote_src: true
-    src: "{{ user_home }}/.config/micro/settings.json"
-    dest: "{{ user_home }}/.config/micro/settings.json_{{ ansible_facts['date_time']['iso8601'] }}.bak"
-    mode: preserve
-    owner: "{{ ansible_user }}"
-  when: micro_config.stat.exists
-
-- name: Copy config file
-  template:
-    src: settings.json.j2
-    dest: "{{ user_home }}/.config/micro/settings.json"
-    mode: u=rw,g=r,o=r # 644 (read and write access for the owner of the file and read access for group and others)
-    owner: "{{ ansible_user }}"
+# Per-user configuration: deploy settings.json
+- name: Configure Micro for users
+  include_tasks: configure_user.yaml
+  loop: "{{ shell_users_list }}"
+  loop_control:
+    loop_var: user_config
