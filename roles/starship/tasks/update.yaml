@@ -37,7 +37,7 @@
     - name: Check home directories exist
       ansible.builtin.stat:
         path: "{{ item.home }}"
-      loop: "{{ starship__users_list }}"
+      loop: "{{ shell_users_list }}"
       register: starship_darwin_homes
       loop_control:
         label: "{{ item.user }}"
@@ -53,7 +53,7 @@
 
 - name: Configure Starship for users
   include_tasks: configure_user.yaml
-  loop: "{{ starship__users_list }}"
+  loop: "{{ shell_users_list }}"
   loop_control:
     loop_var: user_config
   when: user_config.user in starship_users_ok

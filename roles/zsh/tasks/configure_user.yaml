@@ -1,0 +1,77 @@
+# Per-user ZSH configuration: plugins, .zshrc, and shell change.
+# Called from install.yaml and update.yaml with loop_var: user_config.
+
+- name: Check if user exists (Debian)
+  getent:
+    database: passwd
+    key: "{{ user_config.user }}"
+  register: zsh_user_exists
+  failed_when: false
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Check if user home exists (Darwin)
+  ansible.builtin.stat:
+    path: "{{ user_config.home }}"
+  register: zsh_user_exists_darwin
+  when: ansible_facts['os_family'] == 'Darwin'
+
+- name: Configure ZSH for user
+  when: >-
+    (ansible_facts['os_family'] == 'Debian'
+    and user_config.user in (zsh_user_exists.get('ansible_facts', {}).get('getent_passwd', {}).keys() | default([])))
+    or (ansible_facts['os_family'] == 'Darwin' and (zsh_user_exists_darwin.stat.exists | default(false)))
+  block:
+    # On Debian, plugins are cloned per-user. On macOS they are installed system-wide via Homebrew.
+    - name: Create .zsh directory for plugins
+      ansible.builtin.file:
+        path: "{{ user_config.home }}/.zsh"
+        state: directory
+        mode: u=rwx,g=rx,o=rx # 755
+        owner: "{{ user_config.user }}"
+      become: "{{ user_config.user != ansible_user }}"
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Install ZSH autosuggestions plugin for user
+      ansible.builtin.git:
+        repo: "https://github.com/zsh-users/zsh-autosuggestions.git"
+        dest: "{{ user_config.home }}/.zsh/zsh-autosuggestions"
+        version: "master"
+        clone: true
+        update: true
+        force: true
+      become: "{{ user_config.user != ansible_user }}"
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Install ZSH syntax highlighting plugin for user
+      ansible.builtin.git:
+        repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"
+        dest: "{{ user_config.home }}/.zsh/zsh-syntax-highlighting"
+        version: "master"
+        clone: true
+        update: true
+        force: true
+      become: "{{ user_config.user != ansible_user }}"
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Backup existing .zshrc if exists
+      ansible.builtin.copy:
+        remote_src: true
+        src: "{{ user_config.home }}/.zshrc"
+        dest: "{{ user_config.home }}/.zshrc_{{ ansible_facts['date_time']['iso8601'] }}.bak"
+        mode: preserve
+      failed_when: false
+      become: "{{ user_config.user != ansible_user }}"
+
+    - name: Write .zshrc
+      ansible.builtin.template:
+        src: .zshrc.j2
+        dest: "{{ user_config.home }}/.zshrc"
+        mode: u=rw,g=r,o=r # 644
+        owner: "{{ user_config.user }}"
+      become: "{{ user_config.user != ansible_user }}"
+
+    - name: Change user shell to ZSH
+      ansible.builtin.user:
+        name: "{{ user_config.user }}"
+        shell: /bin/zsh
+      become: true

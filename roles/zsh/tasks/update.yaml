@@ -15,31 +15,19 @@
         update_cache: true
       become: true
 
-- name: Update ZSH plugins
-  block:
-    - name: Update plugins with homebrew
-      when: ansible_facts["os_family"] == "Darwin"
-      homebrew:
-        name:
-          - zsh-autosuggestions
-          - zsh-syntax-highlighting
-        state: latest
-        update_homebrew: true
+# On macOS, update plugins system-wide via Homebrew
+- name: Update ZSH plugins with Homebrew
+  when: ansible_facts["os_family"] == "Darwin"
+  homebrew:
+    name:
+      - zsh-autosuggestions
+      - zsh-syntax-highlighting
+    state: latest
+    update_homebrew: true
 
-    - name: Update autosuggestions plugin with git
-      when: ansible_facts["os_family"] == "Debian"
-      ansible.builtin.git:
-        repo: "https://github.com/zsh-users/zsh-autosuggestions.git"
-        dest: "{{ user_home }}/.zsh/zsh-autosuggestions"
-        version: "master"
-        update: true
-        force: true
-
-    - name: Update syntax highlighting plugin with git
-      when: ansible_facts["os_family"] == "Debian"
-      ansible.builtin.git:
-        repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"
-        dest: "{{ user_home }}/.zsh/zsh-syntax-highlighting"
-        version: "master"
-        update: true
-        force: true
+# Per-user configuration: plugins (Debian), .zshrc, and shell change
+- name: Configure ZSH for users
+  include_tasks: configure_user.yaml
+  loop: "{{ shell_users_list }}"
+  loop_control:
+    loop_var: user_config

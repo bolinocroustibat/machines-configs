@@ -2,8 +2,4 @@
 # When set (e.g. in host_vars), overrides the system hostname in the prompt.
 # prompt_hostname:
 
-# Default list of users for Starship configuration
-# Can be overridden in host_vars or playbooks
-starship__users_list:
-  - { home: '/root', user: 'root' }
-  - { home: '/home/github', user: 'github' }
+# Users list is defined per-host in host_vars as shell_users_list.

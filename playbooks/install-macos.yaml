@@ -24,7 +24,7 @@
     - name: Install and configure zsh
       include_role:
         name: zsh
-        tasks_from: main
+        tasks_from: install
 
 - name: Install and configure Starship
   hosts: local

@@ -1,35 +1,18 @@
-- name: Check if ZSH is installed
-  block:
-    - name: Check if ZSH is installed with homebrew
-      when: ansible_facts["os_family"] == "Darwin"
-      homebrew:
-        name: zsh
-        state: present
-      register: zsh_installed
-
-    - name: Check if ZSH is installed with apt
-      when: ansible_facts["os_family"] == "Debian"
-      apt:
-        name: zsh
-        state: present
-        update_cache: true
-      become: true
-      register: zsh_installed
+# System-level ZSH installation, then per-user configuration.
 
 - name: Install ZSH
-  when: not zsh_installed.changed
   block:
     - name: Install ZSH with homebrew
       when: ansible_facts["os_family"] == "Darwin"
       homebrew:
         name: zsh
-        state: latest
+        state: present
 
     - name: Install ZSH with apt
       when: ansible_facts["os_family"] == "Debian"
       apt:
         name: zsh
-        state: latest
+        state: present
         update_cache: true
       become: true
 
@@ -41,61 +24,18 @@
     update_cache: true
   become: true
 
-- name: Install ZSH autosuggestions
-  block:
-    - name: Install ZSH autosuggestions with homebrew
-      when: ansible_facts["os_family"] == "Darwin"
-      homebrew:
-        name: zsh-autosuggestions
-        state: latest
+# On macOS, plugins are installed system-wide via Homebrew
+- name: Install ZSH plugins with Homebrew
+  when: ansible_facts["os_family"] == "Darwin"
+  homebrew:
+    name:
+      - zsh-autosuggestions
+      - zsh-syntax-highlighting
+    state: present
 
-    - name: Install ZSH syntax highlighting with git clone
-      when: ansible_facts["os_family"] == "Debian"
-      ansible.builtin.git:
-        repo: "https://github.com/zsh-users/zsh-autosuggestions.git"
-        dest: "{{ user_home }}/.zsh/zsh-autosuggestions"
-        version: "master"
-        clone: true
-        update: true
-
-- name: Install ZSH syntax highlighting
-  block:
-    - name: Install ZSH syntax highlighting with homebrew
-      when: ansible_facts["os_family"] == "Darwin"
-      homebrew:
-        name: zsh-autosuggestions
-        state: latest
-
-    - name: Install ZSH syntax highlighting with git clone
-      when: ansible_facts["os_family"] == "Debian"
-      ansible.builtin.git:
-        repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"
-        dest: "{{ user_home }}/.zsh/zsh-syntax-highlighting"
-        version: "master"
-        clone: true
-        update: true
-
-- name: Check if .zshrc exists
-  stat:
-    path: "{{ user_home }}/.zshrc"
-  register: zsh_zshrc_stat
-
-- name: Backup existing .zshrc if it exists
-  copy:
-    remote_src: true
-    src: "{{ user_home }}/.zshrc"
-    dest: "{{ user_home }}/.zshrc_{{ ansible_facts['date_time']['iso8601'] }}.bak"
-    mode: preserve # Preserve the file permissions of the original file
-  when: zsh_zshrc_stat.stat.exists
-
-- name: Write .zshrc
-  template:
-    src: .zshrc.j2
-    dest: "{{ user_home }}/.zshrc"
-    mode: u=rw,g=r,o=r # 644 (read and write access for the owner of the file and read access for group and others)
-
-- name: Change current user shell to ZSH
-  user:
-    name: "{{ ansible_user }}"
-    shell: /bin/zsh
-  become: true
+# Per-user configuration: plugins (Debian), .zshrc, and shell change
+- name: Configure ZSH for users
+  include_tasks: configure_user.yaml
+  loop: "{{ shell_users_list }}"
+  loop_control:
+    loop_var: user_config
