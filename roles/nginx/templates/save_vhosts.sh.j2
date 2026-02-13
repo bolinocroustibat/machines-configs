@@ -2,11 +2,11 @@
 
 #!/bin/bash
 {% if nginx__save_script_local_machine_name is defined and nginx__save_script_remote_machine_name is defined %}
-backup_dir="{{ user_home }}"
+backup_dir="{{ user_home }}/vhosts"
 now=$(date +"%Y-%m-%d_%H-%M")
 backup_file="vhosts_nginx_{{ nginx__save_script_local_machine_name }}_${now}.zip"
 zip "${backup_dir}/${backup_file}" {{ nginx_enabled_path }}/* {{ nginx_available_path }}/* /etc/nginx/nginx.conf
-scp "${backup_dir}/${backup_file}" {{ nginx__save_script_remote_machine_name }}:/home/save/vhosts/
+scp "${backup_dir}/${backup_file}" {{ nginx__save_script_remote_machine_name }}:~/vhosts/
 {% else %}
 # Save script not configured (nginx__save_script_local_machine_name or nginx__save_script_remote_machine_name not set)
 exit 0
