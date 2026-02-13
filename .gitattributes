@@ -4,4 +4,5 @@ secrets.yml    filter=git-crypt diff=git-crypt
 /roles/cron/templates/*  filter=git-crypt diff=git-crypt
 /roles/ssh/templates/*  filter=git-crypt diff=git-crypt
 /roles/websites/templates/**  filter=git-crypt diff=git-crypt
+/roles/nginx/templates/.htpasswd  filter=git-crypt diff=git-crypt
 /host_vars/*  filter=git-crypt diff=git-crypt
