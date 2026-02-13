@@ -1,6 +1,6 @@
 [project]
 name = "machines-configs"
-version = "0.2.2"
+dynamic = ["version"]
 description = "Ansible playbooks for setting up local development and remote machines"
 authors = [{ name = "Adrien Carpentier", email = "me@adriencarpentier.com" }]
 readme = "README.md"
@@ -13,7 +13,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ansible-lint>=25.8.0",
-    "ruff>=0.12.0",
+    "ruff>=0.15.0",
 ]
 
 # Ignore flat-layout

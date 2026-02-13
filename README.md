@@ -74,6 +74,15 @@ Lint and format Python code with [Ruff](https://docs.astral.sh/ruff/):
 uvx ruff check && uvx ruff format
 ```
 
+## CI (GitHub Actions)
+
+On push and pull requests to `main`, GitHub Actions runs:
+
+- **ansible-lint** on the whole repository (playbooks and roles)
+- **Ruff** (check and format) for Python and config files
+
+This enforces the same standards as pre-commit so the main branch stays lint-clean even when commits are made without running hooks locally.
+
 ## Pre-commit
 
 This repository uses [pre-commit](https://pre-commit.com/) to lint and format code before committing.
