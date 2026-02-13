@@ -1,0 +1,2 @@
+# eza role defaults.
+# Binary is installed system-wide; no per-user config required (zsh aliases live in zsh role).

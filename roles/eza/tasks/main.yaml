@@ -1,0 +1,15 @@
+# Install eza (modern ls replacement) system-wide for all users.
+
+- name: Install eza via Homebrew (macOS)
+  when: ansible_facts["os_family"] == 'Darwin'
+  community.general.homebrew:
+    name: eza
+    state: present
+
+- name: Install eza via apt (Debian)
+  when: ansible_facts["os_family"] == 'Debian'
+  become: true
+  ansible.builtin.apt:
+    name: eza
+    state: present
+    update_cache: true

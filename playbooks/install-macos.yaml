@@ -89,6 +89,13 @@
       include_role:
         name: bat
 
+- name: Install eza
+  hosts: local
+  tasks:
+    - name: Install eza command-line tool
+      include_role:
+        name: eza
+
 - name: Updating Ruby gems
   hosts: local
   tasks:

@@ -105,6 +105,14 @@
       include_role:
         name: bat
 
+- name: Install eza
+  hosts: pi-bolino
+  become: true
+  tasks:
+    - name: Install eza command-line tool
+      include_role:
+        name: eza
+
 - name: Install and configure uv
   hosts: pi-bolino
   tasks:
