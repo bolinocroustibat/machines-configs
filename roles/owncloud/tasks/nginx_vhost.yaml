@@ -1,0 +1,25 @@
+# Deploy nginx vhost for OwnCloud when owncloud__domain is set (e.g. in host_vars)
+- name: Backup existing OwnCloud nginx vhost
+  ansible.builtin.copy:
+    src: "{{ nginx_conf_path }}/{{ owncloud__domain }}.conf"
+    dest: "{{ nginx_conf_path }}/{{ owncloud__domain }}.conf.bak_{{ ansible_facts['date_time']['iso8601'] }}"
+    mode: preserve
+    remote_src: true
+  when: owncloud__domain is defined and owncloud__domain | length > 0
+  ignore_errors: true
+
+- name: Install OwnCloud nginx vhost
+  ansible.builtin.template:
+    src: nginx_vhost.conf.j2
+    dest: "{{ nginx_conf_path }}/{{ owncloud__domain }}.conf"
+    mode: u=rw,g=r,o=r # 644
+  when: owncloud__domain is defined and owncloud__domain | length > 0
+  notify: Reload nginx config
+
+- name: Enable OwnCloud nginx vhost
+  ansible.builtin.file:
+    src: "{{ nginx_conf_path }}/{{ owncloud__domain }}.conf"
+    dest: "{{ nginx_enabled_path }}/{{ owncloud__domain }}.conf"
+    state: link
+  when: owncloud__domain is defined and owncloud__domain | length > 0
+  notify: Reload nginx config
