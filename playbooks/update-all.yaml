@@ -96,36 +96,31 @@
         name: zsh
         tasks_from: update
 
-- name: Update bat (local)
-  hosts: local
+- name: Update bat
+  hosts: all
   tags:
     - macos
-  tasks:
-    - name: Install or upgrade bat
-      include_role:
-        name: bat
-
-- name: Update bat (remote)
-  hosts: remote
-  become: true
-  tags:
     - debian
   tasks:
     - name: Install or upgrade bat
       include_role:
         name: bat
 
-- name: Update Starship (local)
-  hosts: local
+- name: Update eza
+  hosts: all
+  tags:
+    - macos
+    - debian
   tasks:
-    - name: Update Starship prompt
+    - name: Install or upgrade eza
       include_role:
-        name: starship
-        tasks_from: update
+        name: eza
 
-- name: Update Starship (remote)
-  hosts: remote
-  become: true
+- name: Update Starship
+  hosts: all
+  tags:
+    - macos
+    - debian
   tasks:
     - name: Update Starship prompt
       include_role:

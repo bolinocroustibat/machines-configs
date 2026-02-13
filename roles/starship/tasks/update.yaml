@@ -17,6 +17,7 @@
 
     - name: Update Starship system-wide
       when: ansible_facts["os_family"] == "Debian"
+      become: true
       command: "sh /tmp/starship_install.sh --bin-dir /usr/local/bin -y"
 
     - name: Delete Starship install script
