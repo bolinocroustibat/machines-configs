@@ -1,1 +1,3 @@
 wg_easy__image_tag: "latest"
+# DNS pushed to WireGuard clients (override in vars/secrets.yaml)
+wg_easy__default_dns: "1.1.1.1"
