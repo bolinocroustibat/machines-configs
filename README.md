@@ -2,13 +2,13 @@
 
 Ansible playbooks for setting up local development and remote machines.
 
-## Dependencies
+## 📦 Dependencies
 
 - Python >= 3.10 (automatically installed via [uv](https://docs.astral.sh/uv/))
 - [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (automatically installed via [uv](https://docs.astral.sh/uv/))
 - [git-crypt](https://www.agwa.name/projects/git-crypt/)
 
-## Installation
+## 🚀 Installation
 
 Use [uv](https://docs.astral.sh/uv/) to install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) from the locked requirements:
 
@@ -17,7 +17,7 @@ cd machines-configs
 uv sync
 ```
 
-## Usage
+## 📖 Usage
 
 Dry run a playbook:
 ```bash
@@ -33,7 +33,7 @@ uv run ansible-playbook playbooks/install-local-macos.yaml
 - No need to add `-i inventory.yaml` as it is already configured in `ansible.cfg`.
 - No need to add `--diff` as it is already configured in `ansible.cfg`.
 
-## Encrypt and decrypt secrets
+## 🔐 Encrypt and decrypt secrets
 
 ### git-crypt
 
@@ -62,7 +62,7 @@ Encrypt secret files with:
 uvx ansible-vault encrypt roles/myrole/templates/secret.j2 roles/myrole2/templates/*
 ```
 
-## Lint
+## ✨ Lint
 
 Lint Ansible file with [ansible-lint](https://docs.astral.sh/ansible-lint/):
 ```bash
@@ -74,7 +74,7 @@ Lint and format Python code with [Ruff](https://docs.astral.sh/ruff/):
 uvx ruff check && uvx ruff format
 ```
 
-## CI (GitHub Actions)
+## 🤖 CI (GitHub Actions)
 
 On push and pull requests to `main`, GitHub Actions runs:
 
@@ -83,7 +83,7 @@ On push and pull requests to `main`, GitHub Actions runs:
 
 This enforces the same standards as pre-commit so the main branch stays lint-clean even when commits are made without running hooks locally.
 
-## Pre-commit
+## 🪝 Pre-commit
 
 This repository uses [pre-commit](https://pre-commit.com/) to lint and format code before committing.
 Please install pre-commit hooks with the following command:
@@ -91,7 +91,7 @@ Please install pre-commit hooks with the following command:
 uvx pre-commit install
 ```
 
-## Precedence of Ansible variables
+## 📋 Precedence of Ansible variables
 
 Ansible variables have the following precedence:
 
