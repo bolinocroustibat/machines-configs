@@ -1,13 +1,13 @@
 - name: Create bash script to save vhosts
-  template:
+  ansible.builtin.template:
     src: save_vhosts.sh.j2
     dest: "{{ user_home }}/save_vhosts.sh"
     mode: u=rwx,g=rx,o=rx # 755
 
 - name: Add cron job to backup vhosts
   cron:
-    name: "Backup SQL every month 1st at 2h00"
+    name: "Backup nginx vhosts every month 1st at 1h00"
     minute: "0"
     hour: "1"
     day: "1"
-    job: "{{ user_home }}/save_vhosts.sh >> {{ user_home }}/log-last-save-vhosts.log"
+    job: "{{ user_home }}/save_vhosts.sh >> {{ user_home }}/log_last_save_vhosts.log"
