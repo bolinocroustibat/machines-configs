@@ -228,6 +228,13 @@
         name: databases_backup_over_scp
         tasks_from: install
 
+- name: Install root cron (web-bolino)
+  hosts: web-bolino
+  tasks:
+    - name: Deploy root crontab
+      include_role:
+        name: cron
+
 - name: Install websites
   hosts: web-bolino
   tasks:

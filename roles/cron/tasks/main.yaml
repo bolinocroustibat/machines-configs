@@ -1,0 +1,17 @@
+- name: Deploy root crontab from template
+  ansible.builtin.template:
+    src: root.j2
+    dest: /tmp/root_crontab_{{ ansible_hostname }}.tmp
+    mode: u=rw,g=,o= # 600
+  become: true
+
+- name: Install root crontab
+  ansible.builtin.command: crontab /tmp/root_crontab_{{ ansible_hostname }}.tmp
+  become: true
+  changed_when: true
+
+- name: Remove temporary crontab file
+  ansible.builtin.file:
+    path: /tmp/root_crontab_{{ ansible_hostname }}.tmp
+    state: absent
+  become: true
