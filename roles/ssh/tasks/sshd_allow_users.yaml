@@ -1,20 +1,18 @@
----
-# Deploy same AllowUsers on all hosts (symmetric SSH access).
-# Override ssh__allow_users in host_vars if needed.
-# Requires root to write to /etc/ssh/ and restart ssh.
+# Deploy AllowUsers: connection user (ansible_user) plus ssh__allow_users.
+# Override ssh__allow_users in host_vars to add more users. Requires root to write and restart ssh.
 
 - name: Ensure sshd_config.d exists
   ansible.builtin.file:
     path: /etc/ssh/sshd_config.d
     state: directory
-    mode: "0755"
+    mode: u=rwx,g=rx,o=rx  # 755
   become: true
 
 - name: Deploy AllowUsers drop-in
   ansible.builtin.copy:
     dest: /etc/ssh/sshd_config.d/99-allow-users.conf
-    content: "AllowUsers {{ ssh__allow_users | join(' ') }}\n"
-    mode: "0644"
+    content: "AllowUsers {{ ([ansible_user] + (ssh__allow_users | default([]))) | unique | join(' ') }}\n"
+    mode: u=rw,g=r,o=r  # 644
   register: ssh_allow_users_file
   become: true
 

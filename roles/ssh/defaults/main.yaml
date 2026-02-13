@@ -1,4 +1,5 @@
-# Users allowed to connect via SSH (sshd AllowUsers).
-# Default: bolino only (no root — use bolino + sudo). Override per host if needed (e.g. web-bolino adds github).
+# Additional users allowed to connect via SSH (sshd AllowUsers).
+# The Ansible connection user (ansible_user) is always included; list extra users here.
+# Override per host in host_vars to add more users (e.g. a deploy or service user).
 ssh__allow_users:
   - bolino
