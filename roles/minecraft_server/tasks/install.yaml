@@ -14,7 +14,7 @@
 
 - name: Clone or update Minecraft server repository
   git:
-    repo: "git@github.com:bolinocroustibat/minecraft-server.git"
+    repo: git@github.com:bolinocroustibat/minecraft-server.git
     dest: "{{ user_home }}/minecraft-server"
     accept_hostkey: true
     update: true
@@ -35,7 +35,7 @@
 
 - name: Add Minecraft backup cron job
   cron:
-    name: "Minecraft server daily backup"
+    name: "Minecraft server daily backup at 4 AM UTC (5 AM Paris time)"
     minute: "0"
     hour: "4"
     job: "cd {{ user_home }}/minecraft-server && ./minecraft-backup.sh"

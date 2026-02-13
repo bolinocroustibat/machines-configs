@@ -1,7 +1,7 @@
 - name: Update Minecraft server repository
   git:
-    repo: "git@github.com:bolinocroustibat/minecraft-server.git"
-    dest: "/root/minecraft-server"
+    repo: git@github.com:bolinocroustibat/minecraft-server.git
+    dest: "{{ user_home }}/minecraft-server"
     accept_hostkey: true
     update: true
     version: main
