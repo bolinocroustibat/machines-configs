@@ -1,0 +1,8 @@
+############################
+## ASAO / LES INFOGEREURS ##
+############################
+
+Host beaux-arts
+	Hostname 109.vm.arancloud.com
+	User root
+	IdentityFile "~/.ssh/id_ed25519"

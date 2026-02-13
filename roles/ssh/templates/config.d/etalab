@@ -1,0 +1,154 @@
+###########
+## DINUM ##
+###########
+
+# Albert Sandbox
+
+Host albert-sandbox-v5
+	Hostname 171.33.86.67
+	User acarpentier
+	IdentityFile "~/.ssh/id_ed25519"
+
+Host albert-sandbox-v5.outscale
+	Hostname 171.33.86.67
+	User outscale
+	IdentityFile "~/.ssh/outscale/outscale_sandbox-v5.rsa"
+
+Host albert-sandbox-v6
+	Hostname 217.75.171.132
+	User acarpentier
+	IdentityFile "~/.ssh/id_ed25519"
+
+Host albert-sandbox-v6.outscale
+	Hostname 217.75.171.132
+	User outscale
+	IdentityFile "~/.ssh/outscale/outscale_sandboxKP.rsa"
+
+# Albert Dev (109.232.232.245)
+
+Host albert-dev
+	Hostname albert.dev.etalab.gouv.fr
+	User acarpentier
+	IdentityFile "~/.ssh/id_ed25519"
+
+# Albert Staging (109.232.233.152)
+
+Host albert-staging
+	Hostname albert.staging.etalab.gouv.fr
+	User acarpentier
+	IdentityFile "~/.ssh/id_ed25519"
+
+Host albert-staging-v6
+	Hostname 109.232.232.151
+	User acarpentier
+	IdentityFile "~/.ssh/id_ed25519"
+
+Host albert-staging-v6.outscale
+	Hostname 109.232.232.151
+	User outscale
+	IdentityFile "~/.ssh/outscale/outscale_staging.rsa"
+
+Host albert-staging-v6.gitlab
+	Hostname 109.232.232.151
+	User gitlab
+	IdentityFile "~/.ssh/outscale/outscale_service_gitlab.rsa"
+
+# Albert Prod
+
+##  New DINUM prod 148.253.66.5
+
+Host albert-dinum-prod
+	Hostname albert.etalab.gouv.fr
+	User acarpentier
+	Port 22
+	IdentityFile "~/.ssh/id_ed25519"
+
+Host albert-dinum-prod.outscale
+	Hostname albert.etalab.gouv.fr
+	User outscale
+	Port 22
+	IdentityFile "~/.ssh/outscale/outscale_albert-dinum-prod.rsa"
+
+##  New FS prod 142.44.41.206
+
+Host albert-fs-prod
+	Hostname franceservices.etalab.gouv.fr
+	User acarpentier
+	IdentityFile "~/.ssh/id_ed25519"
+
+Host albert-fs-prod.outscale
+	Hostname franceservices.etalab.gouv.fr
+	User outscale
+	IdentityFile "~/.ssh/outscale/outscale_miaouKP0.rsa"
+
+Host albert-fs-prod-old
+	Hostname 142.44.51.104
+	User acarpentier
+	IdentityFile "~/.ssh/id_ed25519"
+
+# Albert SPP
+
+Host albert-spp
+	Hostname 148.253.86.177
+	User acarpentier
+	IdentityFile "~/.ssh/id_ed25519"
+
+# Albert Tchap
+
+Host albert-tchap-staging
+	Hostname 109.232.236.165
+	User acarpentier
+	IdentityFile "~/.ssh/id_ed25519"
+
+Host albert-tchap-staging.outscale
+	Hostname 109.232.236.165
+	User outscale
+	IdentityFile "~/.ssh/outscale/outscale_albert-tchapbot-staging.rsa"
+
+Host albert-tchap-prod
+	Hostname 148.253.117.145
+	User acarpentier
+	IdentityFile "~/.ssh/id_ed25519"
+
+Host albert-tchap-prod.gitlab
+	Hostname 148.253.117.145
+	User gitlab
+	IdentityFile "~/.ssh/outscale/outscale_service_gitlab.rsa"
+
+# Services
+
+Host etalab-ovh
+	Hostname 51.178.179.106
+
+Host etalab-services
+	Hostname 148.253.98.215
+	User acarpentier
+	IdentityFile "~/.ssh/id_ed25519"
+
+Host etalab-services.outscale
+	Hostname 148.253.98.215
+	User outscale
+	IdentityFile "~/.ssh/outscale/outscale_services.rsa"
+
+Host etalab-services.gitlab
+	Hostname 148.253.98.215
+	User gitlab
+	IdentityFile "~/.ssh/outscale/outscale_service_gitlab.rsa"
+
+Host taiga-legacy
+	Hostname 171.33.114.210
+	User acarpentier
+	Port 22
+	IdentityFile "~/.ssh/id_ed25519"
+
+Host taiga-legacy.outscale
+	Hostname 171.33.114.210
+	User outscale
+	Port 22
+	IdentityFile "~/.ssh/outscale/outscale_miaouKP0.rsa"
+
+Host etalab-cicd-runner
+	Hostname 171.33.125.151
+	User outscale
+	Port 22
+	IdentityFile "~/.ssh/outscale/outscale_cicd-runner.rsa"

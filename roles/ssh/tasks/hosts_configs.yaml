@@ -16,6 +16,8 @@
   template:
     src: config.j2
     dest: "{{ user_home }}/.ssh/config"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: u=rw,g=r,o=r # 644
 
 - name: Backup existing '.ssh/config.d/*' files if they exist
@@ -30,10 +32,10 @@
 
 - name: Add '.ssh/config.d/*' files
   template:
-    src: "{{ item }}"
+    src: "config.d/{{ item | basename }}"
     dest: "{{ user_home }}/.ssh/config.d/{{ item | basename }}"
-    owner: root
-    group: root
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: u=rw,g=r,o=r  # 644
   with_fileglob:
-    - "templates/config.d/*"
+    - "{{ role_path }}/templates/config.d/*"

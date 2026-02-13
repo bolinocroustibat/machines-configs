@@ -1,0 +1,32 @@
+###############
+## VIRTUSIZE ##
+###############
+
+Host vs-staging-jp-instance1
+	HostName webapp-07d7550561fd48416.staging.aws.virtusize.jp
+	User jean
+
+Host vs-staging-jp-instance2
+	HostName webapp-0575a4b084f6d561a.staging.aws.virtusize.jp
+	User jean
+
+Host vs-staging-com-instance1
+	HostName webapp-f4d14578.staging.aws.virtusize.com
+	User jean
+
+Host vs-staging-com-instance2
+	HostName webapp-08251280.staging.aws.virtusize.com
+	User jean
+
+Host vs-gpu-office
+	HostName 192.168.1.32
+	User bolino
+
+Host vs-gpu-outside
+	HostName 1.tcp.jp.ngrok.io
+	User bolino
+	Port 24008
+
+Host vs-monitoror
+	HostName 128.199.215.145
+	User root

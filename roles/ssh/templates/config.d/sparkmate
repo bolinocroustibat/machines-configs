@@ -1,0 +1,17 @@
+###############
+## SPARKMATE ##
+###############
+
+Host pi-wice
+	Hostname 192.168.86.190
+	User admin
+	IdentityFile "~/.ssh/id_rsa"
+
+Host pi-co2
+	HostName 192.168.86.132
+	User admin
+	IdentityFile "~/.ssh/id_rsa"
+
+Host 192.168.1.132
+	HostName 192.168.1.132
+	User admin

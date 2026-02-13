@@ -1,0 +1,28 @@
+##################
+## data.gouv.fr ##
+##################
+
+Host slb-04.infra.data.gouv.fr
+	User 					debian
+	IdentityFile			"~/.ssh/id_ed25519_sk_fido_dinum"
+	IdentitiesOnly			yes
+	RemoteForward 52698		localhost:52698
+
+Host slb-03.infra.data.gouv.fr slb-04.infra.data.gouv.fr slb-05.infra.data.gouv.fr
+	User					debian
+	TCPKeepAlive			yes
+	ServerAliveInterval		60
+	ServerAliveCountMax		10
+	RemoteForward 52698		localhost:52698
+	# IdentityFile			"~/.ssh/id_ed25519_sk_fido_dinum"
+	# IdentitiesOnly		yes
+
+Host *.intra.data.gouv.fr *.infra.data.gouv.fr !www.data.gouv.fr
+	User					root
+	ForwardAgent			Yes
+	ProxyJump				root@www.data.gouv.fr
+	TCPKeepAlive			yes
+	ServerAliveInterval		60
+	RemoteForward 52698		localhost:52698
+	# IdentityFile			"~/.ssh/id_ed25519_sk_fido_dinum"
+	# IdentitiesOnly		yes

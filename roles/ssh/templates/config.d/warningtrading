@@ -1,0 +1,8 @@
+#####################
+## WARNING TRADING ##
+#####################
+
+Host warning-trading
+	HostName ssh-warningtradingweb.alwaysdata.net
+	User warningtradingweb
+	IdentityFile "~/.ssh/id_ed25519"

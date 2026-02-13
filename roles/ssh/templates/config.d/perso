@@ -1,0 +1,44 @@
+###########
+## PERSO ##
+###########
+
+Host 110.vm.arancloud.com
+	HostName 110.vm.arancloud.com
+	RemoteForward 52698 localhost:52698
+	User bolino
+	IdentityFile "~/.ssh/id_ed25519"
+	IdentitiesOnly yes
+
+Host web-bolino
+	HostName 62.210.50.198
+	RemoteForward 52698 localhost:52698
+	User bolino
+	IdentityFile "~/.ssh/id_ed25519"
+	IdentitiesOnly yes
+	ServerAliveInterval 240 # Send a packet every 4 minutes to keep the connection alive
+
+Host data-bolino
+	HostName 212.83.155.100
+	RemoteForward 52698 localhost:52698
+	User bolino
+	IdentityFile "~/.ssh/id_ed25519"
+	IdentitiesOnly yes
+	ServerAliveInterval 240 # Send a packet every 4 minutes to keep the connection alive
+
+Host pi-bolino
+	HostName home.adriencarpentier.com
+	User bolino
+	Port 2222
+	IdentityFile "~/.ssh/id_ed25519"
+	IdentitiesOnly yes
+
+Host bolino-vm3
+	HostName 51.158.113.98
+	User root
+	IdentityFile "~/.ssh/id_ed25519"
+	IdentitiesOnly yes
+
+Host dylan-total-tweets
+	HostName 207.154.209.238
+	User bolino
+	IdentityFile "~/.ssh/id_rsa"

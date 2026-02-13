@@ -1,0 +1,8 @@
+############
+## ZETEOH ##
+############
+
+Host zeteoh-gpu
+	HostName 192.168.0.152
+	User adrien
+	# password 123456

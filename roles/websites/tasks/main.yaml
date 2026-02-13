@@ -1,0 +1,2 @@
+- name: Include web servers tasks
+  ansible.builtin.include_tasks: web_servers.yaml

@@ -5,6 +5,7 @@ user_home: "{{ '/Users/' + ansible_user if ansible_os_family == 'Darwin' else '/
 
 nginx_available_path: /etc/nginx/sites-available
 nginx_enabled_path: /etc/nginx/sites-enabled
+nginx_conf_path: /etc/nginx/sites-available
 
 # PHP-FPM socket path
 php_fpm_socket: /run/php/php8.4-fpm.sock
