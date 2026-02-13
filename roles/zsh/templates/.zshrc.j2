@@ -1,18 +1,22 @@
 {{ ansible_managed | comment }}
 
-### Starship ###
+# Starship
 eval "$(starship init zsh)"
 
-### $PATH ###
-
+# PATH
 export PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
 
-# Set the default text editor, set the standardized VISUAL and EDITOR environment variables
+# Default text editor
 export VISUAL=micro
 export EDITOR="$VISUAL"
 
 {% if ansible_os_family == 'Darwin' %}
-# SSH key path
+# Homebrew (must run before any $(brew ...) usage)
+eval "$(/opt/homebrew/bin/brew shellenv)"
+{% endif %}
+
+{% if user_config.user == 'bolino' %}
+# SSH key path (scripts/tools that use SSH_KEY_PATH)
 export SSH_KEY_PATH="$HOME/.ssh/id_ed25519"
 {% endif %}
 
@@ -26,18 +30,16 @@ source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 {% endif %}
 
 {% if ansible_os_family == 'Debian' %}
-### Save ZSH history ###
+# Save ZSH history
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=1000
 SAVEHIST=1000
 setopt appendhistory
 {% endif %}
 
-### User configuration ###
-
-# You may need to manually set your language environment
-export LANG=en_US.UTF-8 # Global setting, does not overrides anything
-#export LC_ALL=en_US.UTF-8 # Overrides all locale settings
+# Language
+export LANG=en_US.UTF-8
+# export LC_ALL=en_US.UTF-8  # Uncomment to override all locale settings
 
 # Aliases
 alias dfh='df -h'				# disk free with human reading
@@ -53,25 +55,23 @@ alias status='systemctl status'
 {% if ansible_os_family == 'Darwin' %}
 alias l='eza --long --icons --grid --octal-permissions --hyperlink --time-style=iso'
 alias ll='eza --long --icons --grid --octal-permissions --hyperlink --time-style=iso --all'
-alias git_force_pull='git fetch --all & git reset --hard origin/main && git pull'
+alias git_force_pull='git fetch --all && git reset --hard origin/main && git pull'
 alias ruffcheck='ruff check --fix && ruff format'
 alias docker_psa='docker ps --format "table {{ '{{' }}.Names{{ '}}' }}\t{{ '{{' }}.Ports{{ '}}' }}\t{{ '{{' }}.Status{{ '}}' }}"'
 alias biomecheck='biome check --write .'
 
+### MacOS ###
+
 # iTerm2 shell integration
 source $HOME/.iterm2_shell_integration.zsh
 
-# Homebrew
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
-# Use the Homebrew-installed curl instead of the system one - has http3 support
+# Homebrew curl (http3 support)
 export PATH="/opt/homebrew/opt/curl/bin:$PATH"
 
 # NVM
-source $(brew --prefix nvm)/nvm.sh
 export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+[ -s "$(brew --prefix nvm)/nvm.sh" ] && \. "$(brew --prefix nvm)/nvm.sh" # This loads nvm
+[ -s "$(brew --prefix nvm)/etc/bash_completion.d/nvm" ] && \. "$(brew --prefix nvm)/etc/bash_completion.d/nvm" # This loads nvm bash_completion
 
 # Docker + Ansible
 export DOCKER_HOST="unix://$HOME/.docker/run/docker.sock"
