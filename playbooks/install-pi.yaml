@@ -36,6 +36,13 @@
         name: apt
         tasks_from: upgrade
 
+- name: Configure Raspberry Pi (disable Wi-Fi and Bluetooth)
+  hosts: pi-bolino
+  tasks:
+    - name: Apply Raspberry Pi boot and service config
+      include_role:
+        name: raspberry
+
 - name: Install Git
   hosts: pi-bolino
   tasks:

@@ -1,0 +1,23 @@
+- name: Disable Wi-Fi in config.txt
+  ansible.builtin.blockinfile:
+    path: "{{ raspberry__config_path }}"
+    block: |
+      # Disable Wi-Fi (added by Ansible raspberry role)
+      dtoverlay=disable-wifi
+    marker: "# {mark} ANSIBLE raspberry disable-wifi"
+    state: present
+  become: true
+  notify: reboot_raspberry
+  when: (ansible_lsb.id is defined and ansible_lsb.id == "Raspbian") or (ansible_model is defined and "Raspberry Pi" in ansible_model)
+
+- name: Disable Bluetooth in config.txt
+  ansible.builtin.blockinfile:
+    path: "{{ raspberry__config_path }}"
+    block: |
+      # Disable Bluetooth (added by Ansible raspberry role)
+      dtoverlay=disable-bt
+    marker: "# {mark} ANSIBLE raspberry disable-bt"
+    state: present
+  become: true
+  notify: reboot_raspberry
+  when: (ansible_lsb.id is defined and ansible_lsb.id == "Raspbian") or (ansible_model is defined and "Raspberry Pi" in ansible_model)
