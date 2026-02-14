@@ -1,1 +1,5 @@
+{% if prompt_hostname is defined and prompt_hostname | length > 0 %}
+# Custom hostname for Starship prompt (avoids cloud-init / system hostname override)
+export STARSHIP_PROMPT_HOSTNAME="{{ prompt_hostname }}"
+{% endif %}
 eval "$(starship init zsh)"

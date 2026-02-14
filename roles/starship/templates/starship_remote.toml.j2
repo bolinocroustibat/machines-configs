@@ -2,7 +2,7 @@
 
 format = """
 $username\
-$hostname\
+{% if prompt_hostname is defined and prompt_hostname | length > 0 %}${custom.prompt_hostname}{% else %}$hostname{% endif %}\
 $ssh \
 $shlvl\
 $kubernetes\
@@ -42,6 +42,16 @@ show_always = true
 ssh_only = false
 format = '@[$hostname]({{ starship__host_color | default('bold white') }})($style)'
 trim_at = ''
+{% if prompt_hostname is defined and prompt_hostname | length > 0 %}
+disabled = true
+
+# Custom hostname from host_vars (position after username; not affected by system hostname / cloud-init)
+[custom.prompt_hostname]
+when = "test -n \"$STARSHIP_PROMPT_HOSTNAME\""
+command = "printf '%s' \"$STARSHIP_PROMPT_HOSTNAME\""
+format = '@[$output]({{ starship__host_color | default('bold white') }})($style)'
+symbol = ""
+{% endif %}
 
 [directory]
 truncate_to_repo = false
@@ -53,13 +63,6 @@ format = '[$symbol$branch(:$remote_branch)]($style) '
 [os]
 format = "[$symbol]($style)"
 disabled = false
-
-[os.symbols]
-Debian = "🌀 "
-Kali = "🐉 "
-Linux = "🐧 "
-Macos = " "
-Ubuntu = "🎯 "
 
 [package]
 format = '[$symbol$version]($style)'
