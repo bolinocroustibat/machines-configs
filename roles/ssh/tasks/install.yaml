@@ -8,18 +8,26 @@
 
 - name: Download SSH public key
   uri:
-    url: http://adriencarpentier.com/id_ed25519.pub
+    url: "{{ ssh__public_key_url }}"
     dest: "{{ user_home }}/.ssh/id_ed25519.pub"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: u=rw,g=,o= # 600 (only the user can read and write)
     validate_certs: true
     force: false  # Don't download if file exists
+    follow_redirects: true
 
 - name: Read the downloaded public key
   slurp:
     src: "{{ user_home }}/.ssh/id_ed25519.pub"
   register: ssh_public_key
+
+- name: Ensure downloaded content is a valid SSH public key
+  ansible.builtin.assert:
+    that:
+      - (ssh_public_key.content | b64decode | trim).startswith('ssh-ed25519 ') or (ssh_public_key.content | b64decode | trim).startswith('ssh-rsa ')
+    fail_msg: "Downloaded content is not a valid SSH public key. Check that the URL returns the raw key, not HTML (e.g. avoid redirects that serve a page)."
+  when: ssh_public_key.content | length > 0
 
 - name: Ensure authorized_keys file exists
   ansible.builtin.file:
