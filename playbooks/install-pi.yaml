@@ -156,6 +156,23 @@
         name: certbot
         tasks_from: install
 
+- name: Install Docker
+  hosts: pi-bolino
+  tasks:
+    - name: Install Docker
+      include_role:
+        name: docker
+        tasks_from: install
+
+- name: Install Pi-hole
+  hosts: pi-bolino
+  become: true
+  tasks:
+    - name: Install and configure Pi-hole
+      include_role:
+        name: pi-hole
+        tasks_from: install
+
 - name: Setup storage media disk
   hosts: pi-bolino
   tasks:

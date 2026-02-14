@@ -13,11 +13,6 @@
         name: omnitools
         tasks_from: update
 
-    - name: Update Pi-hole
-      include_role:
-        name: pi-hole
-        tasks_from: update
-
     - name: Update Uptime Kuma
       include_role:
         name: uptime_kuma
@@ -26,6 +21,22 @@
     - name: Update WireGuard
       include_role:
         name: wg_easy
+        tasks_from: update
+
+- name: Update Docker-based services on pi-bolino
+  hosts: pi-bolino
+  become: true
+  tags:
+    - debian
+  tasks:
+    - name: Include nginx role for handlers
+      include_role:
+        name: nginx
+        tasks_from: install
+
+    - name: Update Pi-hole
+      include_role:
+        name: pi-hole
         tasks_from: update
 
 - name: Update Portainer

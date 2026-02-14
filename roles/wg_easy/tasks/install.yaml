@@ -12,7 +12,7 @@
     src: docker-compose.yml.j2
     dest: "/opt/wg-easy/docker-compose.yml"
     mode: u=rw,g=r,o=r # 644 (read and write access for the owner of the file and read access for group and others)
-  notify: recreate wg-easy container
+  notify: Recreate wg-easy container
 
 - name: Start Wg-Easy container
   community.docker.docker_compose_v2:

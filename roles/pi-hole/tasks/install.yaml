@@ -12,7 +12,7 @@
     src: docker-compose.yml.j2
     dest: "/opt/pi-hole/docker-compose.yml"
     mode: u=rw,g=r,o=r # 644
-  notify: recreate pihole container
+  notify: Recreate Pi-hole container
 
 - name: Start Pi-hole container
   community.docker.docker_compose_v2:

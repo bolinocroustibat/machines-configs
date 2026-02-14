@@ -1,0 +1,24 @@
+- name: Include Pi-hole secrets
+  include_vars: secrets.yaml
+
+- name: Stop and remove Pi-hole container and project
+  community.docker.docker_compose_v2:
+    project_src: "/opt/pi-hole"
+    state: absent
+  ignore_errors: true
+
+- name: Ensure Pi-hole installation directory is removed
+  ansible.builtin.file:
+    path: /opt/pi-hole
+    state: absent
+
+- name: Remove Nginx vhost symlink for Pi-hole
+  ansible.builtin.file:
+    path: "/etc/nginx/sites-enabled/{{ pihole__domain }}.conf"
+    state: absent
+  notify: Reload nginx config
+
+- name: Remove Nginx vhost config for Pi-hole
+  ansible.builtin.file:
+    path: "/etc/nginx/sites-available/{{ pihole__domain }}.conf"
+    state: absent
