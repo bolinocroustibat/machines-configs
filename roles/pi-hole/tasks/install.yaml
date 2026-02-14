@@ -1,6 +1,11 @@
 - name: Include Pi-hole secrets
   include_vars: secrets.yaml
 
+- name: Ensure Pi-hole domain is set (in host_vars)
+  ansible.builtin.assert:
+    that: pihole__domain is defined and pihole__domain | length > 0
+    fail_msg: "pihole__domain must be set in host_vars for this host"
+
 - name: Create Pi-hole installation directory
   file:
     path: /opt/pi-hole
@@ -36,7 +41,7 @@
 
 - name: Deploy Nginx vhost for Pi-hole (only if SSL doesn't exist)
   template:
-    src: "{{ pihole__domain }}.conf.j2"
+    src: vhost.conf.j2
     dest: "/etc/nginx/sites-available/{{ pihole__domain }}.conf"
     mode: u=rw,g=r,o=r  # 644
   notify: Reload nginx config

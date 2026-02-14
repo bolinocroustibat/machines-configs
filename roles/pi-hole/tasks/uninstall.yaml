@@ -1,6 +1,11 @@
 - name: Include Pi-hole secrets
   include_vars: secrets.yaml
 
+- name: Ensure Pi-hole domain is set (in host_vars)
+  ansible.builtin.assert:
+    that: pihole__domain is defined and pihole__domain | length > 0
+    fail_msg: "pihole__domain must be set in host_vars for this host"
+
 - name: Stop and remove Pi-hole container and project
   community.docker.docker_compose_v2:
     project_src: "/opt/pi-hole"
