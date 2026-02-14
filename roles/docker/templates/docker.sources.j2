@@ -2,7 +2,7 @@
 
 Types: deb
 URIs: https://download.docker.com/linux/debian
-Suites: {{ debian_distribution }}
+Suites: {{ docker__debian_suite | default(debian_distribution) }}
 Components: stable
-Architectures: {{ ansible_architecture }}
+Architectures: {{ (ansible_facts['architecture'] == 'aarch64') | ternary('arm64', ansible_facts['architecture']) }}
 Signed-By: /etc/apt/keyrings/docker.asc

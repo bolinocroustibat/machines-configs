@@ -13,4 +13,4 @@
       - docker-compose-plugin
     state: latest
     update_cache: true
-  notify: restart docker
+  notify: Restart Docker
