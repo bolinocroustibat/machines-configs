@@ -202,6 +202,7 @@
 
 - name: Install WireGuard
   hosts: data-bolino
+  become: true
   tasks:
     - name: Install WireGuard
       include_role:
@@ -222,6 +223,7 @@
 
 - name: Install Postgres
   hosts: web-bolino
+  become: true
   tasks:
     - name: Install and configure PostgreSQL
       include_role:

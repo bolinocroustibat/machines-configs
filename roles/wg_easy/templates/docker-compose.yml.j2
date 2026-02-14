@@ -6,6 +6,7 @@ services:
     image: ghcr.io/wg-easy/wg-easy:{{ wg_easy__image_tag }}
     environment:
       WG_HOST: "{{ wg_easy__domain }}"
+      # $$ is required so docker-compose passes a literal $ to the container (bcrypt hash)
       PASSWORD_HASH: "{{ wg_easy__admin_password_hash | replace('$', '$$') }}"
       WG_DEFAULT_DNS: "{{ wg_easy__default_dns }}"
     volumes:
