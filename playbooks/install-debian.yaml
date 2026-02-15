@@ -181,7 +181,7 @@
         tasks_from: uninstall
 
 - name: Install and configure Nginx
-  hosts: web-bolino, data-bolino
+  hosts: remote
   tasks:
     - name: Install and configure Nginx web server
       include_role:
@@ -193,11 +193,20 @@
         tasks_from: backup_vhosts
 
 - name: Install Certbot
-  hosts: web-bolino, data-bolino
+  hosts: remote
   tasks:
     - name: Install Certbot and Nginx plugin
       include_role:
         name: certbot
+        tasks_from: install
+
+- name: Install Pi-hole
+  hosts: data-bolino, pi-bolino
+  become: true
+  tasks:
+    - name: Install and configure Pi-hole
+      include_role:
+        name: pi-hole
         tasks_from: install
 
 - name: Install WireGuard

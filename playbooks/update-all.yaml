@@ -56,6 +56,11 @@
         name: wg_easy
         tasks_from: update
 
+    - name: Update Pi-hole
+      include_role:
+        name: pi-hole
+        tasks_from: update
+
 - name: Update Docker-based services on pi-bolino
   hosts: pi-bolino
   become: true

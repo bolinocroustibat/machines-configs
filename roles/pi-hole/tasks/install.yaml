@@ -34,29 +34,35 @@
   changed_when: false
   failed_when: dns_check.stdout == ""
 
+- name: Check if Nginx vhost already exists
+  ansible.builtin.stat:
+    path: "/etc/nginx/sites-available/{{ pihole__domain }}.conf"
+  register: pihole_vhost_exists
+
 - name: Check if SSL certificate exists
   stat:
     path: "/etc/letsencrypt/live/{{ pihole__domain }}/fullchain.pem"
   register: ssl_cert_exists
 
-- name: Deploy Nginx vhost for Pi-hole (only if SSL doesn't exist)
+# Deploy vhost when missing (so we never skip it because cert already existed). Do not overwrite once present (Certbot may have added SSL).
+- name: Deploy Nginx vhost for Pi-hole
   template:
     src: vhost.conf.j2
     dest: "/etc/nginx/sites-available/{{ pihole__domain }}.conf"
     mode: u=rw,g=r,o=r  # 644
   notify: Reload nginx config
-  when: not ssl_cert_exists.stat.exists
+  when: not pihole_vhost_exists.stat.exists
 
-- name: Enable Nginx vhost for Pi-hole (only if SSL doesn't exist)
+- name: Enable Nginx vhost for Pi-hole
   file:
     src: "/etc/nginx/sites-available/{{ pihole__domain }}.conf"
     dest: "/etc/nginx/sites-enabled/{{ pihole__domain }}.conf"
     state: link
     force: true
   notify: Reload nginx config
-  when: not ssl_cert_exists.stat.exists
+  when: not pihole_vhost_exists.stat.exists
 
-- name: Configure SSL with Certbot (only if SSL doesn't exist)
+- name: Configure SSL with Certbot (only if certificate does not exist)
   command: certbot --nginx -d {{ pihole__domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
   args:
     creates: "/etc/letsencrypt/live/{{ pihole__domain }}/fullchain.pem"
