@@ -40,6 +40,7 @@
         update: true
         force: true
       become: "{{ user_config.user != ansible_user }}"
+      become_user: "{{ user_config.user }}"
       when: ansible_facts['os_family'] == 'Debian'
 
     - name: Install ZSH syntax highlighting plugin for user
@@ -51,6 +52,7 @@
         update: true
         force: true
       become: "{{ user_config.user != ansible_user }}"
+      become_user: "{{ user_config.user }}"
       when: ansible_facts['os_family'] == 'Debian'
 
     - name: Backup existing .zshrc if exists
