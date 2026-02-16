@@ -47,4 +47,4 @@
     minute: "0"
     hour: "4"
     day: "*"
-    job: "uv run {{ user_home }}/databases-backup-over-scp/main.py >> {{ user_home }}/databases-backup-over-scp/logs/cron_{{ ansible_facts['date_time']['iso8601'] }}.log"
+    job: "/usr/local/bin/uv run {{ user_home }}/databases-backup-over-scp/main.py >> {{ user_home }}/databases-backup-over-scp/logs/cron_$(date +\\%Y-\\%m-\\%d).log 2>&1"
