@@ -28,8 +28,8 @@
   file:
     path: "{{ databases_backup_over_scp__local_backup_path }}"
     state: directory
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
+    owner: "{{ ansible_facts['user_id'] }}"
+    group: "{{ ansible_facts['user_id'] }}"
     mode: u=rwx,g=rwx,o= # 770
   become: true
 
