@@ -62,8 +62,9 @@ alias biomecheck='biome check --write .'
 # iTerm2 shell integration
 source $HOME/.iterm2_shell_integration.zsh
 
-# Homebrew curl (http3 support)
-export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+# Homebrew paths
+export PATH="/opt/homebrew/opt/curl/bin:$PATH" # Homebrew curl (http3 support)
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH" # Homebrew libpq (PostgreSQL client)
 
 # NVM
 export NVM_DIR="$HOME/.nvm"
