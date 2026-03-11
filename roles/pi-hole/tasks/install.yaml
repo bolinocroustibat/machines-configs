@@ -47,7 +47,7 @@
 # Deploy vhost when missing (so we never skip it because cert already existed). Do not overwrite once present (Certbot may have added SSL).
 - name: Deploy Nginx vhost for Pi-hole
   template:
-    src: vhost.conf.j2
+    src: nginx-vhost.conf.j2
     dest: "/etc/nginx/sites-available/{{ pihole__domain }}.conf"
     mode: u=rw,g=r,o=r  # 644
   notify: Reload nginx config

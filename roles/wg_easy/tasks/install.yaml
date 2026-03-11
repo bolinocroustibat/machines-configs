@@ -36,7 +36,7 @@
 
 - name: Deploy Nginx vhost for Wg-Easy (only if SSL doesn't exist)
   template:
-    src: "{{ wg_easy__domain }}.conf.j2"
+    src: nginx-vhost.conf.j2
     dest: "/etc/nginx/sites-available/{{ wg_easy__domain }}.conf"
     mode: u=rw,g=r,o=r  # 644
   notify: Reload nginx config

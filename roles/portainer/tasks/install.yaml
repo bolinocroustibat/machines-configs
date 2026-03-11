@@ -45,7 +45,7 @@
 
 - name: Deploy Nginx vhost for Portainer (only if SSL doesn't exist)
   template:
-    src: "{{ portainer__domain }}.conf.j2"
+    src: nginx-vhost.conf.j2
     dest: "/etc/nginx/sites-available/{{ portainer__domain }}.conf"
     mode: u=rw,g=r,o=r  # 644
   notify: Reload nginx config

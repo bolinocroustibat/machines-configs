@@ -36,7 +36,7 @@
 
 - name: Deploy Nginx vhost for OmniTools (only if SSL doesn't exist)
   template:
-    src: "{{ omnitools__domain }}.conf.j2"
+    src: nginx-vhost.conf.j2
     dest: "/etc/nginx/sites-available/{{ omnitools__domain }}.conf"
     mode: u=rw,g=r,o=r  # 644
   notify: Reload nginx config
