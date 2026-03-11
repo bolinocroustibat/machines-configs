@@ -1,0 +1,71 @@
+- name: Include Pocket ID secrets
+  include_vars: secrets.yaml
+
+- name: Create Pocket ID installation directory
+  file:
+    path: "/opt/pocket-id"
+    state: directory
+    mode: u=rwx,g=,o= # 700 (only the user can read, write and execute)
+
+- name: Create Pocket ID data directory
+  file:
+    path: "/opt/pocket-id/data"
+    state: directory
+    mode: u=rwx,g=,o= # 700 (only the user can read, write and execute)
+
+- name: Copy .env
+  template:
+    src: .env.j2
+    dest: "/opt/pocket-id/.env"
+    mode: u=rw,g=,o= # 600
+  notify: Recreate pocket-id container
+
+- name: Copy docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: "/opt/pocket-id/docker-compose.yml"
+    mode: u=rw,g=r,o=r  # 644
+  notify: Recreate pocket-id container
+
+- name: Start Pocket ID container
+  community.docker.docker_compose_v2:
+    project_src: "/opt/pocket-id"
+    state: present
+    remove_orphans: true
+    build: "never"
+    pull: "always"
+    recreate: always
+
+- name: Check if DNS is properly configured
+  command: dig +short {{ pocket_id__domain }}
+  register: pocket_id_dns_check
+  changed_when: false
+  failed_when: pocket_id_dns_check.stdout == ""
+
+- name: Check if SSL certificate exists
+  stat:
+    path: "/etc/letsencrypt/live/{{ pocket_id__domain }}/fullchain.pem"
+  register: pocket_id_ssl_cert_exists
+
+- name: Deploy Nginx vhost for Pocket ID (only if SSL doesn't exist)
+  template:
+    src: nginx-vhost.conf.j2
+    dest: "/etc/nginx/sites-available/{{ pocket_id__domain }}.conf"
+    mode: u=rw,g=r,o=r  # 644
+  notify: Reload nginx config
+  when: not pocket_id_ssl_cert_exists.stat.exists
+
+- name: Enable Nginx vhost for Pocket ID (only if SSL doesn't exist)
+  file:
+    src: "/etc/nginx/sites-available/{{ pocket_id__domain }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ pocket_id__domain }}.conf"
+    state: link
+    force: true
+  notify: Reload nginx config
+  when: not pocket_id_ssl_cert_exists.stat.exists
+
+- name: Configure SSL with Certbot (only if SSL doesn't exist)
+  command: certbot --nginx -d {{ pocket_id__domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
+  args:
+    creates: "/etc/letsencrypt/live/{{ pocket_id__domain }}/fullchain.pem"
+  when: pocket_id_dns_check.stdout != "" and not pocket_id_ssl_cert_exists.stat.exists

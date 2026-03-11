@@ -1,0 +1,19 @@
+{{ ansible_managed | comment }}
+
+services:
+  pocket-id:
+    image: ghcr.io/pocket-id/pocket-id:{{ pocket_id__image_tag }}
+    container_name: pocket-id
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:{{ pocket_id__web_port }}:{{ pocket_id__container_port }}"
+    volumes:
+      - "./data:/app/data"
+    healthcheck:
+      test: ["CMD", "/app/pocket-id", "healthcheck"]
+      interval: 1m30s
+      timeout: 5s
+      retries: 2
+      start_period: 10s
