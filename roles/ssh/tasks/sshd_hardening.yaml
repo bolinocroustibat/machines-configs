@@ -1,6 +1,3 @@
-# Deploy AllowUsers: connection user (ansible_user) plus ssh__allow_users.
-# Override ssh__allow_users in host_vars to add more users. Requires root to write and restart ssh.
-
 - name: Ensure sshd_config.d exists
   ansible.builtin.file:
     path: /etc/ssh/sshd_config.d
@@ -17,17 +14,20 @@
   register: sshd_include_dropins_line
   become: true
 
-- name: Deploy AllowUsers drop-in
+- name: Deploy sshd hardening drop-in
   ansible.builtin.copy:
-    dest: /etc/ssh/sshd_config.d/99-allow-users.conf
-    content: "AllowUsers {{ ([ansible_user] + (ssh__allow_users | default([]))) | unique | join(' ') }}\n"
+    dest: /etc/ssh/sshd_config.d/10-hardening.conf
+    content: |
+      PermitRootLogin no
+      PasswordAuthentication no
+      PubkeyAuthentication yes
     mode: u=rw,g=r,o=r  # 644
-  register: ssh_allow_users_file
+  register: ssh_hardening_file
   become: true
 
-- name: Restart ssh so AllowUsers takes effect
+- name: Restart ssh so hardening takes effect
   ansible.builtin.service:
     name: ssh
     state: restarted
-  when: ssh_allow_users_file is changed or sshd_include_dropins_line is changed
+  when: ssh_hardening_file is changed or sshd_include_dropins_line is changed
   become: true

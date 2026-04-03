@@ -19,6 +19,17 @@
         name: apt
         tasks_from: upgrade
 
+- name: Refresh SSH server configuration
+  hosts: remote
+  become: true
+  tags:
+    - debian
+  tasks:
+    - name: Refresh SSH server configuration
+      include_role:
+        name: ssh
+        tasks_from: update
+
 - name: Update Docker
   hosts: web-bolino, data-bolino
   become: true

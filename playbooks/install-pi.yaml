@@ -11,6 +11,11 @@
         name: ssh
         tasks_from: sshd_allow_users
 
+    - name: Apply SSH daemon hardening
+      include_role:
+        name: ssh
+        tasks_from: sshd_hardening
+
 - name: Set hostname (when prompt_hostname is defined in host_vars)
   hosts: pi-bolino
   become: true

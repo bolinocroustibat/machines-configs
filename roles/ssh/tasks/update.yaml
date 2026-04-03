@@ -1,0 +1,5 @@
+- name: Refresh SSH daemon hardening
+  ansible.builtin.include_tasks: sshd_hardening.yaml
+
+- name: Refresh SSH AllowUsers configuration
+  ansible.builtin.include_tasks: sshd_allow_users.yaml
