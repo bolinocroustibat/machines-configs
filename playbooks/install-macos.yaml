@@ -53,10 +53,15 @@
 - name: Configure Git
   hosts: local
   tasks:
+    - name: Install Git
+      include_role:
+        name: git
+        tasks_from: install
+
     - name: Set up Git configuration
       include_role:
         name: git
-        tasks_from: main
+        tasks_from: configure
 
 - name: Install uv
   hosts: local
