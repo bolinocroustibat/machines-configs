@@ -30,6 +30,17 @@
         name: ssh
         tasks_from: update
 
+- name: Update UFW rules
+  hosts: remote
+  become: true
+  tags:
+    - debian
+  tasks:
+    - name: Apply UFW rules
+      include_role:
+        name: ufw
+        tasks_from: rules
+
 - name: Update Docker
   hosts: web-bolino, data-bolino
   become: true

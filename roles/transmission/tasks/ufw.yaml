@@ -5,8 +5,8 @@
       [ ! -z "$num" ] && echo "y" | ufw delete $num 2>/dev/null || true
     done
   loop:
-    - { comment: 'Transmission web interface' }
-    - { comment: 'Transmission peer connections' }
+    - { comment: "Allow Transmission web interface - managed by Ansible role transmission" }
+    - { comment: "Allow Transmission peer connections - managed by Ansible role transmission" }
   become: true
   ignore_errors: true
   changed_when: false
@@ -16,7 +16,7 @@
     rule: allow
     port: "{{ transmission__rpc_port | default(9091) }}"
     proto: tcp
-    comment: 'Transmission web interface'
+    comment: "Allow Transmission web interface - managed by Ansible role transmission"
   become: true
 
 - name: Allow Transmission peer connections
@@ -24,7 +24,7 @@
     rule: allow
     port: "{{ transmission__peer_port | default(51413) }}"
     proto: "{{ transmission__peer_proto | default('tcp') }}"
-    comment: 'Transmission peer connections'
+    comment: "Allow Transmission peer connections - managed by Ansible role transmission"
   become: true
 
 - name: Reload UFW

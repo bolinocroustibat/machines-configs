@@ -1,0 +1,12 @@
+- name: Allow Minecraft server port
+  ufw:
+    rule: allow
+    port: 25565
+    proto: tcp
+    comment: "Allow Minecraft - managed by Ansible role minecraft_server"
+  become: true
+
+- name: Reload UFW
+  ufw:
+    state: reloaded
+  become: true

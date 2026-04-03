@@ -20,6 +20,14 @@
   when: ufw__rules | length > 0
   become: true
 
+- name: Ensure SSH rule is present
+  community.general.ufw:
+    rule: allow
+    port: "22"
+    proto: tcp
+    comment: "Allow SSH (IMPORTANT) - managed by Ansible role ufw"
+  become: true
+
 - name: Reload UFW
   ufw:
     state: reloaded

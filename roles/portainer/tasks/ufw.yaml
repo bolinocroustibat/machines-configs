@@ -4,7 +4,7 @@
     port: 9001
     proto: tcp
     from_ip: "{{ hostvars['data-bolino']['ansible_host'] }}"
-    comment: 'Portainer agent from data-bolino'
+    comment: "Allow Portainer agent from data-bolino - managed by Ansible role portainer"
   when: inventory_hostname == 'web-bolino'
 
 - name: Reload UFW

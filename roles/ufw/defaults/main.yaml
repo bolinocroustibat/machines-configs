@@ -3,7 +3,7 @@
 # Each rule should have: port, proto (default: tcp), and comment
 # Example:
 # ufw__rules:
-#   - { port: http, proto: tcp, comment: "Allow HTTP traffic for web servers" }
-#   - { port: https, proto: tcp, comment: "Allow HTTPS traffic for secure web servers" }
-#   - { port: 9091, proto: tcp, comment: "Allow Transmission web interface" }
+#   - { port: http, proto: tcp, comment: "Allow HTTP - managed by Ansible role ufw" }
+#   - { port: https, proto: tcp, comment: "Allow HTTPS - managed by Ansible role ufw" }
+#   - { port: 9091, proto: tcp, comment: "Allow Transmission web interface - managed by Ansible role ufw" }
 ufw__rules: []

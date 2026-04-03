@@ -22,7 +22,9 @@
 - name: Allow SSH
   community.general.ufw:
     rule: allow
-    name: ssh
+    port: "22"
+    proto: tcp
+    comment: "Allow SSH (IMPORTANT) - managed by Ansible role ufw"
   become: true
 
 - name: Enable UFW and persist across reboots
