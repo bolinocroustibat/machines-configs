@@ -39,5 +39,5 @@
     minute: "0"
     hour: "4"
     job: "cd {{ user_home }}/minecraft-server && ./minecraft-backup.sh"
-    user: root
+    user: "{{ ansible_user_id }}"
     state: present

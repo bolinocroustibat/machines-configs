@@ -280,10 +280,10 @@
   tasks:
     - name: Configure UFW for Minecraft server
       include_role:
-        name: minecraft-server
+        name: minecraft_server
         tasks_from: ufw
 
-    - name: Include minecraft-server role
+    - name: Include minecraft_server role
       include_role:
-        name: minecraft-server
+        name: minecraft_server
         tasks_from: install
