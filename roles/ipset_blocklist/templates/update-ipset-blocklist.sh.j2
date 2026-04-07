@@ -1,0 +1,40 @@
+#!/bin/bash
+# Managed by Ansible (role ipset_blocklist). Refreshes hash:net set data_shield from remote list.
+set -euo pipefail
+
+LIST_URL={{ ipset_blocklist__url | quote }}
+SET_NAME="data_shield"
+TEMP_SET="data_shield_temp"
+MAX_ELEM="5000000"
+
+TMP_RESTORE="$(mktemp)"
+trap 'rm -f "$TMP_RESTORE"' EXIT
+
+# Ensure the live set exists so UFW can reference it before first successful refresh.
+ipset create "$SET_NAME" hash:net maxelem "$MAX_ELEM" -exist
+
+ipset destroy "$TEMP_SET" 2>/dev/null || true
+
+{
+  echo "create $TEMP_SET hash:net maxelem $MAX_ELEM"
+  curl -fsS --max-time 300 --retry 2 --retry-delay 5 "$LIST_URL" \
+    | grep -v '^#' \
+    | grep -v '^[[:space:]]*$' \
+    | awk -v s="$TEMP_SET" '{print "add " s " " $0 " -exist"}'
+} > "$TMP_RESTORE"
+
+ADD_COUNT="$(awk '/^add / { n++ } END { print n + 0 }' "$TMP_RESTORE")"
+if [ "$ADD_COUNT" -lt 1 ]; then
+  echo "ipset_blocklist: feed produced no entries, keeping previous set" >&2
+  exit 1
+fi
+
+if ! ipset restore -exist < "$TMP_RESTORE"; then
+  echo "ipset_blocklist: ipset restore failed" >&2
+  exit 1
+fi
+
+ipset swap "$TEMP_SET" "$SET_NAME"
+ipset destroy "$TEMP_SET"
+
+echo "ipset_blocklist: updated $SET_NAME ($(date -u +%Y-%m-%dT%H:%M:%SZ)) entries=$ADD_COUNT"

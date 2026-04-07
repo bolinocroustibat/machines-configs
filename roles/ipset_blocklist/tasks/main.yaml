@@ -1,0 +1,62 @@
+- name: Install ipset and curl
+  ansible.builtin.apt:
+    name:
+      - ipset
+      - curl
+    state: present
+  become: true
+
+- name: Deploy ipset blocklist update script
+  ansible.builtin.template:
+    src: update-ipset-blocklist.sh.j2
+    dest: /usr/local/bin/update-ipset-blocklist.sh
+    mode: u=rwx,g=rx,o=rx # 755
+  become: true
+  register: ipset_blocklist_script
+
+- name: Deploy systemd unit for boot-time blocklist refresh
+  ansible.builtin.copy:
+    src: ipset-blocklist-refresh.service
+    dest: /etc/systemd/system/ipset-blocklist-refresh.service
+    mode: u=rw,g=r,o=r # 644
+  become: true
+  register: ipset_blocklist_systemd_unit
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+  when: ipset_blocklist_systemd_unit.changed
+
+- name: Enable boot-time ipset blocklist refresh
+  ansible.builtin.systemd:
+    name: ipset-blocklist-refresh.service
+    enabled: true
+  become: true
+
+- name: Run ipset blocklist update when script or systemd unit changed
+  ansible.builtin.command: /usr/local/bin/update-ipset-blocklist.sh
+  become: true
+  when: ipset_blocklist_script.changed | default(false) or ipset_blocklist_systemd_unit.changed | default(false)
+  changed_when: false
+
+- name: Add ipset blocklist rule to UFW before.rules
+  ansible.builtin.blockinfile:
+    path: /etc/ufw/before.rules
+    marker: "# {mark} ANSIBLE MANAGED BLOCK ipset_blocklist"
+    insertafter: '^# End required lines'
+    block: |
+      # Data-Shield reputation blocklist (role ipset_blocklist)
+      -A ufw-before-input -m set --match-set data_shield src -j DROP
+  become: true
+  notify: Reload ufw
+
+- name: Schedule daily ipset blocklist refresh
+  ansible.builtin.cron:
+    name: ipset_blocklist refresh Data-Shield list
+    minute: "0"
+    hour: "3"
+    job: /usr/local/bin/update-ipset-blocklist.sh >/dev/null 2>&1
+    user: root
+    state: present
+  become: true

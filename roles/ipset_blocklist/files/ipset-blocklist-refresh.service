@@ -1,0 +1,12 @@
+[Unit]
+Description=Refresh Data-Shield ipset blocklist at boot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/update-ipset-blocklist.sh
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target

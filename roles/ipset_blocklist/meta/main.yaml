@@ -1,0 +1,12 @@
+galaxy_info:
+  role_name: ipset_blocklist
+  author: bolino
+  description: Data-Shield IPv4 blocklist via ipset and UFW before.rules
+  license: MIT
+  min_ansible_version: "2.14"
+  platforms:
+    - name: Debian
+      versions:
+        - all
+
+dependencies: []

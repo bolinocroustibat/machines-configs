@@ -101,6 +101,15 @@
         name: ufw
         tasks_from: rules
 
+- name: Configure ipset reputation blocklist
+  hosts: pi-bolino
+  become: true
+  tasks:
+    - name: Set up Data-Shield ipset blocklist with UFW
+      ansible.builtin.include_role:
+        name: ipset_blocklist
+      when: ipset_blocklist__enabled | default(false) | bool
+
 - name: Install and configure Micro
   hosts: pi-bolino
   tasks:

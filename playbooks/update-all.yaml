@@ -41,6 +41,17 @@
         name: ufw
         tasks_from: rules
 
+- name: Update ipset blocklist configuration
+  hosts: remote
+  become: true
+  tags:
+    - debian
+  tasks:
+    - name: Apply ipset blocklist role
+      ansible.builtin.include_role:
+        name: ipset_blocklist
+      when: ipset_blocklist__enabled | default(false) | bool
+
 - name: Update Docker
   hosts: web-bolino, data-bolino
   become: true

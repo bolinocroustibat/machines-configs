@@ -1,0 +1,5 @@
+# Opt-in per host or group (role is included from playbooks with when: this flag).
+ipset_blocklist__enabled: false
+
+# Public feed URL (override if upstream moves or you use a mirror).
+ipset_blocklist__url: "https://raw.githubusercontent.com/duggytuxy/Data-Shield_IPv4_Blocklist/refs/heads/main/prod_data-shield_ipv4_blocklist.txt"
