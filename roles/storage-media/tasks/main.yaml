@@ -19,7 +19,7 @@
     path: "{{ storage_media__mount_point }}"
     src: "UUID={{ storage_media__ssd_uuid }}"
     fstype: ext4
-    opts: defaults,noatime
+    opts: defaults,noatime,nofail
     state: mounted
   when: disk_check.stat.exists
 
