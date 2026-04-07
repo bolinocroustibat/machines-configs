@@ -35,9 +35,10 @@
 
 - name: Add Minecraft backup cron job
   cron:
-    name: "Minecraft server daily backup at 4 AM UTC (5 AM Paris time)"
+    name: "Minecraft server backup every 3 days at 4 AM UTC (5 AM Paris winter)"
     minute: "0"
     hour: "4"
+    day: "*/3"
     job: "cd {{ user_home }}/minecraft-server && ./minecraft-backup.sh"
     user: "{{ ansible_user_id }}"
     state: present
