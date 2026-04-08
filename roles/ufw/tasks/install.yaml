@@ -5,6 +5,27 @@
     update_cache: true
   become: true
 
+- name: Replace UFW sysctl snippet for kernels that reject stock tunables
+  ansible.builtin.copy:
+    dest: /etc/ufw/sysctl.conf
+    mode: u=rw,g=r,o=r # 644
+    backup: true
+    content: |
+      {{ ansible_managed | comment }}
+      # Empty on purpose: default UFW sysctl lines can fail with "problem running sysctl" on some
+      # embedded/media kernels (e.g. OSMC). Add only keys verified with sysctl -w on the host.
+  become: true
+  when: ufw__minimal_sysctl | bool
+
+# Allow SSH before enabling UFW (default deny would otherwise lock you out mid-play or after).
+- name: Allow SSH (port must match sshd / forwarded port on this host)
+  community.general.ufw:
+    rule: allow
+    port: "{{ ufw__ssh_listen_port | default(ansible_port | default(22)) | string }}"
+    proto: tcp
+    comment: "Allow SSH (IMPORTANT) - managed by Ansible role ufw"
+  become: true
+
 - name: Enable UFW
   ufw:
     state: enabled
@@ -17,14 +38,6 @@
   loop:
     - deny
     - allow
-  become: true
-
-- name: Allow SSH
-  community.general.ufw:
-    rule: allow
-    port: "22"
-    proto: tcp
-    comment: "Allow SSH (IMPORTANT) - managed by Ansible role ufw"
   become: true
 
 - name: Enable UFW and persist across reboots

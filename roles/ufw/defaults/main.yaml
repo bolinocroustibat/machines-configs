@@ -1,5 +1,11 @@
+# Stock /etc/ufw/sysctl.conf can call sysctl keys missing on some kernels (e.g. OSMC); use an empty/minimal file before enable.
+ufw__minimal_sysctl: false
+
+# Optional: port sshd listens on (as seen by UFW on this machine). If unset, uses ansible_port, then 22.
+# If you only use a router forward (e.g. WAN:2222 -> LAN:22), set ufw__ssh_listen_port: 22 on that host.
+
 # UFW rules per host
-# SSH is configured in install.yaml to ensure it's opened first
+# SSH is configured in install.yaml before UFW is enabled
 # Each rule should have: port, proto (default: tcp), and comment
 # Example:
 # ufw__rules:

@@ -30,6 +30,13 @@
     mode: u=rw,g=r,o=r # 644
   become: true
 
+# Docker indexes repos by dpkg arch (armhf, arm64, amd64). Kernel can be aarch64 while userland is armhf (e.g. OSMC on Pi).
+- name: Get dpkg architecture for Docker apt source
+  ansible.builtin.command: dpkg --print-architecture
+  register: docker__dpkg_print_arch
+  changed_when: false
+  check_mode: false
+
 - name: Install Docker sources
   template:
     src: docker.sources.j2
@@ -50,12 +57,15 @@
   notify: Restart Docker
   become: true
 
+- name: Restart Docker before verification when packages changed
+  ansible.builtin.meta: flush_handlers
+
 - name: Ensure Docker service is enabled and started
-  systemd:
+  ansible.builtin.systemd:
     name: docker
     state: started
     enabled: true
-    daemon_reload: true
+    daemon_reload: false
   become: true
 
 - name: Verify Docker installation

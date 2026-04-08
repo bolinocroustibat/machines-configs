@@ -104,15 +104,6 @@
         name: ufw
         tasks_from: rules
 
-- name: Configure ipset reputation blocklist
-  hosts: pi-bolino
-  become: true
-  tasks:
-    - name: Set up Data-Shield ipset blocklist with UFW
-      ansible.builtin.include_role:
-        name: ipset_blocklist
-      when: ipset_blocklist__enabled | default(false) | bool
-
 - name: Install and configure Micro
   hosts: pi-bolino
   tasks:
@@ -128,14 +119,6 @@
     - name: Install bat command-line tool
       include_role:
         name: bat
-
-- name: Install eza
-  hosts: pi-bolino
-  become: true
-  tasks:
-    - name: Install eza command-line tool
-      include_role:
-        name: eza
 
 - name: Install and configure uv
   hosts: pi-bolino
@@ -181,22 +164,22 @@
         name: docker
         tasks_from: install
 
-- name: Install Pi-hole
-  hosts: pi-bolino
-  become: true
-  tasks:
-    - name: Install and configure Pi-hole
-      include_role:
-        name: pi-hole
-        tasks_from: install
+# - name: Install Pi-hole
+#   hosts: pi-bolino
+#   become: true
+#   tasks:
+#     - name: Install and configure Pi-hole
+#       include_role:
+#         name: pi-hole
+#         tasks_from: install
 
-- name: Setup storage media disk
-  hosts: pi-bolino
-  tasks:
-    - name: Setup storage media disk mount and directories
-      include_role:
-        name: storage-media
-        tasks_from: main
+# - name: Setup storage media disk
+#   hosts: pi-bolino
+#   tasks:
+#     - name: Setup storage media disk mount and directories
+#       include_role:
+#         name: storage-media
+#         tasks_from: main
 
 - name: Install transmission-daemon
   hosts: pi-bolino

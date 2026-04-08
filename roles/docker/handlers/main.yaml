@@ -1,0 +1,8 @@
+- name: Restart Docker
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
+    # daemon-reload often times out on D-Bus for low-resource hosts (e.g. Pi) after heavy I/O; dpkg postinst
+    # for docker-ce already refreshes units when needed.
+    daemon_reload: false
+  become: true
