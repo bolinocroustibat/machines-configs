@@ -1,0 +1,3 @@
+# Apt upgrade mode for roles/apt/tasks/upgrade.yaml (Debian family).
+# OSMC wraps apt-get and rejects plain "upgrade"; use "dist" there (dist-upgrade).
+apt__upgrade: true

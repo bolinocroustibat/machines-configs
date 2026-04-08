@@ -11,6 +11,7 @@
         name: ssh
         tasks_from: sshd_allow_users
 
+    # Hardening disables PasswordAuthentication; it must run only after authorized_keys is deployed above.
     - name: Apply SSH daemon hardening
       include_role:
         name: ssh
@@ -33,6 +34,8 @@
         state: present
       when: prompt_hostname is defined and prompt_hostname | length > 0
 
+# Resume after a failure (include_role hides inner task names from --start-at-task):
+#   --start-at-task "Upgrade all packages"
 - name: Update apt and upgrade packages
   hosts: pi-bolino
   tasks:

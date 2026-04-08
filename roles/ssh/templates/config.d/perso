@@ -27,7 +27,7 @@ Host data-bolino
 
 Host pi-bolino
 	HostName home.adriencarpentier.com
-	User bolino
+	User osmc
 	Port 2222
 	IdentityFile "~/.ssh/id_ed25519"
 	IdentitiesOnly yes

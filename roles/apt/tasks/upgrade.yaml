@@ -1,9 +1,13 @@
 # This is equivalent to running: apt update && apt upgrade && apt autoremove && apt autoclean
+# Resuming with --start-at-task skips implicit gather_facts for this play.
+- name: Refresh Ansible facts for apt upgrade (resume-safe)
+  ansible.builtin.setup:
+  when: "'date_time' not in ansible_facts"
 
 - name: Update package lists and perform regular upgrade
   apt:
     update_cache: true
-    upgrade: true
+    upgrade: "{{ apt__upgrade }}"
     force_apt_get: true
   become: true
   when: ansible_facts["os_family"] == 'Debian'

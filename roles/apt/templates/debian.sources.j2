@@ -1,29 +1,31 @@
 {{ ansible_managed | comment }}
+{# non-free-firmware is a separate component from Bookworm onward; omit on Bullseye and older. #}
+{% set apt__debian_components = 'main contrib non-free non-free-firmware' if debian_distribution | default('') not in ['buster', 'bullseye', 'stretch', 'jessie'] else 'main contrib non-free' %}
 
 # Main repository
 Types: deb deb-src
 URIs: http://ftp.fr.debian.org/debian/
 Suites: {{ debian_distribution }}
-Components: main contrib non-free non-free-firmware
+Components: {{ apt__debian_components }}
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 
 # Security updates
 Types: deb
 URIs: http://deb.debian.org/debian-security
 Suites: {{ debian_distribution }}-security
-Components: main contrib non-free non-free-firmware
+Components: {{ apt__debian_components }}
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 
 # Updates ("volatile")
 Types: deb deb-src
 URIs: http://ftp.fr.debian.org/debian/
 Suites: {{ debian_distribution }}-updates
-Components: main contrib non-free non-free-firmware
+Components: {{ apt__debian_components }}
 Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
 
 # Backports (commented by default)
 # Types: deb
 # URIs: http://ftp.fr.debian.org/debian/
 # Suites: {{ debian_distribution }}-backports
-# Components: main contrib non-free non-free-firmware
+# Components: {{ apt__debian_components }}
 # Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
