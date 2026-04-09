@@ -1,6 +1,9 @@
 transmission__service_enabled: true
 transmission__service_state: started
 
+# Debian installs nginx here; Ansible and Certbot often run with a minimal PATH without /usr/sbin.
+transmission__nginx_binary: /usr/sbin/nginx
+
 # Transmission download directory
 transmission__download_dir: "/mnt/medias/DL"
 

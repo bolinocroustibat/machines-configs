@@ -22,6 +22,7 @@ http {
 	types_hash_max_size 2048;
 	server_tokens on; # On by default. If off, hides the Nginx, PHP versions numbers in response header. If on, useful but can slightly impact security.
 
+	# Uncomment if nginx fails: could not build server_names_hash (many/long server_name values).
 	# server_names_hash_bucket_size 64;
 	# server_name_in_redirect off;
 

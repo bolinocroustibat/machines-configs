@@ -1,7 +1,8 @@
 - name: Reload nginx config
-  ansible.builtin.service:
-    name: nginx
-    state: reloaded
+  # Run nginx -t first so failures show the real syntax/include error (systemctl reload hides it).
+  ansible.builtin.shell: "{{ transmission__nginx_binary }} -t && systemctl reload nginx"
+  args:
+    executable: /bin/bash
   become: true
 
 - name: Restart transmission-daemon
