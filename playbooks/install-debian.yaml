@@ -16,6 +16,15 @@
         name: ssh
         tasks_from: sshd_hardening
 
+- name: Set optional local UNIX password hashes (web-bolino, data-bolino)
+  hosts: web-bolino,data-bolino
+  become: true
+  tasks:
+    - name: Apply UNIX passwords from ssh role vars or host_vars
+      ansible.builtin.include_role:
+        name: ssh
+        tasks_from: unix_password
+
 - name: Set hostname (when prompt_hostname is defined in host_vars)
   hosts: remote
   become: true
