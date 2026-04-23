@@ -1,0 +1,50 @@
+# Official repository: https://nginx.org/en/linux_packages.html#Debian
+- name: Nginx official APT repository (Debian)
+  when: ansible_facts['os_family'] == 'Debian'
+  block:
+    - name: Install prerequisites for the Nginx official APT repository
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - curl
+          - gnupg
+        state: present
+      become: true
+
+    - name: Check if Nginx APT keyring is already installed
+      ansible.builtin.stat:
+        path: /usr/share/keyrings/nginx-archive-keyring.gpg
+      register: nginx__apt_keyring_stat
+
+    - name: Download Nginx package signing key
+      ansible.builtin.get_url:
+        url: https://nginx.org/keys/nginx_signing.key
+        dest: /tmp/.ansible-nginx-official-apt.key
+        mode: u=rw,g=,o= # 600
+      when: not nginx__apt_keyring_stat.stat.exists
+      become: true
+
+    - name: Add Nginx signing key to the system keyring
+      ansible.builtin.command:
+        cmd:
+          - gpg
+          - --batch
+          - --dearmor
+          - --yes
+          - -o
+          - /usr/share/keyrings/nginx-archive-keyring.gpg
+          - /tmp/.ansible-nginx-official-apt.key
+      when: not nginx__apt_keyring_stat.stat.exists
+      become: true
+
+    - name: Install Nginx APT sources
+      ansible.builtin.template:
+        src: nginx.sources.j2
+        dest: /etc/apt/sources.list.d/nginx.sources
+        mode: u=rw,g=r,o=r # 644
+      become: true
+
+    - name: Update apt cache after Nginx official repository is configured
+      ansible.builtin.apt:
+        update_cache: true
+      become: true

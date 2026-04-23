@@ -1,0 +1,72 @@
+- name: Ensure all folders exist
+  file:
+    path: "/etc/nginx/{{ item }}"
+    state: directory
+    mode: u=rwx,g=rx,o=rx # 755
+  with_items:
+    - modules-available
+    - modules-enabled
+    - sites-available
+    - sites-enabled
+    - conf.d
+    - snippets
+  become: true
+
+- name: Copy .htpasswd file
+  template:
+    src: .htpasswd
+    dest: /etc/nginx/.htpasswd
+    mode: u=rw,g=r,o= # 640 (only owner can write, group can read)
+    owner: www-data
+    group: www-data
+  notify: Reload nginx config
+  become: true
+
+- name: Copy PHP snippet
+  template:
+    src: snippets/php.conf.j2
+    dest: /etc/nginx/snippets/php.conf
+    mode: u=rw,g=r,o=r # 644
+  notify: Reload nginx config
+  become: true
+
+- name: Ensure configuration is set
+  template:
+    src: "{{ item.src }}"
+    dest: /etc/nginx/{{ item.path }}"
+    mode: u=rw,g=r,o=r # 644
+  when: item.state == 'file'
+  loop_control:
+    label: "{{ item.path }}"
+  notify: Reload nginx config
+  loop: "{{ nginx_config_items | default([]) }}"
+  become: true
+
+- name: Ensure cache dir exists
+  file:
+    path: "/var/cache/nginx"
+    state: directory
+    owner: www-data
+    mode: u=rwx,g=,o= # 700 (only the user can read, write and execute)
+  become: true
+
+- name: Ensure service is started and enabled at boot
+  service:
+    name: nginx
+    state: started
+    enabled: true
+  become: true
+
+- name: Ensure www-data user exists
+  user:
+    name: www-data
+    state: present
+    system: true
+  become: true
+
+- name: Ensure user www-data is in the www-data group
+  user:
+    name: www-data
+    groups: www-data
+    append: true
+  become: true

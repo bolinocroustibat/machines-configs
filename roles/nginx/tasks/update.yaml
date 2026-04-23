@@ -1,22 +1,14 @@
-- name: Gather package facts
-  package_facts:
-    manager: apt
-
 - name: Ensure Nginx official APT repository
   ansible.builtin.import_tasks: apt_sources.yaml
 
-- name: Install Nginx if not installed
-  when: '"nginx" not in ansible_facts.packages'
+- name: Update Nginx packages
   apt:
     name: nginx
     state: latest
+    update_cache: false
+  when: ansible_facts['os_family'] == 'Debian'
   become: true
-
-- name: Ensure openssl is installed
-  apt:
-    pkg: openssl
-    state: latest
-  become: true
+  notify: Restart nginx
 
 - name: Deploy Nginx configuration and service
   ansible.builtin.import_tasks: configure.yaml
