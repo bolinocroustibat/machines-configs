@@ -1,7 +1,7 @@
 #!/bin/bash
 {{ ansible_managed | comment }}
 
-# Sync pairs: local path <-> gdrive:remote (multiple roots)
+# Safe copy pairs: local path <-> gdrive:remote (multiple roots)
 REMOTE_NAME="{{ gdrive__remote_name }}"
 LOG_FILE="${HOME}/rclone_sync.log"
 
@@ -31,54 +31,11 @@ find_pair_index() {
   echo "$best_i"
 }
 
-run_bisync_or_sync() {
-  local _local="$1"
-  local _rem="$2"
-  if rclone bisync --help > /dev/null 2>&1; then
-    echo "Using rclone bisync: $_local <-> $REMOTE_NAME:$_rem"
-    rclone bisync "$_local" "$REMOTE_NAME:$_rem" \
-      --transfers 4 \
-      --checkers 8 \
-      --exclude "*.part" \
-      --log-file "$LOG_FILE" \
-      --log-level INFO \
-      --stats 60s \
-      --stats-one-line
-    return
-  else
-    echo "bisync not available, using sync: $_local <-> $REMOTE_NAME:$_rem"
-    rclone sync "$_local" "$REMOTE_NAME:$_rem" \
-      --transfers 4 \
-      --checkers 8 \
-      --exclude "*.part" \
-      --log-file "$LOG_FILE" \
-      --log-level INFO \
-      --stats 60s \
-      --stats-one-line || return
-    rclone sync "$REMOTE_NAME:$_rem" "$_local" \
-      --transfers 4 \
-      --checkers 8 \
-      --exclude "*.part" \
-      --log-file "$LOG_FILE" \
-      --log-level INFO \
-      --stats 60s \
-      --stats-one-line
-  fi
-}
-
-# Transmission: sync finished torrent path to the matching gdrive root
-if [[ -n "${TR_TORRENT_DIR:-}" ]]; then
-  SYNC_SRC="${TR_TORRENT_DIR}"
-  echo "Syncing finished torrent: $TR_TORRENT_NAME ($TR_TORRENT_DIR)"
-  echo "Timestamp: $(date)"
-  pair_idx=$(find_pair_index "$TR_TORRENT_DIR")
-  if [[ "$pair_idx" -lt 0 ]]; then
-    echo "ERROR: TR_TORRENT_DIR is not under any gdrive__sync_pairs local path" >&2
-    exit 1
-  fi
-  REM_DIR="${SYNC_REMOTES[$pair_idx]}"
-  echo "Target remote: $REMOTE_NAME:$REM_DIR (pair index $pair_idx)"
-  rclone sync "$SYNC_SRC" "$REMOTE_NAME:$REM_DIR" \
+run_rclone_copy() {
+  local _src="$1"
+  local _dst="$2"
+  echo "Copying without deletion: $_src -> $_dst"
+  rclone copy "$_src" "$_dst" \
     --transfers 4 \
     --checkers 8 \
     --exclude "*.part" \
@@ -86,17 +43,61 @@ if [[ -n "${TR_TORRENT_DIR:-}" ]]; then
     --log-level INFO \
     --stats 60s \
     --stats-one-line
-  echo "Sync finished: $TR_TORRENT_NAME -> $REMOTE_NAME:$REM_DIR"
+}
+
+remote_dest_for_local_dir() {
+  local _local_root="${1%/}"
+  local _remote_root="${2%/}"
+  local _dir="${3%/}"
+  local _relative
+
+  if [[ "$_dir" == "$_local_root" ]]; then
+    echo "$REMOTE_NAME:$_remote_root"
+    return
+  fi
+
+  _relative="${_dir#$_local_root/}"
+  echo "$REMOTE_NAME:$_remote_root/$_relative"
+}
+
+run_safe_pair_copy() {
+  local _local="$1"
+  local _rem="$2"
+
+  run_rclone_copy "$REMOTE_NAME:$_rem" "$_local" || return
+  run_rclone_copy "$_local" "$REMOTE_NAME:$_rem"
+}
+
+# Transmission: copy finished torrent path to the matching gdrive root
+if [[ -n "${TR_TORRENT_DIR:-}" ]]; then
+  TORRENT_DIR="${TR_TORRENT_DIR%/}"
+  SYNC_SRC="$TORRENT_DIR"
+  echo "Copying finished torrent: ${TR_TORRENT_NAME:-unknown} ($TR_TORRENT_DIR)"
+  echo "Timestamp: $(date)"
+  pair_idx=$(find_pair_index "$TR_TORRENT_DIR")
+  if [[ "$pair_idx" -lt 0 ]]; then
+    echo "ERROR: TR_TORRENT_DIR is not under any gdrive__sync_pairs local path" >&2
+    exit 1
+  fi
+  LOCAL_ROOT="${SYNC_LOCALS[$pair_idx]}"
+  REM_DIR="${SYNC_REMOTES[$pair_idx]}"
+  REM_DEST="$(remote_dest_for_local_dir "$LOCAL_ROOT" "$REM_DIR" "$TORRENT_DIR")"
+  if [[ -n "${TR_TORRENT_NAME:-}" && -e "$TORRENT_DIR/$TR_TORRENT_NAME" ]]; then
+    SYNC_SRC="$TORRENT_DIR/$TR_TORRENT_NAME"
+  fi
+  echo "Target remote: $REM_DEST (pair index $pair_idx)"
+  run_rclone_copy "$SYNC_SRC" "$REM_DEST"
+  echo "Copy finished: ${TR_TORRENT_NAME:-$SYNC_SRC} -> $REM_DEST"
 else
-  # Cron / manual: bidirectional sync for each pair
-  echo "Starting bidirectional sync for all pairs; timestamp: $(date)"
+  # Cron / manual: reconcile both sides without deleting files from either side.
+  echo "Starting safe bidirectional copy for all pairs; timestamp: $(date)"
   for i in "${!SYNC_LOCALS[@]}"; do
     _loc="${SYNC_LOCALS[$i]}"
     _rem="${SYNC_REMOTES[$i]}"
     echo "--- Pair $((i + 1))/{% raw %}${#SYNC_LOCALS[@]}{% endraw %}: $_loc <-> $REMOTE_NAME:$_rem"
-    if ! run_bisync_or_sync "$_loc" "$_rem"; then
+    if ! run_safe_pair_copy "$_loc" "$_rem"; then
       exit $?
     fi
   done
-  echo "All syncs finished: $(date)"
+  echo "All copies finished: $(date)"
 fi
