@@ -5,6 +5,9 @@
 - name: Include main setup tasks
   ansible.builtin.include_tasks: main.yaml
 
+- name: Include gdrive pair resolution
+  ansible.builtin.include_tasks: resolve_sync_pairs.yaml
+
 - name: Deploy sync_gdrive script in script user home
   when: ansible_facts["os_family"] == "Debian"
   ansible.builtin.template:
@@ -20,7 +23,7 @@
     - ansible_facts["os_family"] == "Debian"
     - gdrive__cron_enabled | default(true) | bool
   ansible.builtin.cron:
-    name: "Sync Google Drive DL folder bidirectionally"
+    name: "Sync Google Drive media folders"
     minute: "0"
     hour: "*/4"  # Every 4 hours
     day: "*"

@@ -33,12 +33,13 @@
     recurse: false
   when: disk_check.stat.exists
 
-- name: Create DL directory for downloads
+- name: Create media subdirectories (DL, etc.)
   become: true
-  file:
-    path: "{{ storage_media__mount_point }}/DL"
+  ansible.builtin.file:
+    path: "{{ storage_media__mount_point }}/{{ item }}"
     state: directory
     owner: "{{ storage_media__owner }}"
     group: "{{ storage_media__group }}"
     mode: u=rwx,g=rx,o=rx # 755
+  loop: "{{ storage_media__media_subdirs }}"
   when: disk_check.stat.exists

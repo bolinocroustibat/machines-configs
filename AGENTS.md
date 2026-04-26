@@ -20,8 +20,8 @@ Rules for AI agents (Cursor, Claude, etc.) working on this Ansible project.
 
 ## Variable Naming Convention
 - **Use double underscore (`__`) as separator** between role name and variable name:
-  - ✅ `gdrive__user`, `gdrive__local_dir`, `transmission__domain` (correct)
-  - ❌ `gdrive_user`, `gdrive.local_dir` (incorrect)
+  - ✅ `gdrive__user`, `gdrive__sync_pairs`, `transmission__domain` (correct)
+  - ❌ `gdrive_user`, `gdrive.sync_pairs` (incorrect)
 
 - This convention prevents variable name collisions between roles and makes it clear which role owns each variable.
 - Format: `{role_name}__{variable_name}` (lowercase with underscores)

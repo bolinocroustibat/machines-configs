@@ -8,5 +8,9 @@ gdrive__script_user: "debian-transmission"
 # Override in host_vars if different
 gdrive__remote_name: "gdrive"
 
+# Set in host_vars — list of { local, remote } per gdrive root, e.g.
+# gdrive__sync_pairs:
+#   - { local: "/mnt/medias/DL", remote: "/DL" }
+
 # Enable/disable cron job for regular bidirectional sync
 gdrive__cron_enabled: true

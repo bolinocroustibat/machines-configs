@@ -1,26 +1,45 @@
 #!/bin/bash
 {{ ansible_managed | comment }}
 
-# Configuration
-LOCAL_DIR="{{ gdrive__local_dir }}"
 REMOTE_NAME="{{ gdrive__remote_name }}"
-REMOTE_DIR="{{ gdrive__remote_dir }}"
 
-# When called by Transmission (script-torrent-done), use only the finished torrent dir
-# Otherwise (manual run) upload the whole local dir
+# shellcheck disable=SC2034,SC2206
+SYNC_LOCALS=( {% for p in gdrive__sync_pairs_resolved %}{{ p.local | to_json }} {% endfor %})
+# shellcheck disable=SC2034,SC2206
+SYNC_REMOTES=( {% for p in gdrive__sync_pairs_resolved %}{{ p.remote | to_json }} {% endfor %})
+
+find_pair_index() {
+  local tdir="${1:-}"
+  tdir="${tdir%/}"
+  local best_i=-1
+  local best_len=0
+  local i loc lnorm n
+  for i in "${!SYNC_LOCALS[@]}"; do
+    loc="${SYNC_LOCALS[$i]}"
+    lnorm="${loc%/}"
+    if [[ "$tdir" == "$lnorm" || "$tdir" == "$lnorm"/* ]]; then
+      # Semicolon keeps the following if on this line (Ansible Jinja trim_blocks)
+      n={% raw %}${#lnorm}{% endraw %}; if [[ $n -gt $best_len ]]; then
+        best_len=$n
+        best_i=$i
+      fi
+    fi
+  done
+  echo "$best_i"
+}
+
+# Transmission: move finished torrent tree to the matching gdrive root
 if [[ -n "${TR_TORRENT_DIR:-}" ]]; then
-    UPLOAD_SRC="$TR_TORRENT_DIR"
-    echo "Uploading finished torrent: $TR_TORRENT_NAME (${TR_TORRENT_DIR})"
-else
-    UPLOAD_SRC="$LOCAL_DIR"
-    echo "Uploading full directory: $UPLOAD_SRC"
-fi
-
-# Using 'move' to free space on the Pi; use 'copy' if you want to keep a local copy
-# --stats 60s: progress logged once per minute per transfer (use 5s for verbose)
-echo "Starting upload to Google Drive..."
-
-rclone move "$UPLOAD_SRC" "$REMOTE_NAME:$REMOTE_DIR" \
+  UPLOAD_SRC="$TR_TORRENT_DIR"
+  echo "Uploading finished torrent: $TR_TORRENT_NAME ($TR_TORRENT_DIR)"
+  pair_idx=$(find_pair_index "$TR_TORRENT_DIR")
+  if [[ "$pair_idx" -lt 0 ]]; then
+    echo "ERROR: TR_TORRENT_DIR is not under any gdrive sync local path" >&2
+    exit 1
+  fi
+  REM_DIR="${SYNC_REMOTES[$pair_idx]}"
+  echo "Target remote: $REMOTE_NAME:$REM_DIR"
+  rclone move "$UPLOAD_SRC" "$REMOTE_NAME:$REM_DIR" \
     --transfers 4 \
     --checkers 8 \
     --exclude "*.part" \
@@ -29,9 +48,23 @@ rclone move "$UPLOAD_SRC" "$REMOTE_NAME:$REMOTE_DIR" \
     --stats 60s \
     --stats-one-line \
     --delete-empty-src-dirs
-
-if [[ -n "${TR_TORRENT_DIR:-}" ]]; then
-    echo "Upload finished: $TR_TORRENT_NAME -> $REMOTE_NAME:$REMOTE_DIR"
+  echo "Upload finished: $TR_TORRENT_NAME -> $REMOTE_NAME:$REM_DIR"
 else
-    echo "Upload finished: $UPLOAD_SRC -> $REMOTE_NAME:$REMOTE_DIR"
+  # Manual: move each local root to its remote
+  echo "Uploading all configured pairs to Google Drive..."
+  for i in "${!SYNC_LOCALS[@]}"; do
+    _loc="${SYNC_LOCALS[$i]}"
+    _rem="${SYNC_REMOTES[$i]}"
+    echo "--- Pair $((i + 1))/{% raw %}${#SYNC_LOCALS[@]}{% endraw %}: $_loc -> $REMOTE_NAME:$_rem"
+    rclone move "$_loc" "$REMOTE_NAME:$_rem" \
+      --transfers 4 \
+      --checkers 8 \
+      --exclude "*.part" \
+      --log-file "${HOME}/rclone_upload.log" \
+      --log-level INFO \
+      --stats 60s \
+      --stats-one-line \
+      --delete-empty-src-dirs || exit $?
+  done
+  echo "Upload finished (all pairs)."
 fi

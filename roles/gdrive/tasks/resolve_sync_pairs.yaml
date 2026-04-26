@@ -1,0 +1,15 @@
+# Sets gdrive__sync_pairs_resolved for script templates (copy of gdrive__sync_pairs)
+
+- name: Assert gdrive__sync_pairs is set
+  ansible.builtin.assert:
+    that:
+      - gdrive__sync_pairs is defined
+      - (gdrive__sync_pairs | length) > 0
+      - (gdrive__sync_pairs | first).local | default('') | trim | length > 0
+    fail_msg: >-
+      gdrive: set gdrive__sync_pairs in host_vars — a list of { local, remote } for each
+      gdrive top-level path (e.g. /mnt/medias/DL and /DL).
+
+- name: Resolve gdrive sync pairs
+  ansible.builtin.set_fact:
+    gdrive__sync_pairs_resolved: "{{ gdrive__sync_pairs }}"

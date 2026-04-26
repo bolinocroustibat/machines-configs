@@ -1,5 +1,9 @@
 # Storage media disk configuration
-storage_media__ssd_uuid: "918ffcee-cf26-4c57-96f7-80cac1fafbd2"
+# storage_media__ssd_uuid: set in host_vars (blkid UUID of the ext4 partition) per host.
 storage_media__mount_point: "/mnt/medias"
 storage_media__owner: "debian-transmission"
 storage_media__group: "debian-transmission"
+
+# Subdirectories of the mount to create (e.g. gdrive local roots). The Transmission
+# download directory is created by the transmission role (transmission__download_dir).
+storage_media__media_subdirs: []

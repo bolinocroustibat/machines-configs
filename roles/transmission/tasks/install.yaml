@@ -1,6 +1,16 @@
 - name: Install transmission-daemon package and stop service
   ansible.builtin.import_tasks: install_package.yaml
 
+- name: Ensure Transmission download directory exists
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  ansible.builtin.file:
+    path: "{{ transmission__download_dir }}"
+    state: directory
+    owner: debian-transmission
+    group: debian-transmission
+    mode: u=rwx,g=rx,o=rx # 755
+
 - name: Deploy Transmission settings.json
   when: ansible_facts["os_family"] == "Debian"
   template:

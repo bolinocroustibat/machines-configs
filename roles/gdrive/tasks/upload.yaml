@@ -5,12 +5,18 @@
 - name: Include main setup tasks
   ansible.builtin.include_tasks: main.yaml
 
+- name: Include gdrive pair resolution
+  ansible.builtin.include_tasks: resolve_sync_pairs.yaml
+
 - name: Remove bidirectional sync cron job if it exists
   when: ansible_facts["os_family"] == "Debian"
   ansible.builtin.cron:
-    name: "Sync Google Drive DL folder bidirectionally"
+    name: "{{ item }}"
     state: absent
     user: "{{ gdrive__script_user }}"
+  loop:
+    - "Sync Google Drive DL folder bidirectionally"
+    - "Sync Google Drive media folders"
   become: true
 
 - name: Deploy upload_gdrive script in script user home
