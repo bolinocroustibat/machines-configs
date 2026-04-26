@@ -1,18 +1,5 @@
-- name: Install transmission-daemon (Debian)
-  when: ansible_facts["os_family"] == "Debian"
-  become: true
-  apt:
-    name: transmission-daemon
-    state: present
-    update_cache: true
-
-- name: Stop transmission-daemon before configuration
-  when: ansible_facts["os_family"] == "Debian"
-  become: true
-  service:
-    name: transmission-daemon
-    state: stopped
-  ignore_errors: true
+- name: Install transmission-daemon package and stop service
+  ansible.builtin.import_tasks: install_package.yaml
 
 - name: Deploy Transmission settings.json
   when: ansible_facts["os_family"] == "Debian"

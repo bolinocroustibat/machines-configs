@@ -7,7 +7,7 @@
 
 - name: Remove bidirectional sync cron job if it exists
   when: ansible_facts["os_family"] == "Debian"
-  cron:
+  ansible.builtin.cron:
     name: "Sync Google Drive DL folder bidirectionally"
     state: absent
     user: "{{ gdrive__script_user }}"

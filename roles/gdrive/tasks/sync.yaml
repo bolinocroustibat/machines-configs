@@ -19,7 +19,7 @@
   when:
     - ansible_facts["os_family"] == "Debian"
     - gdrive__cron_enabled | default(true) | bool
-  cron:
+  ansible.builtin.cron:
     name: "Sync Google Drive DL folder bidirectionally"
     minute: "0"
     hour: "*/4"  # Every 4 hours

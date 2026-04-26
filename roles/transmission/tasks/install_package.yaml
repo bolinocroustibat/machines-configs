@@ -1,0 +1,18 @@
+# Installs transmission-daemon and stops the service. Creates the debian-transmission
+# system user required by roles (e.g. storage-media) that run before full install.
+
+- name: Install transmission-daemon (Debian)
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  apt:
+    name: transmission-daemon
+    state: present
+    update_cache: true
+
+- name: Stop transmission-daemon before storage or configuration
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  service:
+    name: transmission-daemon
+    state: stopped
+  ignore_errors: true
