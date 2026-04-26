@@ -1,0 +1,25 @@
+- name: Remove old Plex UFW rules by comment
+  ansible.builtin.shell: |
+    # ufw status numbered has format "[ 3]" with spaces, so regex must handle that
+    ufw status numbered | grep "{{ item.comment }}" | sed -E 's/^[[:space:]]*\[[[:space:]]*([0-9]+)[[:space:]]*\].*/\1/' | sort -rn | while read num; do
+      [ ! -z "$num" ] && echo "y" | ufw delete $num 2>/dev/null || true
+    done
+  loop:
+    - { comment: "Allow Plex Media Server - managed by Ansible role plex_server" }
+    - { comment: "Allow Plex Media Server - managed by Ansible role ufw" }
+  become: true
+  ignore_errors: true
+  changed_when: false
+
+- name: Allow Plex Media Server
+  community.general.ufw:
+    rule: allow
+    port: "32400"
+    proto: tcp
+    comment: "Allow Plex Media Server - managed by Ansible role plex_server"
+  become: true
+
+- name: Reload UFW
+  community.general.ufw:
+    state: reloaded
+  become: true

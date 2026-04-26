@@ -1,6 +1,14 @@
 - name: Install transmission-daemon package and stop service
   ansible.builtin.import_tasks: install_package.yaml
 
+- name: Add Transmission user to media group
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  ansible.builtin.user:
+    name: debian-transmission
+    groups: "{{ storage_media__group | default('media') }}"
+    append: true
+
 - name: Ensure Transmission download directory exists
   when: ansible_facts["os_family"] == "Debian"
   become: true
@@ -8,8 +16,8 @@
     path: "{{ transmission__download_dir }}"
     state: directory
     owner: debian-transmission
-    group: debian-transmission
-    mode: u=rwx,g=rx,o=rx # 755
+    group: "{{ storage_media__group | default('media') }}"
+    mode: u=rwx,g=rwxs,o=rx # 2775
 
 - name: Deploy Transmission settings.json
   when: ansible_facts["os_family"] == "Debian"

@@ -1,21 +1,35 @@
+- name: Ensure media group exists
+  become: true
+  ansible.builtin.group:
+    name: "{{ storage_media__group }}"
+    state: present
+
+- name: Add storage owner to media group
+  become: true
+  ansible.builtin.user:
+    name: "{{ storage_media__owner }}"
+    groups: "{{ storage_media__group }}"
+    append: true
+  when: storage_media__owner != "root"
+
 - name: Create mount point directory
   become: true
-  file:
+  ansible.builtin.file:
     path: "{{ storage_media__mount_point }}"
     state: directory
     owner: "{{ storage_media__owner }}"
     group: "{{ storage_media__group }}"
-    mode: u=rwx,g=rx,o=rx # 755
+    mode: u=rwx,g=rwxs,o=rx # 2775
 
 - name: Check if disk exists
   become: true
-  stat:
+  ansible.builtin.stat:
     path: "/dev/disk/by-uuid/{{ storage_media__ssd_uuid }}"
   register: disk_check
 
 - name: Mount partition via fstab
   become: true
-  mount:
+  ansible.builtin.mount:
     path: "{{ storage_media__mount_point }}"
     src: "UUID={{ storage_media__ssd_uuid }}"
     fstype: ext4
@@ -25,11 +39,12 @@
 
 - name: Ensure permissions are correct after mount
   become: true
-  file:
+  ansible.builtin.file:
     path: "{{ storage_media__mount_point }}"
     state: directory
     owner: "{{ storage_media__owner }}"
     group: "{{ storage_media__group }}"
+    mode: u=rwx,g=rwxs,o=rx # 2775
     recurse: false
   when: disk_check.stat.exists
 
@@ -40,6 +55,6 @@
     state: directory
     owner: "{{ storage_media__owner }}"
     group: "{{ storage_media__group }}"
-    mode: u=rwx,g=rx,o=rx # 755
+    mode: u=rwx,g=rwxs,o=rx # 2775
   loop: "{{ storage_media__media_subdirs }}"
   when: disk_check.stat.exists

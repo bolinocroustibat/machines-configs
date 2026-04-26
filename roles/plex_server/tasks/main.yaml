@@ -1,0 +1,74 @@
+- name: Install prerequisites for the Plex APT repository
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+    state: present
+    update_cache: true
+
+- name: Check if Plex APT keyring is already installed
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  ansible.builtin.stat:
+    path: /usr/share/keyrings/plexmediaserver.gpg
+  register: plex_server_apt_keyring
+
+- name: Download Plex package signing key
+  when:
+    - ansible_facts["os_family"] == "Debian"
+    - not plex_server_apt_keyring.stat.exists
+  become: true
+  ansible.builtin.get_url:
+    url: https://downloads.plex.tv/plex-keys/PlexSign.key
+    dest: /tmp/.ansible-plexmediaserver.key
+    mode: u=rw,g=,o= # 600
+
+- name: Add Plex signing key to the system keyring
+  when:
+    - ansible_facts["os_family"] == "Debian"
+    - not plex_server_apt_keyring.stat.exists
+  become: true
+  ansible.builtin.command:
+    argv:
+      - gpg
+      - --batch
+      - --dearmor
+      - --yes
+      - -o
+      - /usr/share/keyrings/plexmediaserver.gpg
+      - /tmp/.ansible-plexmediaserver.key
+
+- name: Install Plex APT sources
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  ansible.builtin.template:
+    src: plexmediaserver.sources.j2
+    dest: /etc/apt/sources.list.d/plexmediaserver.sources
+    mode: u=rw,g=r,o=r # 644
+
+- name: Install Plex Media Server
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  ansible.builtin.apt:
+    name: plexmediaserver
+    state: present
+    update_cache: true
+
+- name: Add Plex user to media group
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  ansible.builtin.user:
+    name: plex
+    groups: "{{ storage_media__group | default('media') }}"
+    append: true
+
+- name: Ensure Plex Media Server is enabled and running
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  ansible.builtin.service:
+    name: plexmediaserver
+    enabled: true
+    state: started

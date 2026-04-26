@@ -1,6 +1,12 @@
 - name: Reboot_raspberry
+  listen: reboot_raspberry
   ansible.builtin.reboot:
     msg: "Raspberry boot config changed"
     connect_timeout: 5
     reboot_timeout: 300
   when: (ansible_facts.get('lsb', {}).get('id') == "Raspbian") or ("Raspberry Pi" in (ansible_facts.get('model') | default('', true)))
+
+- name: Reload udev rules
+  become: true
+  ansible.builtin.command: udevadm control --reload-rules
+  changed_when: false

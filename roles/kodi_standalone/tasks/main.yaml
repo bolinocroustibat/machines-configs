@@ -1,0 +1,39 @@
+- name: Install Kodi
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  ansible.builtin.apt:
+    name: kodi
+    state: present
+    update_cache: true
+    install_recommends: false
+
+- name: Add Kodi user to media and hardware access groups
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups:
+      - "{{ storage_media__group | default('media') }}"
+      - audio
+      - input
+      - render
+      - video
+    append: true
+
+- name: Deploy Kodi standalone systemd service
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  ansible.builtin.template:
+    src: kodi-standalone.service.j2
+    dest: /etc/systemd/system/kodi-standalone.service
+    mode: u=rw,g=r,o=r # 644
+  notify: Restart kodi-standalone
+
+- name: Ensure Kodi standalone service is enabled and running
+  when: ansible_facts["os_family"] == "Debian"
+  become: true
+  ansible.builtin.systemd:
+    name: kodi-standalone
+    enabled: true
+    state: started
+    daemon_reload: true

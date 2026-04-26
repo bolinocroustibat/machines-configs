@@ -1,0 +1,6 @@
+- name: Restart kodi-standalone
+  become: true
+  ansible.builtin.systemd:
+    name: kodi-standalone
+    state: restarted
+    daemon_reload: true

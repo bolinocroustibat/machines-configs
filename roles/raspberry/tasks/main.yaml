@@ -21,3 +21,44 @@
   become: true
   notify: reboot_raspberry
   when: (ansible_facts.get('lsb', {}).get('id') == "Raspbian") or ("Raspberry Pi" in (ansible_facts.get('model') | default('', true)))
+
+- name: Configure GPU memory for media playback
+  ansible.builtin.blockinfile:
+    path: "{{ raspberry__config_path }}"
+    block: |
+      # Reserve GPU memory for Kodi media playback (added by Ansible raspberry role)
+      gpu_mem=256
+    marker: "# {mark} ANSIBLE raspberry media-center-gpu"
+    state: present
+  become: true
+  notify: reboot_raspberry
+  when: (ansible_facts.get('lsb', {}).get('id') == "Raspbian") or ("Raspberry Pi" in (ansible_facts.get('model') | default('', true)))
+
+- name: Install zram tools
+  ansible.builtin.apt:
+    name: zram-tools
+    state: present
+    update_cache: true
+  become: true
+  when: ansible_facts["os_family"] == "Debian"
+
+- name: Ensure zram swap service is enabled and running
+  ansible.builtin.service:
+    name: zramswap
+    enabled: true
+    state: started
+  become: true
+  when: ansible_facts["os_family"] == "Debian"
+
+- name: Configure mq-deadline scheduler for media disk
+  ansible.builtin.copy:
+    dest: /etc/udev/rules.d/60-sda-scheduler.rules
+    content: |
+      ACTION=="add", KERNEL=="sda", ATTR{queue/scheduler}="mq-deadline"
+      ACTION=="change", KERNEL=="sda", ATTR{queue/scheduler}="mq-deadline"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r # 644
+  become: true
+  notify: Reload udev rules
+  when: ansible_facts["os_family"] == "Debian"

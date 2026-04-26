@@ -195,6 +195,24 @@
         name: storage-media
         tasks_from: main
 
+- name: Install Plex Media Server
+  hosts: pi-bolino
+  tasks:
+    - name: Install and run Plex Media Server
+      include_role:
+        name: plex_server
+    - name: Configure UFW rules for Plex Media Server
+      include_role:
+        name: plex_server
+        tasks_from: ufw
+
+- name: Install Kodi standalone
+  hosts: pi-bolino
+  tasks:
+    - name: Install and run Kodi on HDMI
+      include_role:
+        name: kodi_standalone
+
 - name: Install transmission-daemon
   hosts: pi-bolino
   tags: transmission
