@@ -12,43 +12,76 @@
   failed_when: transmission_dns_check.stdout == ""
   become: true
 
-- name: Check if SSL certificate exists
-  stat:
+# follow=true resolves live/*.pem symlinks to archive files (shell test -r was flaky with /bin/sh + symlinks).
+- name: Stat Let's Encrypt fullchain (resolved path)
+  ansible.builtin.stat:
     path: "/etc/letsencrypt/live/{{ transmission__domain }}/fullchain.pem"
-  register: transmission_ssl_cert_exists
+    follow: true
+  register: transmission_le_fullchain
   become: true
 
-- name: Deploy Nginx vhost for Transmission (only if SSL doesn't exist)
-  template:
+- name: Stat Let's Encrypt privkey (resolved path)
+  ansible.builtin.stat:
+    path: "/etc/letsencrypt/live/{{ transmission__domain }}/privkey.pem"
+    follow: true
+  register: transmission_le_privkey
+  become: true
+
+- name: Record whether to use TLS in nginx vhost (single boolean for template + Certbot)
+  ansible.builtin.set_fact:
+    transmission_le_tls_ready: "{{ transmission_le_fullchain.stat.exists | default(false) and transmission_le_privkey.stat.exists | default(false) }}"
+
+- name: Ensure ACME webroot exists (HTTP-01 renewals)
+  ansible.builtin.file:
+    path: /var/www/html
+    state: directory
+    owner: root
+    group: root
+    mode: u=rwx,g=rx,o=rx # 755
+  become: true
+
+# Requires nginx role (tasks_from: install) beforehand: nginx.conf must include sites-enabled.
+- name: Deploy Nginx vhost for Transmission
+  ansible.builtin.template:
     src: transmission_vhost.conf.j2
     dest: "/etc/nginx/sites-available/{{ transmission__domain }}.conf"
-    mode: u=rw,g=r,o=r  # 644
-  notify: Reload nginx config
-  when: not transmission_ssl_cert_exists.stat.exists
+    mode: u=rw,g=r,o=r # 644
   become: true
+  notify: Reload nginx config
 
-- name: Enable Nginx vhost for Transmission (only if SSL doesn't exist)
-  file:
+- name: Enable Nginx vhost for Transmission
+  ansible.builtin.file:
     src: "/etc/nginx/sites-available/{{ transmission__domain }}.conf"
     dest: "/etc/nginx/sites-enabled/{{ transmission__domain }}.conf"
     state: link
     force: true
-  notify: Reload nginx config
-  when: not transmission_ssl_cert_exists.stat.exists
   become: true
+  notify: Reload nginx config
 
-- name: Configure SSL with Certbot (only if SSL doesn't exist)
-  command: certbot --nginx -d {{ transmission__domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
+# Apply nginx reload + transmission-daemon restart before Certbot:
+# HTTP-01 needs the vhost live to answer /.well-known/acme-challenge/.
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Obtain certificate with Certbot (first time only)
+  ansible.builtin.command: >-
+    certbot --nginx -d {{ transmission__domain }}
+    --non-interactive --agree-tos --email me@adriencarpentier.com
   args:
     creates: "/etc/letsencrypt/live/{{ transmission__domain }}/fullchain.pem"
-  when: transmission_dns_check.stdout != "" and not transmission_ssl_cert_exists.stat.exists
+  when:
+    - transmission_dns_check.stdout != ""
+    - not (transmission_le_tls_ready | bool)
   become: true
   ignore_errors: true
-  register: transmission_certbot_result
+  register: transmission_certbot_obtain_result
 
-- name: Display Certbot error if failed
-  debug:
+- name: Display Certbot error if obtain failed
+  ansible.builtin.debug:
     msg: >-
-      Certbot failed. Check DNS configuration and firewall rules
-      (HTTP port 80 must be open). Error: {{ transmission_certbot_result.stderr_lines | default(['Unknown error']) }}
-  when: transmission_certbot_result.rc is defined and transmission_certbot_result.rc != 0
+      Certbot failed (need DNS + port 80). stderr:
+      {{ transmission_certbot_obtain_result.stderr_lines | default(['unknown']) }}
+  when:
+    - not (transmission_le_tls_ready | bool)
+    - transmission_certbot_obtain_result.rc is defined
+    - transmission_certbot_obtain_result.rc != 0

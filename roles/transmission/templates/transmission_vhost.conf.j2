@@ -1,33 +1,55 @@
 {{ ansible_managed | comment }}
 
-server {
-	server_name {{ transmission__domain }};
-	listen 80;
+{# transmission_le_tls_ready is set in web.yaml and shared with the Certbot conditional. #}
+{% set _ssl = transmission_le_tls_ready | default(false) %}
 
-	# Forbid everything except /transmission/
-	location / {
-		return 403;
-	}
-
-	# Transmission proxy
+{% macro transmission_proxy() %}
 	location /transmission/ {
-		auth_basic off;  # Deactivated if RPC password suffices
+		auth_basic off;
 		proxy_pass http://127.0.0.1:{{ transmission__rpc_port }}/transmission/;
 		proxy_http_version 1.1;
-
 		proxy_set_header Host 127.0.0.1;
 		proxy_set_header X-Real-IP $remote_addr;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 		proxy_set_header X-Forwarded-Proto $scheme;
-
-		# Crucial to prevent CSRF session loop issues
 		proxy_pass_header X-Transmission-Session-Id;
 		proxy_set_header Origin "";
-
 		proxy_buffering off;
 	}
-
-	# Logging
 	access_log /var/log/nginx/{{ transmission__domain }}.access.log;
 	error_log /var/log/nginx/{{ transmission__domain }}.error.log;
+{% endmacro %}
+
+{% if _ssl %}
+server {
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	server_name {{ transmission__domain }};
+	ssl_certificate /etc/letsencrypt/live/{{ transmission__domain }}/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/{{ transmission__domain }}/privkey.pem;
+	location / {
+		return 403;
+	}
+	{{ transmission_proxy() }}
+}
+{% endif %}
+
+server {
+	listen 80;
+	listen [::]:80;
+	server_name {{ transmission__domain }};
+	location ^~ /.well-known/acme-challenge/ {
+		root /var/www/html;
+		default_type "text/plain";
+	}
+{% if _ssl %}
+	location / {
+		return 301 https://$host$request_uri;
+	}
+{% else %}
+	location / {
+		return 403;
+	}
+	{{ transmission_proxy() }}
+{% endif %}
 }

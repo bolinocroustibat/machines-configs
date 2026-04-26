@@ -30,16 +30,12 @@
   notify: Reload nginx config
   become: true
 
-- name: Ensure configuration is set
-  template:
-    src: "{{ item.src }}"
-    dest: /etc/nginx/{{ item.path }}
+- name: Ensure nginx.conf is deployed
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
     mode: u=rw,g=r,o=r # 644
-  when: item.state == 'file'
-  loop_control:
-    label: "{{ item.path }}"
   notify: Reload nginx config
-  loop: "{{ nginx_config_items | default([]) }}"
   become: true
 
 - name: Ensure cache dir exists
