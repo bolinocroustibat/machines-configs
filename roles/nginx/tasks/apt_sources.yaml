@@ -26,7 +26,7 @@
 
     - name: Add Nginx signing key to the system keyring
       ansible.builtin.command:
-        cmd:
+        argv:
           - gpg
           - --batch
           - --dearmor

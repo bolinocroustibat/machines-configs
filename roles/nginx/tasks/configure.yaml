@@ -33,7 +33,7 @@
 - name: Ensure configuration is set
   template:
     src: "{{ item.src }}"
-    dest: /etc/nginx/{{ item.path }}"
+    dest: /etc/nginx/{{ item.path }}
     mode: u=rw,g=r,o=r # 644
   when: item.state == 'file'
   loop_control:

@@ -4,8 +4,7 @@
     state: restarted
     enabled: true
 
+# Direct reload avoids systemctl D-Bus timeouts on slow/embedded targets (e.g. Pi)
 - name: Reload nginx config
-  ansible.builtin.service:
-    name: nginx
-    state: reloaded
-    enabled: true
+  ansible.builtin.shell: /usr/sbin/nginx -t && /usr/sbin/nginx -s reload
+  become: true
