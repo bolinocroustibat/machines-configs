@@ -7,7 +7,7 @@ export PATH="$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/sbin"
 export VISUAL=micro
 export EDITOR="$VISUAL"
 
-{% if ansible_os_family == 'Darwin' %}
+{% if ansible_facts['os_family'] == 'Darwin' %}
 # Homebrew (must run before any $(brew ...) usage)
 eval "$(/opt/homebrew/bin/brew shellenv)"
 {% endif %}
@@ -18,7 +18,7 @@ export SSH_KEY_PATH="$HOME/.ssh/id_ed25519"
 {% endif %}
 
 # ZSH plugins
-{% if ansible_os_family == 'Darwin' %}
+{% if ansible_facts['os_family'] == 'Darwin' %}
 source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 {% else %}
@@ -26,7 +26,7 @@ source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 {% endif %}
 
-{% if ansible_os_family == 'Debian' %}
+{% if ansible_facts['os_family'] == 'Debian' %}
 # Save ZSH history
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=1000
@@ -41,7 +41,7 @@ export LANG=en_US.UTF-8
 # Aliases
 alias dfh='df -h'				# disk free with human reading
 alias duh='du -hd1 | sort -h'	# disk usage with human reading, only first level
-{% if ansible_os_family == 'Debian' %}
+{% if ansible_facts['os_family'] == 'Debian' %}
 alias l='ls -lFh --color=auto'
 alias ll='ls -alFh --color=auto'
 alias start='systemctl start'
@@ -49,7 +49,7 @@ alias restart='systemctl restart'
 alias stop='systemctl stop'
 alias status='systemctl status'
 {% endif %}
-{% if ansible_os_family == 'Darwin' %}
+{% if ansible_facts['os_family'] == 'Darwin' %}
 alias l='eza --long --icons --grid --octal-permissions --hyperlink --time-style=iso'
 alias ll='eza --long --icons --grid --octal-permissions --hyperlink --time-style=iso --all'
 alias git_force_pull='git fetch --all && git reset --hard origin/main && git pull'

@@ -8,7 +8,7 @@
     state: present
   become: true
   notify: reboot_raspberry
-  when: (ansible_lsb.id is defined and ansible_lsb.id == "Raspbian") or (ansible_model is defined and "Raspberry Pi" in ansible_model)
+  when: (ansible_facts.get('lsb', {}).get('id') == "Raspbian") or ("Raspberry Pi" in (ansible_facts.get('model') | default('', true)))
 
 - name: Disable Bluetooth in config.txt
   ansible.builtin.blockinfile:
@@ -20,4 +20,4 @@
     state: present
   become: true
   notify: reboot_raspberry
-  when: (ansible_lsb.id is defined and ansible_lsb.id == "Raspbian") or (ansible_model is defined and "Raspberry Pi" in ansible_model)
+  when: (ansible_facts.get('lsb', {}).get('id') == "Raspbian") or ("Raspberry Pi" in (ansible_facts.get('model') | default('', true)))

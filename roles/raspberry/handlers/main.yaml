@@ -3,4 +3,4 @@
     msg: "Raspberry boot config changed"
     connect_timeout: 5
     reboot_timeout: 300
-  when: (ansible_lsb.id is defined and ansible_lsb.id == "Raspbian") or (ansible_model is defined and "Raspberry Pi" in ansible_model)
+  when: (ansible_facts.get('lsb', {}).get('id') == "Raspbian") or ("Raspberry Pi" in (ansible_facts.get('model') | default('', true)))

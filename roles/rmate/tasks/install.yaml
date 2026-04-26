@@ -1,5 +1,5 @@
 - name: Check if system is Debian-based
-  when: ansible_distribution in ['Debian', 'Ubuntu']
+  when: ansible_facts['distribution'] in ['Debian', 'Ubuntu']
   block:
     - name: Download rmate script
       get_url:
