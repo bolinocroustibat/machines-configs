@@ -1,0 +1,6 @@
+# Omit daemon_reload: repeated reload after apt postinst + the "Ensure Docker service"
+# task can hit D-Bus "Method call timed out" on slow/loaded hosts (e.g. Raspberry Pi).
+- name: Restart Docker
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
