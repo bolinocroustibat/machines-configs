@@ -46,6 +46,7 @@ Rules for AI agents (Cursor, Claude, etc.) working on this Ansible project.
 - **Always use `uv run` for Ansible commands**: use `uv run ansible-playbook ...` instead of `ansible-playbook ...`
   - ✅ `uv run ansible-playbook playbooks/install-pi.yaml --limit pi-bolino` (correct)
   - ❌ `ansible-playbook playbooks/install-pi.yaml --limit pi-bolino` (incorrect)
+- **Privilege escalation (become)**: playbooks and roles that manage Linux hosts often use `become: true` (root via `sudo`). If Ansible fails with **Missing sudo password**, the connection user is allowed to `sudo` but requires a password and none was provided. **Resolve** by: (1) passing `--ask-become-pass` or `-K` and entering the target user's `sudo` password at the prompt; (2) configuring passwordless `sudo` for that user on the host (e.g. `NOPASSWD` in `sudoers`, typical for a dedicated deployment user in a home lab); or (3) for non-interactive runs, setting `ansible_become_password` (prefer [Ansible Vault](https://docs.ansible.com/ansible/latest/vault_guide/index.html) or an uncommitted password file) per inventory/host. Never commit real passwords in plain text.
 - **Check linting after modifications**: run `uv run ansible-lint <file_or_directory>` to verify code quality
 
 ## Commit Naming Convention

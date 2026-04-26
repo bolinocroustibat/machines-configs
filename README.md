@@ -32,6 +32,7 @@ uv run ansible-playbook playbooks/install-local-macos.yaml
 **Notes:**
 - No need to add `-i inventory.yaml` as it is already configured in `ansible.cfg`.
 - No need to add `--diff` as it is already configured in `ansible.cfg`.
+- Playbooks that configure remote machines (e.g. Raspberry Pi) use privilege escalation. If the SSH user’s `sudo` requires a password, run with `--ask-become-pass` (`-K`) so Ansible can prompt for it, or use passwordless `sudo` / Vault for automation (see [AGENTS.md](AGENTS.md) for details).
 
 ## 🔐 Encrypt and decrypt secrets
 
