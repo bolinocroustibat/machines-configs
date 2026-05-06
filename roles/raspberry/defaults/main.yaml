@@ -1,2 +1,5 @@
 # Boot config path (Bookworm). For Bullseye and older, set to /boot/config.txt in host_vars.
 raspberry__config_path: /boot/firmware/config.txt
+
+# Extra kernel command line options to append once, for hardware-specific quirks.
+raspberry__cmdline_options: []

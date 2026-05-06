@@ -1,21 +1,55 @@
+- name: Allow media mount point updates if it exists
+  become: true
+  ansible.builtin.command:
+    argv:
+      - chattr
+      - -i
+      - "{{ storage_media__mount_point }}"
+  changed_when: false
+  failed_when: false
+
 - name: Create mount point directory
   become: true
-  file:
+  ansible.builtin.file:
     path: "{{ storage_media__mount_point }}"
     state: directory
     owner: "{{ storage_media__owner }}"
     group: "{{ storage_media__group }}"
     mode: u=rwx,g=rx,o=rx # 755
 
+- name: Check if media mount point is already mounted
+  ansible.builtin.command: "mountpoint -q {{ storage_media__mount_point }}"
+  register: storage_media_mountpoint_check
+  changed_when: false
+  failed_when: false
+
+- name: Protect unmounted media mount point from writes
+  become: true
+  ansible.builtin.file:
+    path: "{{ storage_media__mount_point }}"
+    state: directory
+    attributes: +i
+  when:
+    - storage_media_mountpoint_check.rc != 0
+
 - name: Check if disk exists
   become: true
-  stat:
+  ansible.builtin.stat:
     path: "/dev/disk/by-uuid/{{ storage_media__ssd_uuid }}"
   register: disk_check
 
-- name: Mount partition via fstab
+- name: Configure media partition in fstab
   become: true
-  mount:
+  ansible.builtin.mount:
+    path: "{{ storage_media__mount_point }}"
+    src: "UUID={{ storage_media__ssd_uuid }}"
+    fstype: ext4
+    opts: defaults,noatime,nofail
+    state: present
+
+- name: Mount media partition
+  become: true
+  ansible.builtin.mount:
     path: "{{ storage_media__mount_point }}"
     src: "UUID={{ storage_media__ssd_uuid }}"
     fstype: ext4
@@ -25,11 +59,12 @@
 
 - name: Ensure permissions are correct after mount
   become: true
-  file:
+  ansible.builtin.file:
     path: "{{ storage_media__mount_point }}"
     state: directory
     owner: "{{ storage_media__owner }}"
     group: "{{ storage_media__group }}"
+    mode: u=rwx,g=rx,o=rx # 755
     recurse: false
   when: disk_check.stat.exists
 

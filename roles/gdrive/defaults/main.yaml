@@ -14,3 +14,6 @@ gdrive__remote_name: "gdrive"
 
 # Enable/disable cron job for regular bidirectional sync
 gdrive__cron_enabled: true
+
+# Mount points that must be mounted before scripts touch local sync roots.
+gdrive__required_mount_points: []

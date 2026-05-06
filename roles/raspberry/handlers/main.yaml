@@ -1,4 +1,4 @@
-- name: Reboot_raspberry
+- name: Reboot Raspberry
   ansible.builtin.reboot:
     msg: "Raspberry boot config changed"
     connect_timeout: 5

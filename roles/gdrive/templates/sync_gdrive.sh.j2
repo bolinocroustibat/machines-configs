@@ -9,6 +9,18 @@ LOG_FILE="${HOME}/rclone_sync.log"
 SYNC_LOCALS=( {% for p in gdrive__sync_pairs_resolved %}{{ p.local | to_json }} {% endfor %})
 # shellcheck disable=SC2034,SC2206
 SYNC_REMOTES=( {% for p in gdrive__sync_pairs_resolved %}{{ p.remote | to_json }} {% endfor %})
+# shellcheck disable=SC2034,SC2206
+REQUIRED_MOUNT_POINTS=( {% for p in gdrive__required_mount_points %}{{ p | to_json }} {% endfor %})
+
+assert_required_mount_points() {
+  local _mount
+  for _mount in "${REQUIRED_MOUNT_POINTS[@]}"; do
+    if ! findmnt -rn "$_mount" > /dev/null 2>&1; then
+      echo "ERROR: required mount point is not mounted: $_mount" >&2
+      exit 1
+    fi
+  done
+}
 
 # Pick pair index for TR_TORRENT_DIR (longest local prefix); echo index or -1
 find_pair_index() {
@@ -67,6 +79,8 @@ run_safe_pair_copy() {
   run_rclone_copy "$REMOTE_NAME:$_rem" "$_local" || return
   run_rclone_copy "$_local" "$REMOTE_NAME:$_rem"
 }
+
+assert_required_mount_points
 
 # Transmission: copy finished torrent path to the matching gdrive root
 if [[ -n "${TR_TORRENT_DIR:-}" ]]; then

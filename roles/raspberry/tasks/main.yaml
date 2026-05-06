@@ -7,7 +7,7 @@
     marker: "# {mark} ANSIBLE raspberry disable-wifi"
     state: present
   become: true
-  notify: reboot_raspberry
+  notify: Reboot Raspberry
   when: (ansible_facts.get('lsb', {}).get('id') == "Raspbian") or ("Raspberry Pi" in (ansible_facts.get('model') | default('', true)))
 
 - name: Disable Bluetooth in config.txt
@@ -19,5 +19,18 @@
     marker: "# {mark} ANSIBLE raspberry disable-bt"
     state: present
   become: true
-  notify: reboot_raspberry
+  notify: Reboot Raspberry
   when: (ansible_facts.get('lsb', {}).get('id') == "Raspbian") or ("Raspberry Pi" in (ansible_facts.get('model') | default('', true)))
+
+- name: Add Raspberry Pi kernel command line options
+  ansible.builtin.lineinfile:
+    path: /boot/firmware/cmdline.txt
+    regexp: "^(?!.*(?:^| ){{ item | regex_escape }}(?: |$))(.*)$"
+    line: '\1 {{ item }}'
+    backrefs: true
+  loop: "{{ raspberry__cmdline_options }}"
+  become: true
+  notify: Reboot Raspberry
+  when:
+    - (ansible_facts.get('lsb', {}).get('id') == "Raspbian") or ("Raspberry Pi" in (ansible_facts.get('model') | default('', true)))
+    - raspberry__cmdline_options | length > 0
