@@ -1,3 +1,19 @@
+# Pi detection: vanilla Debian on Pi often has no Raspbian LSB / ansible_model; the kernel still exposes the board string in /proc/device-tree/model.
+- name: Detect Raspberry Pi via device tree model
+  ansible.builtin.command:
+    argv:
+      - grep
+      - -q
+      - Raspberry Pi
+      - /proc/device-tree/model
+  changed_when: false
+  failed_when: false
+  register: raspberry__dt_pi_check
+
+- name: Set Raspberry Pi applicability fact (shared by tasks and reboot handler)
+  ansible.builtin.set_fact:
+    raspberry__is_pi: "{{ (raspberry__dt_pi_check.rc | default(-1) | int) == 0 }}"
+
 - name: Disable Wi-Fi in config.txt
   ansible.builtin.blockinfile:
     path: "{{ raspberry__config_path }}"
@@ -8,7 +24,7 @@
     state: present
   become: true
   notify: Reboot Raspberry
-  when: (ansible_facts.get('lsb', {}).get('id') == "Raspbian") or ("Raspberry Pi" in (ansible_facts.get('model') | default('', true)))
+  when: raspberry__is_pi | bool
 
 - name: Disable Bluetooth in config.txt
   ansible.builtin.blockinfile:
@@ -20,7 +36,7 @@
     state: present
   become: true
   notify: Reboot Raspberry
-  when: (ansible_facts.get('lsb', {}).get('id') == "Raspbian") or ("Raspberry Pi" in (ansible_facts.get('model') | default('', true)))
+  when: raspberry__is_pi | bool
 
 - name: Add Raspberry Pi kernel command line options
   ansible.builtin.lineinfile:
@@ -32,5 +48,5 @@
   become: true
   notify: Reboot Raspberry
   when:
-    - (ansible_facts.get('lsb', {}).get('id') == "Raspbian") or ("Raspberry Pi" in (ansible_facts.get('model') | default('', true)))
+    - raspberry__is_pi | bool
     - raspberry__cmdline_options | length > 0
