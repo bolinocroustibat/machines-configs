@@ -1,0 +1,39 @@
+- name: Install Kodi
+  become: true
+  ansible.builtin.apt:
+    name:
+      - kodi
+    state: present
+    update_cache: true
+
+- name: Create kodi system user
+  become: true
+  ansible.builtin.user:
+    name: "{{ kodi_standalone__user }}"
+    system: true
+    shell: /usr/sbin/nologin
+    home: "/home/{{ kodi_standalone__user }}"
+    create_home: true
+    # Groups required for GBM/KMS direct rendering (no X11)
+    groups:
+      - video
+      - audio
+      - input
+      - render
+    append: true
+
+- name: Deploy kodi systemd service
+  become: true
+  ansible.builtin.template:
+    src: kodi.service.j2
+    dest: /etc/systemd/system/kodi.service
+    mode: u=rw,g=r,o=r # 644
+  notify: Restart kodi
+
+- name: Enable and start kodi service
+  become: true
+  ansible.builtin.systemd:
+    name: kodi
+    enabled: "{{ kodi_standalone__service_enabled }}"
+    state: "{{ kodi_standalone__service_state }}"
+    daemon_reload: true

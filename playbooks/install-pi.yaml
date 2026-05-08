@@ -228,6 +228,13 @@
         name: plex
         tasks_from: ufw
 
+- name: Install Kodi standalone media player
+  hosts: pi-bolino
+  tasks:
+    - name: Install and configure Kodi standalone
+      include_role:
+        name: kodi_standalone
+
 - name: Install gdrive sync
   hosts: pi-bolino
   tasks:

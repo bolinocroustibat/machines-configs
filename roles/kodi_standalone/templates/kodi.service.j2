@@ -1,0 +1,24 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=Kodi Media Center (standalone, GBM/KMS)
+After=sound.target network-online.target
+Wants=network-online.target
+
+[Service]
+User={{ kodi_standalone__user }}
+Group={{ kodi_standalone__user }}
+Type=simple
+ExecStart=/usr/bin/kodi --standalone
+Restart=on-abort
+RestartSec=5
+Environment=HOME=/home/{{ kodi_standalone__user }}
+
+# Take over virtual console 1 (the HDMI output)
+StandardInput=tty
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+
+[Install]
+WantedBy=multi-user.target
