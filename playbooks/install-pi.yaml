@@ -212,6 +212,14 @@
         name: transmission
         tasks_from: web
 
+- name: Install Plex media server
+  hosts: pi-bolino
+  tasks:
+    - name: Deploy Plex as Docker container
+      include_role:
+        name: plex
+        tasks_from: install
+
 - name: Install gdrive sync
   hosts: pi-bolino
   tasks:

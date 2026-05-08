@@ -1,0 +1,11 @@
+plex__image_tag: latest
+plex__config_dir: /opt/plex/config
+plex__port: 32400
+
+# Set plex__hostname in host_vars to enable an Nginx reverse proxy + Certbot TLS.
+plex__hostname: ""
+
+# Ephemeral claim token from https://plex.tv/claim — only needed on first run.
+# After Plex is linked to your account, this can be left empty or removed.
+# Must be set in host_vars (ideally in a git-crypt encrypted file).
+plex__claim: ""

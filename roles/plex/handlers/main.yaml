@@ -1,0 +1,20 @@
+- name: Reload nginx config
+  ansible.builtin.shell: /usr/sbin/nginx -t && /usr/sbin/nginx -s reload
+  become: true
+
+- name: Recreate plex container
+  community.docker.docker_container:
+    name: plex
+    image: "lscr.io/linuxserver/plex:{{ plex__image_tag }}"
+    state: started
+    restart_policy: unless-stopped
+    network_mode: host
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      VERSION: docker
+      PLEX_CLAIM: "{{ plex__claim }}"
+    volumes:
+      - "{{ plex__config_dir }}:/config"
+      - "{{ storage_media__mount_point }}:/data:ro"
+  become: true

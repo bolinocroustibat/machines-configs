@@ -1,0 +1,113 @@
+- name: Create Plex config directory
+  become: true
+  ansible.builtin.file:
+    path: "{{ plex__config_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: u=rwx,g=rx,o=rx # 755
+
+- name: Create Plex container
+  become: true
+  community.docker.docker_container:
+    name: plex
+    image: "lscr.io/linuxserver/plex:{{ plex__image_tag }}"
+    state: started
+    restart_policy: unless-stopped
+    # host networking gives Plex full LAN visibility for client auto-discovery
+    network_mode: host
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      VERSION: docker
+      PLEX_CLAIM: "{{ plex__claim }}"
+    volumes:
+      - "{{ plex__config_dir }}:/config"
+      - "{{ storage_media__mount_point }}:/data:ro"
+
+- name: Configure Nginx reverse proxy for Plex
+  when: plex__hostname | length > 0
+  block:
+    - name: Install dnsutils for DNS check
+      become: true
+      ansible.builtin.apt:
+        name: dnsutils
+        state: present
+        update_cache: true
+
+    - name: Check if DNS is properly configured
+      ansible.builtin.command: dig +short {{ plex__hostname }}
+      register: plex_dns_check
+      changed_when: false
+      failed_when: plex_dns_check.stdout == ""
+      become: true
+
+    - name: Stat Let's Encrypt fullchain
+      become: true
+      ansible.builtin.stat:
+        path: "/etc/letsencrypt/live/{{ plex__hostname }}/fullchain.pem"
+        follow: true
+      register: plex_le_fullchain
+
+    - name: Stat Let's Encrypt privkey
+      become: true
+      ansible.builtin.stat:
+        path: "/etc/letsencrypt/live/{{ plex__hostname }}/privkey.pem"
+        follow: true
+      register: plex_le_privkey
+
+    - name: Record whether TLS is ready
+      ansible.builtin.set_fact:
+        plex_le_tls_ready: "{{ plex_le_fullchain.stat.exists | default(false) and plex_le_privkey.stat.exists | default(false) }}"
+
+    - name: Ensure ACME webroot exists
+      become: true
+      ansible.builtin.file:
+        path: /var/www/html
+        state: directory
+        owner: root
+        group: root
+        mode: u=rwx,g=rx,o=rx # 755
+
+    - name: Deploy Nginx vhost for Plex
+      become: true
+      ansible.builtin.template:
+        src: plex_vhost.conf.j2
+        dest: "/etc/nginx/sites-available/{{ plex__hostname }}.conf"
+        mode: u=rw,g=r,o=r # 644
+      notify: Reload nginx config
+
+    - name: Enable Nginx vhost for Plex
+      become: true
+      ansible.builtin.file:
+        src: "/etc/nginx/sites-available/{{ plex__hostname }}.conf"
+        dest: "/etc/nginx/sites-enabled/{{ plex__hostname }}.conf"
+        state: link
+        force: true
+      notify: Reload nginx config
+
+    - name: Flush handlers before Certbot
+      ansible.builtin.meta: flush_handlers
+
+    - name: Obtain certificate with Certbot (first time only)
+      become: true
+      ansible.builtin.command: >-
+        certbot --nginx -d {{ plex__hostname }}
+        --non-interactive --agree-tos --email me@adriencarpentier.com
+      args:
+        creates: "/etc/letsencrypt/live/{{ plex__hostname }}/fullchain.pem"
+      when:
+        - plex_dns_check.stdout != ""
+        - not (plex_le_tls_ready | bool)
+      ignore_errors: true
+      register: plex_certbot_result
+
+    - name: Display Certbot error if obtain failed
+      ansible.builtin.debug:
+        msg: >-
+          Certbot failed (need DNS + port 80). stderr:
+          {{ plex_certbot_result.stderr_lines | default(['unknown']) }}
+      when:
+        - not (plex_le_tls_ready | bool)
+        - plex_certbot_result.rc is defined
+        - plex_certbot_result.rc != 0
