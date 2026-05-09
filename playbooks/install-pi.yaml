@@ -219,6 +219,10 @@
       include_role:
         name: plex
         tasks_from: install
+    - name: Configure UFW rules for Plex
+      include_role:
+        name: plex
+        tasks_from: ufw
 
 - name: Install gdrive sync
   hosts: pi-bolino
