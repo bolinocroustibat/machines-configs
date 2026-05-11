@@ -14,7 +14,7 @@
     line: Include /etc/ssh/sshd_config.d/*.conf
     insertbefore: BOF
     state: present
-  register: sshd_include_dropins_line
+  register: ssh_sshd_include_dropins_line
   become: true
 
 - name: Deploy AllowUsers drop-in
@@ -29,5 +29,5 @@
   ansible.builtin.service:
     name: ssh
     state: restarted
-  when: ssh_allow_users_file is changed or sshd_include_dropins_line is changed
+  when: ssh_allow_users_file is changed or ssh_sshd_include_dropins_line is changed
   become: true
