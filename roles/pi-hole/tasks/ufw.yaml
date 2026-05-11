@@ -1,0 +1,36 @@
+- name: Remove old Pi-hole UFW rules by comment
+  shell: |
+    ufw status numbered | grep "{{ item.comment }}" | sed -E 's/^[[:space:]]*\[[[:space:]]*([0-9]+)[[:space:]]*\].*/\1/' | sort -rn | while read num; do
+      [ ! -z "$num" ] && echo "y" | ufw delete $num 2>/dev/null || true
+    done
+  loop:
+    - { comment: "Allow Pi-hole DNS (UDP) - managed by Ansible role pihole" }
+    - { comment: "Allow Pi-hole DNS (TCP) - managed by Ansible role pihole" }
+  become: true
+  ignore_errors: true
+  changed_when: false
+  when: pihole__dns_bind_ips is not defined
+
+- name: Allow Pi-hole DNS (UDP)
+  ufw:
+    rule: allow
+    port: "53"
+    proto: udp
+    comment: "Allow Pi-hole DNS (UDP) - managed by Ansible role pihole"
+  become: true
+  when: pihole__dns_bind_ips is not defined
+
+- name: Allow Pi-hole DNS (TCP)
+  ufw:
+    rule: allow
+    port: "53"
+    proto: tcp
+    comment: "Allow Pi-hole DNS (TCP) - managed by Ansible role pihole"
+  become: true
+  when: pihole__dns_bind_ips is not defined
+
+- name: Reload UFW
+  ufw:
+    state: reloaded
+  become: true
+  when: pihole__dns_bind_ips is not defined

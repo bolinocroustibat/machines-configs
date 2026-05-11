@@ -231,6 +231,10 @@
       include_role:
         name: pi-hole
         tasks_from: install
+    - name: Configure UFW rules for Pi-hole
+      include_role:
+        name: pi-hole
+        tasks_from: ufw
 
 - name: Install WireGuard
   hosts: data-bolino
