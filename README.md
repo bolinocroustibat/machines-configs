@@ -101,4 +101,4 @@ Ansible variables have the following precedence:
 3. Vars set in the vars: block in the play
 4. Vars set in `host_vars/`
 5. Vars set in `group_vars/`
-6. Role default vars e.g. `roles/.../defaults/main.yml`
+6. Role default vars e.g. `roles/.../defaults/main.yaml`
