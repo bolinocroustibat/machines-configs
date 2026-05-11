@@ -36,7 +36,7 @@
   become: true
   ansible.builtin.stat:
     path: "/dev/disk/by-uuid/{{ storage_media__ssd_uuid }}"
-  register: disk_check
+  register: storage_media_disk_stat
 
 - name: Configure media partition in fstab
   become: true
@@ -55,7 +55,7 @@
     fstype: ext4
     opts: defaults,noatime,nofail
     state: mounted
-  when: disk_check.stat.exists
+  when: storage_media_disk_stat.stat.exists
 
 - name: Ensure permissions are correct after mount
   become: true
@@ -66,7 +66,7 @@
     group: "{{ storage_media__group }}"
     mode: u=rwx,g=rx,o=rx # 755
     recurse: false
-  when: disk_check.stat.exists
+  when: storage_media_disk_stat.stat.exists
 
 - name: Create media subdirectories (DL, etc.)
   become: true
@@ -77,4 +77,4 @@
     group: "{{ storage_media__group }}"
     mode: u=rwx,g=rx,o=rx # 755
   loop: "{{ storage_media__media_subdirs }}"
-  when: disk_check.stat.exists
+  when: storage_media_disk_stat.stat.exists

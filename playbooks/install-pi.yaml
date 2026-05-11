@@ -196,7 +196,7 @@
   tasks:
     - name: Setup storage media disk mount and directories
       include_role:
-        name: storage-media
+        name: storage_media
         tasks_from: main
 
 - name: Install transmission-daemon
