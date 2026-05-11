@@ -1,9 +1,7 @@
-# UFW rules per host
-# SSH is configured in install.yaml to ensure it's opened first
+# Base UFW rules applied to all hosts
+# SSH is configured separately in install.yaml and rules.yaml to ensure it's always open
 # Each rule should have: port, proto (default: tcp), and comment
-# Example:
-# ufw__rules:
-#   - { port: http, proto: tcp, comment: "Allow HTTP - managed by Ansible role ufw" }
-#   - { port: https, proto: tcp, comment: "Allow HTTPS - managed by Ansible role ufw" }
-#   - { port: 9091, proto: tcp, comment: "Allow Transmission web interface - managed by Ansible role ufw" }
-ufw__rules: []
+ufw__rules:
+  - { port: http, proto: tcp, comment: "Allow HTTP - managed by Ansible role ufw" }
+  - { port: https, proto: tcp, comment: "Allow HTTPS - managed by Ansible role ufw" }
+  - { port: 443, proto: udp, comment: "Allow QUIC HTTP/3 - managed by Ansible role ufw" }
