@@ -1,0 +1,14 @@
+[Unit]
+Description=Ensure Data-Shield ipset exists before UFW starts
+DefaultDependencies=no
+Before=ufw.service network-pre.target
+After=systemd-modules-load.service
+
+[Service]
+Type=oneshot
+# UFW before.rules references data_shield; the set must exist before ufw loads rules.
+ExecStart=/usr/sbin/ipset create data_shield hash:net maxelem 5000000 -exist
+RemainAfterExit=true
+
+[Install]
+WantedBy=sysinit.target

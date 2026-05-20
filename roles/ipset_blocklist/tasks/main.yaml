@@ -14,6 +14,26 @@
   become: true
   register: ipset_blocklist_script
 
+- name: Deploy systemd unit to create ipset before UFW starts
+  ansible.builtin.copy:
+    src: ipset-blocklist-init.service
+    dest: /etc/systemd/system/ipset-blocklist-init.service
+    mode: u=rw,g=r,o=r # 644
+  become: true
+  register: ipset_blocklist_init_unit
+
+- name: Reload systemd when ipset init unit changed
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+  when: ipset_blocklist_init_unit.changed
+
+- name: Enable ipset init unit for boot
+  ansible.builtin.systemd:
+    name: ipset-blocklist-init.service
+    enabled: true
+  become: true
+
 - name: Deploy systemd unit for boot-time blocklist refresh
   ansible.builtin.copy:
     src: ipset-blocklist-refresh.service
