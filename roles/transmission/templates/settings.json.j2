@@ -66,7 +66,7 @@
     "script-torrent-added-enabled": false,
     "script-torrent-added-filename": "",
     "script-torrent-done-enabled": true,
-    "script-torrent-done-filename": "{{ transmission__script_torrent_done_filename }}",
+    "script-torrent-done-filename": "{{ gdrive__transmission_hook_path | default('/var/lib/transmission-daemon/sync_gdrive.sh') }}",
     "script-torrent-done-seeding-enabled": false,
     "script-torrent-done-seeding-filename": "",
     "seed-queue-enabled": false,

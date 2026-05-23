@@ -1,9 +1,12 @@
 #!/bin/bash
 {{ ansible_managed | comment }}
 
-# Safe copy pairs: local path <-> gdrive:remote (multiple roots)
+# Bidirectional sync pairs: local path <-> gdrive:remote (multiple roots)
+# Cron runs rclone bisync (deletes and moves propagate both ways).
+# Transmission hook uses one-way rclone copy for immediate upload.
 REMOTE_NAME="{{ gdrive__remote_name }}"
 LOG_FILE="${HOME}/rclone_sync.log"
+GDRIVE_BISYNC_FORCE_RESYNC="${GDRIVE_BISYNC_FORCE_RESYNC:-{% if gdrive__bisync_force_resync | default(false) | bool %}1{% endif %}}"
 
 # shellcheck disable=SC2034,SC2206
 SYNC_LOCALS=( {% for p in gdrive__sync_pairs_resolved %}{{ p.local | to_json }} {% endfor %})
@@ -72,12 +75,33 @@ remote_dest_for_local_dir() {
   echo "$REMOTE_NAME:$_remote_root/$_relative"
 }
 
-run_safe_pair_copy() {
+run_rclone_bisync() {
   local _local="$1"
   local _rem="$2"
+  local _pair_id="$3"
+  local _workdir="${HOME}/.cache/rclone/bisync/${_pair_id}"
+  local _resync_flag=()
 
-  run_rclone_copy "$REMOTE_NAME:$_rem" "$_local" || return
-  run_rclone_copy "$_local" "$REMOTE_NAME:$_rem"
+  if [[ -n "$GDRIVE_BISYNC_FORCE_RESYNC" ]] || [[ ! -f "${_workdir}/.bisync_initialized" ]]; then
+    _resync_flag=(--resync)
+    echo "Bisync resync for pair $_pair_id (force=${GDRIVE_BISYNC_FORCE_RESYNC:-0}, initialized=$([[ -f "${_workdir}/.bisync_initialized" ]] && echo 1 || echo 0))"
+  fi
+
+  echo "Bisync: $_local <-> $REMOTE_NAME:$_rem"
+  # Flags compatible with rclone bisync from Debian apt (~1.60); global flags apply to transfers.
+  rclone bisync "$_local" "$REMOTE_NAME:$_rem" \
+    "${_resync_flag[@]}" \
+    --workdir "$_workdir" \
+    --transfers 4 \
+    --checkers 8 \
+    --exclude "*.part" \
+    --log-file "$LOG_FILE" \
+    --log-level INFO \
+    --stats 60s \
+    --stats-one-line || return
+
+  mkdir -p "$_workdir"
+  touch "${_workdir}/.bisync_initialized"
 }
 
 assert_required_mount_points
@@ -103,15 +127,16 @@ if [[ -n "${TR_TORRENT_DIR:-}" ]]; then
   run_rclone_copy "$SYNC_SRC" "$REM_DEST"
   echo "Copy finished: ${TR_TORRENT_NAME:-$SYNC_SRC} -> $REM_DEST"
 else
-  # Cron / manual: reconcile both sides without deleting files from either side.
-  echo "Starting safe bidirectional copy for all pairs; timestamp: $(date)"
+  # Cron / manual: true bidirectional sync (deletes propagate both ways).
+  echo "Starting bidirectional bisync for all pairs; timestamp: $(date)"
   for i in "${!SYNC_LOCALS[@]}"; do
     _loc="${SYNC_LOCALS[$i]}"
     _rem="${SYNC_REMOTES[$i]}"
+    _pair_id="pair_${i}"
     echo "--- Pair $((i + 1))/{% raw %}${#SYNC_LOCALS[@]}{% endraw %}: $_loc <-> $REMOTE_NAME:$_rem"
-    if ! run_safe_pair_copy "$_loc" "$_rem"; then
+    if ! run_rclone_bisync "$_loc" "$_rem" "$_pair_id"; then
       exit $?
     fi
   done
-  echo "All copies finished: $(date)"
+  echo "All bisync runs finished: $(date)"
 fi

@@ -1,6 +1,7 @@
-# Deploy sync_gdrive.sh script (bidirectional sync)
-# This script synchronizes files bidirectionally, keeping files on both sides
-# This is the recommended approach for regular use
+# Deploy sync_gdrive.sh (rclone bisync for cron; one-way copy for Transmission hook)
+# Bisync propagates new/changed/deleted files in both directions between local and Google Drive.
+# First run per pair uses --resync to establish a baseline; set gdrive__bisync_force_resync: true
+# to rebaseline after errors. Manual override: GDRIVE_BISYNC_FORCE_RESYNC=1 sync_gdrive.sh
 
 - name: Include main setup tasks
   ansible.builtin.include_tasks: main.yaml
@@ -8,11 +9,11 @@
 - name: Include gdrive pair resolution
   ansible.builtin.include_tasks: resolve_sync_pairs.yaml
 
-- name: Deploy sync_gdrive script in script user home
+- name: Deploy sync_gdrive script at transmission hook path
   when: ansible_facts["os_family"] == "Debian"
   ansible.builtin.template:
     src: sync_gdrive.sh.j2
-    dest: "{{ gdrive_script_user_ent.ansible_facts.getent_passwd[gdrive__script_user][4] }}/sync_gdrive.sh"
+    dest: "{{ gdrive__transmission_hook_path }}"
     mode: u=rwx,g=rx,o= # 750
     owner: "{{ gdrive__script_user }}"
     group: "{{ gdrive__script_user }}"
@@ -30,7 +31,7 @@
     month: "*"
     weekday: "*"
     job: >-
-      {{ gdrive_script_user_ent.ansible_facts.getent_passwd[gdrive__script_user][4] }}/sync_gdrive.sh
+      {{ gdrive__transmission_hook_path }}
       >> {{ gdrive_script_user_ent.ansible_facts.getent_passwd[gdrive__script_user][4] }}/rclone_sync.log 2>&1
     user: "{{ gdrive__script_user }}"
   become: true

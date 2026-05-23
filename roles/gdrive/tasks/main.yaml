@@ -42,6 +42,16 @@
     mode: u=rw,g=,o= # 600
   become: true
 
+- name: Ensure script user has rclone bisync workdir
+  when: ansible_facts["os_family"] == "Debian"
+  ansible.builtin.file:
+    path: "{{ gdrive_script_user_ent.ansible_facts.getent_passwd[gdrive__script_user][4] }}/.cache/rclone/bisync"
+    state: directory
+    owner: "{{ gdrive__script_user }}"
+    group: "{{ gdrive__script_user }}"
+    mode: u=rwx,g=,o= # 700
+  become: true
+
 - name: Ensure rclone log files exist and are writable by script user
   when: ansible_facts["os_family"] == "Debian"
   ansible.builtin.file:
