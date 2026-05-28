@@ -128,6 +128,13 @@ if [[ -n "${TR_TORRENT_DIR:-}" ]]; then
   echo "Copy finished: ${TR_TORRENT_NAME:-$SYNC_SRC} -> $REM_DEST"
 else
   # Cron / manual: true bidirectional sync (deletes propagate both ways).
+  LOCK_FILE="${HOME}/.cache/sync_gdrive.lock"
+  mkdir -p "$(dirname "$LOCK_FILE")"
+  exec 9>"$LOCK_FILE"
+  if ! flock -n 9; then
+    echo "Another bidirectional sync is already running; skipping." >&2
+    exit 0
+  fi
   echo "Starting bidirectional bisync for all pairs; timestamp: $(date)"
   for i in "${!SYNC_LOCALS[@]}"; do
     _loc="${SYNC_LOCALS[$i]}"
