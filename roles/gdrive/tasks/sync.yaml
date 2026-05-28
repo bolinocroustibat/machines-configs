@@ -19,6 +19,11 @@
     group: "{{ gdrive__script_user }}"
   become: true
 
+# pi-bolino observed bisync run times (rclone ~1.60 via apt, ~7200 files, 4 sync pairs):
+# - Initial --resync baseline (all pairs): ~39 h wall clock.
+# - Incremental bisync when idle (all pairs): ~24 h wall clock (May 2026):
+#   DL <1 h, MOVIES ~11 h, SERIES ~10 h, DOCUMENTARIES ~1 h.
+# Weekly schedule below: run less often than the longest expected incremental run.
 - name: Add cron job for regular bidirectional sync
   when:
     - ansible_facts["os_family"] == "Debian"
@@ -26,10 +31,10 @@
   ansible.builtin.cron:
     name: "Sync Google Drive media folders"
     minute: "0"
-    hour: "*/4"  # Every 4 hours
+    hour: "5"
     day: "*"
     month: "*"
-    weekday: "*"
+    weekday: "1" # Monday (Ansible cron: 0=Sunday, 1=Monday, …)
     job: >-
       {{ gdrive__transmission_hook_path }}
       >> {{ gdrive_script_user_ent.ansible_facts.getent_passwd[gdrive__script_user][4] }}/rclone_sync.log 2>&1
