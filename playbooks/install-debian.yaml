@@ -16,7 +16,7 @@
         name: ssh
         tasks_from: sshd_hardening
 
-- name: Set optional local UNIX password hashes (web-bolino, data-bolino)
+- name: Set optional local UNIX password hashes
   hosts: web-bolino,data-bolino
   become: true
   tasks:
