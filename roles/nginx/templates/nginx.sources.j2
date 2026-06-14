@@ -4,5 +4,5 @@ Types: deb
 URIs: https://nginx.org/packages/debian/
 Suites: {{ debian_distribution }}
 Components: nginx
-Architectures: {{ (ansible_facts['architecture'] == 'aarch64') | ternary('arm64', ansible_facts['architecture']) }}
+Architectures: {{ ansible_facts['architecture'] | replace('x86_64', 'amd64') | replace('aarch64', 'arm64') }}
 Signed-By: /usr/share/keyrings/nginx-archive-keyring.gpg

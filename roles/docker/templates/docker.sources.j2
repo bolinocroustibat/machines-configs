@@ -4,5 +4,5 @@ Types: deb
 URIs: https://download.docker.com/linux/debian
 Suites: {{ docker__debian_suite | default(debian_distribution) }}
 Components: stable
-Architectures: {{ (ansible_facts['architecture'] == 'aarch64') | ternary('arm64', ansible_facts['architecture']) }}
+Architectures: {{ ansible_facts['architecture'] | replace('x86_64', 'amd64') | replace('aarch64', 'arm64') }}
 Signed-By: /etc/apt/keyrings/docker.asc
