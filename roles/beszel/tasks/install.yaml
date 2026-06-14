@@ -74,9 +74,9 @@
         creates: "/etc/letsencrypt/live/{{ beszel__domain }}/fullchain.pem"
       when: beszel_dns_check.stdout != "" and not beszel_ssl_cert_exists.stat.exists
 
-- name: Install Beszel agent on web-bolino
+- name: Install Beszel agent on remote hosts
   when:
-    - inventory_hostname == 'web-bolino'
+    - beszel__agent_enabled | default(false) | bool
     - beszel__universal_token | default('') | length > 0
     - beszel__hub_public_key | default('') | length > 0
   become: true

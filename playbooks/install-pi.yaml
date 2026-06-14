@@ -200,6 +200,16 @@
         name: docker
         tasks_from: install
 
+- name: Install Beszel agent
+  hosts: pi-bolino
+  tags:
+    - beszel
+  tasks:
+    - name: Install Beszel agent
+      include_role:
+        name: beszel
+        tasks_from: install
+
 - name: Install Pi-hole
   hosts: pi-bolino
   become: true

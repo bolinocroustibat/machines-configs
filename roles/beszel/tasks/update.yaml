@@ -39,9 +39,9 @@
         pull: "always"
         recreate: always
 
-- name: Update Beszel agent on web-bolino
+- name: Update Beszel agent on remote hosts
   when:
-    - inventory_hostname == 'web-bolino'
+    - beszel__agent_enabled | default(false) | bool
     - beszel__universal_token | default('') | length > 0
     - beszel__hub_public_key | default('') | length > 0
   become: true
