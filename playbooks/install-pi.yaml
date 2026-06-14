@@ -6,6 +6,19 @@
         name: ssh
         tasks_from: install
 
+- name: Allow passwordless sudo for Ansible user
+  hosts: pi-bolino
+  become: true
+  tasks:
+    - name: Configure passwordless sudo for Ansible user
+      ansible.builtin.include_role:
+        name: ssh
+        tasks_from: sudo_nopasswd
+
+- name: Harden SSH server
+  hosts: pi-bolino
+  become: true
+  tasks:
     - name: Configure AllowUsers
       include_role:
         name: ssh

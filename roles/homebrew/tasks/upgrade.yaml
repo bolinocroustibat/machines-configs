@@ -1,3 +1,17 @@
+- name: List Homebrew taps
+  command: brew tap
+  register: homebrew_brew_taps
+  changed_when: false
+
+- name: Trust third-party Homebrew taps
+  command: brew trust {{ item }}
+  loop: "{{ homebrew_brew_taps.stdout_lines | reject('match', '^homebrew/') | list }}"
+  register: homebrew_brew_trust
+  changed_when: homebrew_brew_trust.rc == 0
+  failed_when:
+    - homebrew_brew_trust.rc != 0
+    - "'already trusted' not in (homebrew_brew_trust.stdout | default('') + homebrew_brew_trust.stderr | default('')) | lower"
+
 - name: Update Homebrew
   command: brew update
   register: homebrew_brew_update_result
@@ -7,6 +21,10 @@
   command: brew upgrade
   register: homebrew_brew_upgrade_result
   changed_when: "'Upgrading' in homebrew_brew_upgrade_result.stdout"
+  failed_when:
+    - homebrew_brew_upgrade_result.rc != 0
+    - "'Already up-to-date' not in homebrew_brew_upgrade_result.stdout"
+    - "'Upgraded' not in homebrew_brew_upgrade_result.stdout"
 
 - name: Upgrading Homebrew casks
   command: brew upgrade --cask --greedy

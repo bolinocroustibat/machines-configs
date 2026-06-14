@@ -4,19 +4,23 @@
   failed_when: false
   become: true
 
+# Use the Docker CLI instead of the API module for image prune: large image sets can
+# exceed the Python Docker client's default 60s read timeout on remote hosts.
 - name: Prune all unused Docker images
-  community.docker.docker_prune:
-    images: true
-    images_filters:
-      dangling: false
+  command: docker image prune -af
   register: docker_prune_images
   when: docker_available.rc == 0
   become: true
+  async: 3600
+  poll: 30
+  changed_when: "'Total reclaimed space: 0B' not in docker_prune_images.stdout"
 
 - name: Display pruned images
   debug:
-    var: docker_prune_images.images_deleted
-  when: docker_available.rc == 0 and docker_prune_images.images_deleted is defined
+    msg: "{{ docker_prune_images.stdout_lines[-3:] }}"
+  when:
+    - docker_available.rc == 0
+    - docker_prune_images.stdout is defined
 
 - name: Prune unused Docker containers
   community.docker.docker_prune:
