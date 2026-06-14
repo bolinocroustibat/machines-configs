@@ -1,0 +1,68 @@
+- name: Include Beszel secrets
+  include_vars: secrets.yaml
+
+- name: Update Beszel hub on data-bolino
+  when: inventory_hostname == 'data-bolino'
+  become: true
+  block:
+    - name: Ensure Beszel installation directory exists
+      file:
+        path: /opt/beszel
+        state: directory
+        mode: u=rwx,g=,o= # 700
+
+    - name: Copy hub docker-compose.yml
+      template:
+        src: docker-compose.hub.yml.j2
+        dest: /opt/beszel/docker-compose.yml
+        mode: u=rw,g=r,o=r # 644
+
+    - name: Recreate Beszel hub
+      community.docker.docker_compose_v2:
+        project_src: /opt/beszel
+        state: present
+        remove_orphans: true
+        build: "never"
+        pull: "always"
+        recreate: always
+
+    - name: Recreate Beszel local agent
+      when:
+        - beszel__universal_token | default('') | length > 0
+        - beszel__hub_public_key | default('') | length > 0
+      community.docker.docker_compose_v2:
+        project_src: /opt/beszel
+        state: present
+        profiles: ["agent"]
+        remove_orphans: true
+        build: "never"
+        pull: "always"
+        recreate: always
+
+- name: Update Beszel agent on web-bolino
+  when:
+    - inventory_hostname == 'web-bolino'
+    - beszel__universal_token | default('') | length > 0
+    - beszel__hub_public_key | default('') | length > 0
+  become: true
+  block:
+    - name: Ensure Beszel agent installation directory exists
+      file:
+        path: /opt/beszel-agent
+        state: directory
+        mode: u=rwx,g=,o= # 700
+
+    - name: Copy agent docker-compose.yml
+      template:
+        src: docker-compose.agent.yml.j2
+        dest: /opt/beszel-agent/docker-compose.yml
+        mode: u=rw,g=r,o=r # 644
+
+    - name: Recreate Beszel agent
+      community.docker.docker_compose_v2:
+        project_src: /opt/beszel-agent
+        state: present
+        remove_orphans: true
+        build: "never"
+        pull: "always"
+        recreate: always

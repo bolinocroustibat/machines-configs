@@ -18,6 +18,11 @@
         name: uptime_kuma
         tasks_from: update
 
+    - name: Update Beszel hub
+      include_role:
+        name: beszel
+        tasks_from: update
+
     - name: Update WireGuard
       include_role:
         name: wg_easy
@@ -57,6 +62,11 @@
     - name: Update Portainer
       include_role:
         name: portainer
+        tasks_from: update
+
+    - name: Update Beszel agents
+      include_role:
+        name: beszel
         tasks_from: update
 
 - name: Prune Docker resources

@@ -1,0 +1,20 @@
+galaxy_info:
+  role_name: beszel
+  author: bolino
+  description: Role to install Beszel hub and agents
+  company: bolino
+  license: MIT
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+  galaxy_tags:
+    - docker
+    - beszel
+    - monitoring
+
+dependencies: []

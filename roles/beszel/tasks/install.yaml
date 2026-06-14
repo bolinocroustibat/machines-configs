@@ -1,0 +1,104 @@
+- name: Include Beszel secrets
+  include_vars: secrets.yaml
+
+- name: Install Beszel hub on data-bolino
+  when: inventory_hostname == 'data-bolino'
+  become: true
+  block:
+    - name: Create Beszel installation directory
+      file:
+        path: /opt/beszel
+        state: directory
+        mode: u=rwx,g=,o= # 700
+
+    - name: Copy hub docker-compose.yml
+      template:
+        src: docker-compose.hub.yml.j2
+        dest: /opt/beszel/docker-compose.yml
+        mode: u=rw,g=r,o=r # 644
+      notify: Recreate beszel hub stack
+
+    - name: Start Beszel hub
+      community.docker.docker_compose_v2:
+        project_src: /opt/beszel
+        state: present
+        remove_orphans: true
+        build: "never"
+        pull: "always"
+        recreate: always
+
+    - name: Start Beszel local agent
+      when:
+        - beszel__universal_token | default('') | length > 0
+        - beszel__hub_public_key | default('') | length > 0
+      community.docker.docker_compose_v2:
+        project_src: /opt/beszel
+        state: present
+        profiles: ["agent"]
+        remove_orphans: true
+        build: "never"
+        pull: "always"
+        recreate: always
+
+    - name: Check if DNS is properly configured
+      command: dig +short {{ beszel__domain }}
+      register: beszel_dns_check
+      changed_when: false
+      failed_when: beszel_dns_check.stdout == ""
+
+    - name: Check if SSL certificate exists
+      stat:
+        path: "/etc/letsencrypt/live/{{ beszel__domain }}/fullchain.pem"
+      register: beszel_ssl_cert_exists
+
+    - name: Deploy Nginx vhost for Beszel (only if SSL doesn't exist)
+      template:
+        src: nginx-vhost.conf.j2
+        dest: "/etc/nginx/sites-available/{{ beszel__domain }}.conf"
+        mode: u=rw,g=r,o=r # 644
+      notify: Reload nginx
+      when: not beszel_ssl_cert_exists.stat.exists
+
+    - name: Enable Nginx vhost for Beszel (only if SSL doesn't exist)
+      file:
+        src: "/etc/nginx/sites-available/{{ beszel__domain }}.conf"
+        dest: "/etc/nginx/sites-enabled/{{ beszel__domain }}.conf"
+        state: link
+        force: true
+      notify: Reload nginx
+      when: not beszel_ssl_cert_exists.stat.exists
+
+    - name: Configure SSL with Certbot (only if SSL doesn't exist)
+      command: certbot --nginx -d {{ beszel__domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
+      args:
+        creates: "/etc/letsencrypt/live/{{ beszel__domain }}/fullchain.pem"
+      when: beszel_dns_check.stdout != "" and not beszel_ssl_cert_exists.stat.exists
+
+- name: Install Beszel agent on web-bolino
+  when:
+    - inventory_hostname == 'web-bolino'
+    - beszel__universal_token | default('') | length > 0
+    - beszel__hub_public_key | default('') | length > 0
+  become: true
+  block:
+    - name: Create Beszel agent installation directory
+      file:
+        path: /opt/beszel-agent
+        state: directory
+        mode: u=rwx,g=,o= # 700
+
+    - name: Copy agent docker-compose.yml
+      template:
+        src: docker-compose.agent.yml.j2
+        dest: /opt/beszel-agent/docker-compose.yml
+        mode: u=rw,g=r,o=r # 644
+      notify: Recreate beszel remote agent
+
+    - name: Start Beszel agent
+      community.docker.docker_compose_v2:
+        project_src: /opt/beszel-agent
+        state: present
+        remove_orphans: true
+        build: "never"
+        pull: "always"
+        recreate: always

@@ -1,0 +1,36 @@
+- name: Reload nginx
+  become: true
+  ansible.builtin.service:
+    name: nginx
+    state: reloaded
+
+- name: Recreate beszel hub stack
+  become: true
+  community.docker.docker_compose_v2:
+    project_src: /opt/beszel
+    state: present
+    remove_orphans: true
+    build: "never"
+    pull: "always"
+    recreate: always
+
+- name: Recreate beszel local agent
+  become: true
+  community.docker.docker_compose_v2:
+    project_src: /opt/beszel
+    state: present
+    profiles: ["agent"]
+    remove_orphans: true
+    build: "never"
+    pull: "always"
+    recreate: always
+
+- name: Recreate beszel remote agent
+  become: true
+  community.docker.docker_compose_v2:
+    project_src: /opt/beszel-agent
+    state: present
+    remove_orphans: true
+    build: "never"
+    pull: "always"
+    recreate: always

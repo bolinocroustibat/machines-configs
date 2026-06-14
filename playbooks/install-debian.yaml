@@ -257,6 +257,16 @@
         name: portainer
         tasks_from: ufw
 
+- name: Install Beszel
+  hosts: data-bolino,web-bolino
+  tags:
+    - beszel
+  tasks:
+    - name: Install Beszel hub and agents
+      include_role:
+        name: beszel
+        tasks_from: install
+
 - name: Install Postgres
   hosts: web-bolino
   become: true
