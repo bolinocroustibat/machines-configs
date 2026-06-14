@@ -1,5 +1,5 @@
 - name: Upgrade Debian distribution
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tags: upgrade
   vars:
     apt_debian_target_distribution: "trixie"  # Can be overridden when needed
@@ -26,7 +26,7 @@
         tasks_from: dist_upgrade
 
 - name: Verify system state
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tags: verify
   tasks:
     - name: Check if system is running

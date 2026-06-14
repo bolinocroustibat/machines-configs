@@ -1,5 +1,5 @@
 - name: Prune Docker images and containers
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tasks:
     - name: Include Docker prune tasks
       include_role:

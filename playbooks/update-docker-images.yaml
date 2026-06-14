@@ -50,7 +50,7 @@
         tasks_from: update
 
 - name: Update Portainer
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tags:
     - debian
   tasks:
@@ -70,7 +70,7 @@
         tasks_from: update
 
 - name: Prune Docker resources
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tags:
     - debian
   tasks:

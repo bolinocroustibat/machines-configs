@@ -9,7 +9,7 @@
         tasks_from: upgrade
 
 - name: Update apt and upgrade packages
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   become: true
   tags:
     - debian
@@ -20,7 +20,7 @@
         tasks_from: upgrade
 
 - name: Refresh SSH server configuration
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   become: true
   tags:
     - debian
@@ -31,7 +31,7 @@
         tasks_from: update
 
 - name: Update UFW rules
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   become: true
   tags:
     - debian
@@ -42,7 +42,7 @@
         tasks_from: rules
 
 - name: Update ipset blocklist configuration
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   become: true
   tags:
     - debian
@@ -116,7 +116,7 @@
         tasks_from: update
 
 - name: Update Portainer
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   become: true
   tags:
     - debian
@@ -137,7 +137,7 @@
         tasks_from: update
 
 - name: Prune Docker resources
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   become: true
   tags:
     - debian
@@ -195,7 +195,7 @@
         tasks_from: update
 
 - name: Update global pip
-  hosts: remote # python is entirely managed by uv on local
+  hosts: web-bolino,data-bolino,pi-bolino # python is entirely managed by uv on local
   become: true
   tags:
     - debian
@@ -209,7 +209,7 @@
             tasks_from: update
 
 - name: Update fail2ban configurations
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   become: true
   tags:
     - debian

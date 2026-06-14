@@ -1,5 +1,5 @@
 - name: Add SSH keys
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tasks:
     - name: Configure SSH keys and settings
       include_role:
@@ -26,7 +26,7 @@
         tasks_from: unix_password
 
 - name: Set hostname (when prompt_hostname is defined in host_vars)
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   become: true
   tasks:
     - name: Set system hostname
@@ -43,7 +43,7 @@
       when: prompt_hostname is defined and prompt_hostname | length > 0
 
 - name: Update apt and upgrade packages
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   vars:
     apt_debian_target_distribution: "trixie"  # Can be overridden when needed
     apt_debian_target_codename: "13"  # For reference
@@ -70,7 +70,7 @@
         tasks_from: upgrade
 
 - name: Install Git
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tasks:
     - name: Install Git
       include_role:
@@ -78,7 +78,7 @@
         tasks_from: install
 
 - name: Configure .bashrc
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tasks:
     - name: Configure bash environment
       include_role:
@@ -86,7 +86,7 @@
         tasks_from: install
 
 - name: Install zsh
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tasks:
     - name: Install and configure zsh shell
       include_role:
@@ -94,7 +94,7 @@
         tasks_from: install
 
 - name: Install and configure Starship
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tasks:
     - name: Install Starship prompt
       include_role:
@@ -102,7 +102,7 @@
         tasks_from: install
 
 - name: Install and configure fail2ban
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tasks:
     - name: Set up fail2ban intrusion prevention
       include_role:
@@ -110,7 +110,7 @@
         tasks_from: install
 
 - name: Install and configure UFW
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tasks:
     - name: Install UFW
       include_role:
@@ -123,7 +123,7 @@
         tasks_from: rules
 
 - name: Configure ipset reputation blocklist
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   become: true
   tasks:
     - name: Set up Data-Shield ipset blocklist with UFW
@@ -132,7 +132,7 @@
       when: ipset_blocklist__enabled | default(false) | bool
 
 - name: Install and configure Micro
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tasks:
     - name: Install Micro editor
       include_role:
@@ -140,7 +140,7 @@
         tasks_from: install
 
 - name: Install bat
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   become: true
   tasks:
     - name: Install bat command-line tool
@@ -148,7 +148,7 @@
         name: bat
 
 - name: Install eza
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   become: true
   tasks:
     - name: Install eza command-line tool
@@ -164,7 +164,7 @@
         tasks_from: install
 
 - name: Install and configure rmate
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tasks:
     - name: Install rmate remote editor
       include_role:
@@ -172,7 +172,7 @@
         tasks_from: install
 
 - name: Install and configure uv
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tasks:
     - name: Install uv package manager
       include_role:
@@ -180,7 +180,7 @@
         tasks_from: install
 
 - name: Install and configure direnv
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tasks:
     - name: Install and configure direnv
       include_role:
@@ -196,7 +196,7 @@
         tasks_from: main
 
 - name: Uninstall Apache2
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tasks:
     - name: Include Apache2 uninstall tasks
       include_role:
@@ -204,7 +204,7 @@
         tasks_from: uninstall
 
 - name: Install and configure Nginx
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tasks:
     - name: Install and configure Nginx web server
       include_role:
@@ -216,7 +216,7 @@
         tasks_from: backup_vhosts
 
 - name: Install Certbot
-  hosts: remote
+  hosts: web-bolino,data-bolino,pi-bolino
   tasks:
     - name: Install Certbot and Nginx plugin
       include_role:
