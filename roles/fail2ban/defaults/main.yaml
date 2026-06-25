@@ -2,3 +2,6 @@ fail2ban__user_email: me@adriencarpentier.com
 fail2ban__sender_email: fail2ban@110.vm.arancloud.com
 fail2ban__jails: []
 fail2ban__filters: []
+# Inventory hosts to never ban. Uses public_ip from host_vars when set, otherwise
+# ansible_host when it is already an IP address (typical VPS).
+fail2ban__ignore_hosts: []

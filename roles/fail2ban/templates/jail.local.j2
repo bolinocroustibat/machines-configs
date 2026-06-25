@@ -5,6 +5,18 @@
 # Enable IPv6 support automatically if available
 allowipv6 = auto
 
+# Never ban trusted IPs (e.g. hosts running Beszel agents).
+{% set ns = namespace(ips=[]) %}
+{% for host in fail2ban__ignore_hosts | default([]) %}
+{%   set hv = hostvars[host] %}
+{%   if hv.public_ip is defined %}
+{%     set ns.ips = ns.ips + [hv.public_ip] %}
+{%   elif hv.ansible_host is defined and (hv.ansible_host | ansible.utils.ipaddr) %}
+{%     set ns.ips = ns.ips + [hv.ansible_host] %}
+{%   endif %}
+{% endfor %}
+ignoreip = {{ (['127.0.0.1/8', '::1'] + ns.ips) | unique | join(' ') }}
+
 # "bantime" is the number of seconds that a host is banned.
 # In this case, banned hosts will be blocked for 1 day
 bantime  = 1d
