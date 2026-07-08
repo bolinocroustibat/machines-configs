@@ -1,0 +1,106 @@
+- name: Install dnsutils for DNS checks
+  ansible.builtin.apt:
+    name: dnsutils
+    state: present
+    update_cache: true
+  when: photon__nginx_mode == "subdomain"
+
+- name: Check if DNS is properly configured
+  ansible.builtin.command: dig +short {{ photon__domain }}
+  register: photon_dns_check
+  changed_when: false
+  failed_when: photon_dns_check.stdout == ""
+  when: photon__nginx_mode == "subdomain"
+
+- name: Check if SSL certificate exists
+  ansible.builtin.stat:
+    path: "/etc/letsencrypt/live/{{ photon__domain }}/fullchain.pem"
+  register: photon_ssl_cert_exists
+  when: photon__nginx_mode == "subdomain"
+
+- name: Deploy dedicated Nginx vhost for Photon
+  ansible.builtin.template:
+    src: nginx-vhost.conf.j2
+    dest: "/etc/nginx/sites-available/{{ photon__domain }}-photon.conf"
+    mode: u=rw,g=r,o=r # 644
+  notify: Reload nginx config
+  when:
+    - photon__nginx_mode == "subdomain"
+    - not photon_ssl_cert_exists.stat.exists
+
+- name: Enable dedicated Nginx vhost for Photon
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/{{ photon__domain }}-photon.conf"
+    dest: "/etc/nginx/sites-enabled/{{ photon__domain }}-photon.conf"
+    state: link
+    force: true
+  notify: Reload nginx config
+  when:
+    - photon__nginx_mode == "subdomain"
+    - not photon_ssl_cert_exists.stat.exists
+
+- name: Configure SSL with Certbot for Photon subdomain
+  ansible.builtin.command: >-
+    certbot --nginx -d {{ photon__domain }}
+    --non-interactive --agree-tos --email me@adriencarpentier.com
+  args:
+    creates: "/etc/letsencrypt/live/{{ photon__domain }}/fullchain.pem"
+  when:
+    - photon__nginx_mode == "subdomain"
+    - photon_dns_check.stdout != ""
+    - not photon_ssl_cert_exists.stat.exists
+
+- name: Stat Let's Encrypt fullchain for parent domain
+  ansible.builtin.stat:
+    path: "/etc/letsencrypt/live/{{ photon__domain }}/fullchain.pem"
+    follow: true
+  register: photon_parent_le_fullchain
+  when: photon__nginx_mode == "subpath"
+
+- name: Stat Let's Encrypt privkey for parent domain
+  ansible.builtin.stat:
+    path: "/etc/letsencrypt/live/{{ photon__domain }}/privkey.pem"
+    follow: true
+  register: photon_parent_le_privkey
+  when: photon__nginx_mode == "subpath"
+
+- name: Record whether parent domain already uses TLS
+  ansible.builtin.set_fact:
+    photon_parent_tls_ready: >-
+      {{
+        photon_parent_le_fullchain.stat.exists | default(false)
+        and photon_parent_le_privkey.stat.exists | default(false)
+      }}
+  when: photon__nginx_mode == "subpath"
+
+- name: Deploy Photon subpath location snippet
+  ansible.builtin.template:
+    src: nginx-subpath-snippet.conf.j2
+    dest: /etc/nginx/snippets/photon-proxy.conf
+    mode: u=rw,g=r,o=r # 644
+  notify: Reload nginx config
+  when: photon__nginx_mode == "subpath"
+
+- name: Include Photon subpath snippet in parent HTTPS vhost
+  ansible.builtin.blockinfile:
+    path: "/etc/nginx/sites-available/{{ photon__domain }}.conf"
+    marker: "# {mark} ANSIBLE MANAGED - photon subpath (https)"
+    block: |2
+          include snippets/photon-proxy.conf;
+    insertafter: 'listen 443 ssl'
+  notify: Reload nginx config
+  when:
+    - photon__nginx_mode == "subpath"
+    - photon_parent_tls_ready | default(false) | bool
+
+- name: Include Photon subpath snippet in parent HTTP vhost
+  ansible.builtin.blockinfile:
+    path: "/etc/nginx/sites-available/{{ photon__domain }}.conf"
+    marker: "# {mark} ANSIBLE MANAGED - photon subpath (http)"
+    block: |2
+          include snippets/photon-proxy.conf;
+    insertafter: "server_name {{ photon__domain }};"
+  notify: Reload nginx config
+  when:
+    - photon__nginx_mode == "subpath"
+    - not (photon_parent_tls_ready | default(false) | bool)

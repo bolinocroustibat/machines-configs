@@ -248,6 +248,16 @@
         name: transmission
         tasks_from: web
 
+- name: Install Photon reverse geocoder
+  hosts: pi-bolino
+  tags:
+    - photon
+  tasks:
+    - name: Install and configure Photon
+      include_role:
+        name: photon
+        tasks_from: install
+
 - name: Install Plex media server
   hosts: pi-bolino
   tasks:

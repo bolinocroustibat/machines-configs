@@ -1,0 +1,32 @@
+- name: Include Photon secrets
+  ansible.builtin.include_vars: secrets.yaml
+
+- name: Ensure Photon directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: u=rwx,g=,o= # 700
+  loop:
+    - "{{ photon__install_dir }}"
+    - "{{ photon__data_dir }}"
+
+- name: Copy docker-compose.yml
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ photon__install_dir }}/docker-compose.yml"
+    mode: u=rw,g=r,o=r # 644
+
+- name: Stop and remove existing Photon container
+  community.docker.docker_container:
+    name: photon
+    state: absent
+  ignore_errors: true
+
+- name: Recreate Photon container with new image
+  community.docker.docker_compose_v2:
+    project_src: "{{ photon__install_dir }}"
+    state: present
+    remove_orphans: true
+    build: "never"
+    pull: "always"
+    recreate: always

@@ -1,0 +1,25 @@
+# Deploy Photon reverse geocoder on pi-bolino.
+# Subpath mode (default) requires the parent nginx vhost to exist first
+# (e.g. transmission web on home.adriencarpentier.com).
+# photon__data_dir on /mnt/medias requires the media HDD to be mounted (storage_media role).
+#
+# Usage:
+#   uv run ansible-playbook playbooks/install-photon.yaml -K
+
+- name: Install Photon on pi-bolino
+  hosts: pi-bolino
+  become: true
+  tasks:
+    - name: Mount media HDD (/mnt/medias is immutable when the disk is not mounted)
+      ansible.builtin.include_role:
+        name: storage_media
+
+    - name: Include nginx role for handlers
+      ansible.builtin.include_role:
+        name: nginx
+        tasks_from: install
+
+    - name: Install and configure Photon
+      ansible.builtin.include_role:
+        name: photon
+        tasks_from: install

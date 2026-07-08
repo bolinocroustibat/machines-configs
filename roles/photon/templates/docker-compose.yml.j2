@@ -1,0 +1,20 @@
+{{ ansible_managed | comment }}
+
+services:
+  photon:
+    image: {{ photon__image }}:{{ photon__image_tag }}
+    container_name: photon
+    restart: unless-stopped
+    environment:
+      IMPORT_MODE: {{ photon__import_mode }}
+      REGION: {{ photon__region }}
+      UPDATE_STRATEGY: {{ photon__update_strategy }}
+      UPDATE_INTERVAL: {{ photon__update_interval }}
+      LOG_LEVEL: {{ photon__log_level }}
+{% if photon__java_params | length > 0 %}
+      JAVA_PARAMS: {{ photon__java_params }}
+{% endif %}
+    volumes:
+      - {{ photon__data_dir }}:/photon/data
+    ports:
+      - "{{ photon__bind_address }}:{{ photon__web_port }}:2322"

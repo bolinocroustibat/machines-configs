@@ -1,0 +1,13 @@
+- name: Reload nginx config
+  ansible.builtin.service:
+    name: nginx
+    state: reloaded
+
+- name: Recreate photon container
+  community.docker.docker_compose_v2:
+    project_src: "{{ photon__install_dir }}"
+    state: present
+    remove_orphans: true
+    build: "never"
+    pull: "always"
+    recreate: always

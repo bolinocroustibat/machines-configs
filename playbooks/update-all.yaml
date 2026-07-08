@@ -120,6 +120,11 @@
         name: pi-hole
         tasks_from: update
 
+    - name: Update Photon
+      include_role:
+        name: photon
+        tasks_from: update
+
 - name: Update Portainer
   hosts: web-bolino,data-bolino,pi-bolino
   become: true

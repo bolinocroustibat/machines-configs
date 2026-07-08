@@ -1,0 +1,54 @@
+- name: Include Photon secrets
+  ansible.builtin.include_vars: secrets.yaml
+
+- name: Create Photon installation directory
+  ansible.builtin.file:
+    path: "{{ photon__install_dir }}"
+    state: directory
+    mode: u=rwx,g=,o= # 700
+
+- name: Check that media HDD mount point is mounted
+  ansible.builtin.command:
+    argv:
+      - mountpoint
+      - -q
+      - "{{ photon__media_mount_point }}"
+  register: photon_media_mount
+  changed_when: false
+  failed_when: false
+  when: photon__data_dir is match('^' ~ photon__media_mount_point ~ '(/|$)')
+
+- name: Fail when media HDD is not mounted
+  ansible.builtin.fail:
+    msg: >-
+      {{ photon__media_mount_point }} is not mounted.
+      Run the storage_media role first or mount the media HDD manually.
+  when:
+    - photon__data_dir is match('^' ~ photon__media_mount_point ~ '(/|$)')
+    - photon_media_mount.rc != 0
+
+- name: Create Photon data directory
+  ansible.builtin.file:
+    path: "{{ photon__data_dir }}"
+    state: directory
+    mode: u=rwx,g=,o= # 700
+
+- name: Copy docker-compose.yml
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ photon__install_dir }}/docker-compose.yml"
+    mode: u=rw,g=r,o=r # 644
+  notify: Recreate photon container
+
+- name: Start Photon container
+  community.docker.docker_compose_v2:
+    project_src: "{{ photon__install_dir }}"
+    state: present
+    remove_orphans: true
+    build: "never"
+    pull: "always"
+    recreate: always
+
+- name: Configure nginx reverse proxy for Photon
+  ansible.builtin.include_tasks: nginx.yaml
+  when: photon__nginx_mode in ["subdomain", "subpath"]

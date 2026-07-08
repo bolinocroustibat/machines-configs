@@ -1,0 +1,28 @@
+photon__image: "rtuszik/photon-docker"
+photon__image_tag: "latest"
+photon__install_dir: "/opt/photon"
+# Bind-mount path for the Photon index (override to a large volume, e.g. /mnt/medias/photon/data on pi-bolino)
+photon__data_dir: "{{ photon__install_dir }}/data"
+# Mount point checked when photon__data_dir lives under the media HDD (pi-bolino)
+photon__media_mount_point: "/mnt/medias"
+photon__web_port: 2322
+# 127.0.0.1 when behind nginx; set to 0.0.0.0 for direct LAN access without a reverse proxy
+photon__bind_address: "127.0.0.1"
+
+# Index configuration (see https://github.com/rtuszik/photon-docker)
+photon__import_mode: "db"
+photon__region: "planet"
+photon__update_strategy: "PARALLEL"
+photon__update_interval: "720h"
+photon__log_level: "INFO"
+# Planet index is ~60 GB on disk; heap size is the main constraint on low-RAM hosts.
+# pi-bolino (1.8 GiB RAM): override in secrets.yaml or host_vars (~768m).
+# data-bolino / web-bolino: raise to -Xmx4g or more if the host has headroom.
+photon__java_params: "-Xmx768m"
+
+# Reverse proxy: none | subdomain | subpath
+# - none: expose photon__bind_address:photon__web_port only
+# - subdomain: dedicated vhost (e.g. photon.example.com)
+# - subpath: location under an existing domain (e.g. home.example.com/photon/)
+photon__nginx_mode: "subpath"
+photon__path: "/photon/"
