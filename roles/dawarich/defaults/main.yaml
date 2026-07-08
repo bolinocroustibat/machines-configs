@@ -9,3 +9,8 @@ dawarich__app_memory_limit: "4G"
 dawarich__log_max_size: "100m"
 dawarich__log_max_file: "5"
 dawarich__nginx_client_max_body_size: "200m"
+
+# Reverse geocoding (Photon-compatible)
+# See https://dawarich.app/docs/self-hosting/configuration/reverse-geocoding/
+dawarich__photon_api_host: "app.chibigeo.com/v1/photon"
+dawarich__photon_api_use_https: true
