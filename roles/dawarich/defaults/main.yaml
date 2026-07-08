@@ -1,0 +1,11 @@
+dawarich__redis_image: "redis:7.4-alpine"
+dawarich__postgis_image: "postgis/postgis:17-3.5-alpine"
+dawarich__app_image: "freikin/dawarich:latest"
+dawarich__time_zone: "Europe/Paris"
+dawarich__store_geodata: true
+dawarich__background_processing_concurrency: 5
+dawarich__app_cpu_limit: "0.50"
+dawarich__app_memory_limit: "4G"
+dawarich__log_max_size: "100m"
+dawarich__log_max_file: "5"
+dawarich__nginx_client_max_body_size: "200m"

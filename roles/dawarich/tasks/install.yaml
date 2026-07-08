@@ -1,0 +1,74 @@
+- name: Include Dawarich secrets
+  include_vars: secrets.yaml
+
+- name: Create Dawarich installation directory
+  file:
+    path: "/opt/dawarich"
+    state: directory
+    mode: u=rwx,g=,o= # 700
+
+- name: Copy .env
+  template:
+    src: .env.j2
+    dest: "/opt/dawarich/.env"
+    mode: u=rw,g=,o= # 600
+  notify: Recreate dawarich stack
+
+- name: Copy docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: "/opt/dawarich/docker-compose.yml"
+    mode: u=rw,g=r,o=r # 644
+  notify: Recreate dawarich stack
+
+- name: Start Dawarich stack
+  community.docker.docker_compose_v2:
+    project_src: "/opt/dawarich"
+    state: present
+    remove_orphans: true
+    build: "never"
+    pull: "always"
+    recreate: always
+
+- name: Check if DNS is properly configured
+  command: dig +short {{ dawarich__domain }}
+  register: dawarich_dns_check
+  changed_when: false
+  failed_when: dawarich_dns_check.stdout == ""
+
+- name: Check if SSL certificate exists
+  stat:
+    path: "/etc/letsencrypt/live/{{ dawarich__domain }}/fullchain.pem"
+  register: dawarich_ssl_cert_exists
+
+- name: Deploy Nginx vhost for Dawarich (only if SSL doesn't exist)
+  template:
+    src: nginx-vhost.conf.j2
+    dest: "/etc/nginx/sites-available/{{ dawarich__domain }}.conf"
+    mode: u=rw,g=r,o=r # 644
+  notify: Reload nginx config
+  when: not dawarich_ssl_cert_exists.stat.exists
+
+- name: Enable Nginx vhost for Dawarich (only if SSL doesn't exist)
+  file:
+    src: "/etc/nginx/sites-available/{{ dawarich__domain }}.conf"
+    dest: "/etc/nginx/sites-enabled/{{ dawarich__domain }}.conf"
+    state: link
+    force: true
+  notify: Reload nginx config
+  when: not dawarich_ssl_cert_exists.stat.exists
+
+- name: Configure SSL with Certbot (only if SSL doesn't exist)
+  command: certbot --nginx -d {{ dawarich__domain }} --non-interactive --agree-tos --email me@adriencarpentier.com
+  args:
+    creates: "/etc/letsencrypt/live/{{ dawarich__domain }}/fullchain.pem"
+  when: dawarich_dns_check.stdout != "" and not dawarich_ssl_cert_exists.stat.exists
+
+- name: Ensure nginx allows large uploads for Dawarich imports
+  ansible.builtin.lineinfile:
+    path: "/etc/nginx/sites-available/{{ dawarich__domain }}.conf"
+    regexp: '^\s*client_max_body_size'
+    line: "\tclient_max_body_size {{ dawarich__nginx_client_max_body_size }};"
+    insertafter: '^\s*server_name {{ dawarich__domain }};'
+    firstmatch: true
+  notify: Reload nginx config

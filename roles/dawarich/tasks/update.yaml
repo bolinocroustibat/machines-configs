@@ -1,0 +1,29 @@
+- name: Include Dawarich secrets
+  include_vars: secrets.yaml
+
+- name: Ensure Dawarich directory exists
+  file:
+    path: "/opt/dawarich"
+    state: directory
+    mode: u=rwx,g=,o= # 700
+
+- name: Copy .env
+  template:
+    src: .env.j2
+    dest: "/opt/dawarich/.env"
+    mode: u=rw,g=,o= # 600
+
+- name: Copy docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: "/opt/dawarich/docker-compose.yml"
+    mode: u=rw,g=r,o=r # 644
+
+- name: Recreate Dawarich stack with new images
+  community.docker.docker_compose_v2:
+    project_src: "/opt/dawarich"
+    state: present
+    remove_orphans: true
+    build: "never"
+    pull: "always"
+    recreate: always

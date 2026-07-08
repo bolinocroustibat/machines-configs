@@ -1,0 +1,8 @@
+- name: Install Dawarich location history
+  hosts: data-bolino
+  become: true
+  tasks:
+    - name: Install Dawarich
+      include_role:
+        name: dawarich
+        tasks_from: install

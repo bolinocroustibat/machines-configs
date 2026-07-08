@@ -1,0 +1,13 @@
+- name: Reload nginx config
+  ansible.builtin.service:
+    name: nginx
+    state: reloaded
+
+- name: Recreate dawarich stack
+  community.docker.docker_compose_v2:
+    project_src: "/opt/dawarich"
+    state: present
+    remove_orphans: true
+    build: "never"
+    pull: "always"
+    recreate: always
