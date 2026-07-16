@@ -51,6 +51,10 @@ services:
 
   dawarich_app:
     image: {{ dawarich__app_image }}
+    # TEMPORARY: build from fork branch (see dawarich__git_* defaults)
+    build:
+      context: "{{ dawarich__git_repo }}#{{ dawarich__git_version }}"
+      dockerfile: docker/Dockerfile
     container_name: dawarich_app
     volumes:
       - dawarich_public:/var/app/public
@@ -94,6 +98,10 @@ services:
 
   dawarich_sidekiq:
     image: {{ dawarich__app_image }}
+    # TEMPORARY: same build as dawarich_app (compose builds once, shared tag)
+    build:
+      context: "{{ dawarich__git_repo }}#{{ dawarich__git_version }}"
+      dockerfile: docker/Dockerfile
     container_name: dawarich_sidekiq
     volumes:
       - dawarich_public:/var/app/public

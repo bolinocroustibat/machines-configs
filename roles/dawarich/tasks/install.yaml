@@ -26,8 +26,9 @@
     project_src: "/opt/dawarich"
     state: present
     remove_orphans: true
-    build: "never"
-    pull: "always"
+    # TEMPORARY: build app image from git branch (revert to build: never, pull: always)
+    build: "always"
+    pull: "missing"
     recreate: always
 
 - name: Check if DNS is properly configured

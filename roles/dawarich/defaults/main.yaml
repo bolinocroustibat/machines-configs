@@ -1,6 +1,10 @@
 dawarich__redis_image: "redis:7.4-alpine"
 dawarich__postgis_image: "postgis/postgis:17-3.5-alpine"
-dawarich__app_image: "freikin/dawarich:latest"
+# TEMPORARY: build from fork branch instead of freikin/dawarich:latest
+# Revert to: dawarich__app_image: "freikin/dawarich:latest" (and remove build from compose)
+dawarich__app_image: "dawarich:feat-import-airtrail-json"
+dawarich__git_repo: "https://github.com/bolinocroustibat/dawarich.git"
+dawarich__git_version: "feat/import-airtrail-json"
 dawarich__time_zone: "Europe/Paris"
 dawarich__store_geodata: true
 dawarich__background_processing_concurrency: 5
