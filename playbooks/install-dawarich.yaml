@@ -1,0 +1,20 @@
+# Deploy Dawarich location history on data-bolino.
+# Requires Docker, Nginx, and Certbot (install-debian.yaml or equivalent).
+# DNS A record for dawarich__domain must point to data-bolino.
+#
+# Usage:
+#   uv run ansible-playbook playbooks/install-dawarich.yaml -K
+
+- name: Install Dawarich on data-bolino
+  hosts: data-bolino
+  become: true
+  tasks:
+    - name: Include nginx role for handlers
+      ansible.builtin.include_role:
+        name: nginx
+        tasks_from: install
+
+    - name: Install and configure Dawarich
+      ansible.builtin.include_role:
+        name: dawarich
+        tasks_from: install
