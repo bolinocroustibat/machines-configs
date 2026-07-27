@@ -29,6 +29,14 @@ http {
 	default_type application/octet-stream;
 
 	##
+	# Proxy Buffer Settings (avoid disk buffering for upstream responses)
+	##
+
+	proxy_buffer_size 32k;
+	proxy_buffers 8 64k;
+	proxy_busy_buffers_size 128k;
+
+	##
 	# SSL Settings
 	##
 
