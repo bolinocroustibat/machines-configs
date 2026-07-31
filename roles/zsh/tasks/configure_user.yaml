@@ -31,18 +31,6 @@
       become: "{{ user_config.user != ansible_user }}"
       when: ansible_facts['os_family'] == 'Debian'
 
-    - name: Install ZSH autosuggestions plugin for user
-      ansible.builtin.git:
-        repo: "https://github.com/zsh-users/zsh-autosuggestions.git"
-        dest: "{{ user_config.home }}/.zsh/zsh-autosuggestions"
-        version: "master"
-        clone: true
-        update: true
-        force: true
-      become: "{{ user_config.user != ansible_user }}"
-      become_user: "{{ user_config.user }}"
-      when: ansible_facts['os_family'] == 'Debian'
-
     - name: Install ZSH syntax highlighting plugin for user
       ansible.builtin.git:
         repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"

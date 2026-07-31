@@ -20,10 +20,8 @@ export SSH_KEY_PATH="$HOME/.ssh/id_ed25519"
 # ZSH plugins
 {% if ansible_facts['os_family'] == 'Darwin' %}
 source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 {% else %}
 source $HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source $HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 {% endif %}
 
 {% if ansible_facts['os_family'] == 'Debian' %}
@@ -74,3 +72,8 @@ export NVM_DIR="$HOME/.nvm"
 # Docker + Ansible
 export DOCKER_HOST="unix://$HOME/.docker/run/docker.sock"
 {% endif %}
+
+# IRIS shell auto-completion (https://github.com/versenilvis/iris)
+if command -v iris >/dev/null 2>&1; then
+    eval "$(iris init zsh)"
+fi
