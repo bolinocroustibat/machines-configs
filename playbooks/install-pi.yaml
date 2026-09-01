@@ -156,6 +156,23 @@
       include_role:
         name: eza
 
+- name: Install fzf
+  hosts: pi-bolino
+  become: true
+  tasks:
+    - name: Install fzf command-line tool
+      include_role:
+        name: fzf
+
+- name: Install zoxide
+  hosts: pi-bolino
+  become: true
+  tasks:
+    - name: Install zoxide command-line tool
+      include_role:
+        name: zoxide
+
+
 - name: Install and configure uv
   hosts: pi-bolino
   tasks:

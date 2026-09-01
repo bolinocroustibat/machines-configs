@@ -101,6 +101,21 @@
       include_role:
         name: eza
 
+- name: Install fzf
+  hosts: local
+  tasks:
+    - name: Install fzf command-line tool
+      include_role:
+        name: fzf
+
+- name: Install zoxide
+  hosts: local
+  tasks:
+    - name: Install zoxide command-line tool
+      include_role:
+        name: zoxide
+
+
 - name: Updating Ruby gems
   hosts: local
   tasks:

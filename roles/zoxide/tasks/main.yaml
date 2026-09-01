@@ -1,0 +1,41 @@
+# Install zoxide (smarter cd). Interactive selection (cdi) uses fzf when present.
+
+- name: Install zoxide via Homebrew (macOS)
+  when: ansible_facts["os_family"] == 'Darwin'
+  community.general.homebrew:
+    name: zoxide
+    state: present
+
+- name: Download zoxide install script
+  when: ansible_facts["os_family"] == 'Debian'
+  ansible.builtin.get_url:
+    url: "https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh"
+    dest: "/tmp/zoxide_install.sh"
+    mode: u=rwx,g=rx,o=rx # 755
+
+- name: Install zoxide system-wide
+  when: ansible_facts["os_family"] == 'Debian'
+  become: true
+  ansible.builtin.command: "sh /tmp/zoxide_install.sh --bin-dir /usr/local/bin --man-dir /usr/local/share/man"
+  register: zoxide_install_result
+  changed_when: "'zoxide is installed!' in zoxide_install_result.stdout"
+
+- name: Delete zoxide install script
+  when: ansible_facts["os_family"] == 'Debian'
+  ansible.builtin.file:
+    path: "/tmp/zoxide_install.sh"
+    state: absent
+
+- name: Add zoxide to users' .zshrc (replace cd)
+  ansible.builtin.blockinfile:
+    path: "{{ user_config.home }}/.zshrc"
+    marker: "### {mark} zoxide (Ansible-managed) ###"
+    block: |
+      eval "$(zoxide init zsh --cmd cd)"
+    owner: "{{ user_config.user }}"
+    create: true
+    mode: u=rw,g=r,o=r # 644
+  loop: "{{ shell_users_list }}"
+  loop_control:
+    loop_var: user_config
+  become: "{{ user_config.user != ansible_user }}"

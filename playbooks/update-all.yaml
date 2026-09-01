@@ -185,6 +185,27 @@
       include_role:
         name: eza
 
+- name: Update fzf
+  hosts: all
+  tags:
+    - macos
+    - debian
+  tasks:
+    - name: Install or upgrade fzf
+      include_role:
+        name: fzf
+
+- name: Update zoxide
+  hosts: all
+  tags:
+    - macos
+    - debian
+  tasks:
+    - name: Install or upgrade zoxide
+      include_role:
+        name: zoxide
+
+
 - name: Update Starship
   hosts: all
   tags:

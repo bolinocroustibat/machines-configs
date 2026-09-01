@@ -168,6 +168,23 @@
       include_role:
         name: eza
 
+- name: Install fzf
+  hosts: web-bolino,data-bolino,pi-bolino
+  become: true
+  tasks:
+    - name: Install fzf command-line tool
+      include_role:
+        name: fzf
+
+- name: Install zoxide
+  hosts: web-bolino,data-bolino,pi-bolino
+  become: true
+  tasks:
+    - name: Install zoxide command-line tool
+      include_role:
+        name: zoxide
+
+
 - name: Install Docker
   hosts: web-bolino, data-bolino
   tasks:

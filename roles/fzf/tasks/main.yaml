@@ -1,0 +1,30 @@
+# fzf is a command-line fuzzy finder: https://github.com/junegunn/fzf
+# Install it and enable zsh key bindings and fuzzy completion.
+
+- name: Install fzf via Homebrew (macOS)
+  when: ansible_facts["os_family"] == 'Darwin'
+  community.general.homebrew:
+    name: fzf
+    state: present
+
+- name: Install fzf via apt (Debian)
+  when: ansible_facts["os_family"] == 'Debian'
+  become: true
+  ansible.builtin.apt:
+    name: fzf
+    state: present
+    update_cache: true
+
+- name: Add fzf to users' .zshrc
+  ansible.builtin.blockinfile:
+    path: "{{ user_config.home }}/.zshrc"
+    marker: "### {mark} fzf (Ansible-managed) ###"
+    block: |
+      source <(fzf --zsh)
+    owner: "{{ user_config.user }}"
+    create: true
+    mode: u=rw,g=r,o=r # 644
+  loop: "{{ shell_users_list }}"
+  loop_control:
+    loop_var: user_config
+  become: "{{ user_config.user != ansible_user }}"
