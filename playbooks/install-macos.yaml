@@ -101,12 +101,13 @@
       include_role:
         name: eza
 
-- name: Install fzf
+- name: Uninstall fzf
   hosts: local
   tasks:
-    - name: Install fzf command-line tool
+    - name: Include fzf uninstall tasks
       include_role:
         name: fzf
+        tasks_from: uninstall
 
 - name: Install zoxide
   hosts: local

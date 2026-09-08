@@ -1,0 +1,24 @@
+# Remove fzf and its zsh bindings. IRIS and fzf both bind Ctrl+R.
+
+- name: Uninstall fzf via Homebrew (macOS)
+  when: ansible_facts["os_family"] == 'Darwin'
+  community.general.homebrew:
+    name: fzf
+    state: absent
+
+- name: Uninstall fzf via apt (Debian)
+  when: ansible_facts["os_family"] == 'Debian'
+  become: true
+  ansible.builtin.apt:
+    name: fzf
+    state: absent
+
+- name: Remove fzf from users' .zshrc
+  ansible.builtin.blockinfile:
+    path: "{{ user_config.home }}/.zshrc"
+    marker: "### {mark} fzf (Ansible-managed) ###"
+    state: absent
+  loop: "{{ shell_users_list }}"
+  loop_control:
+    loop_var: user_config
+  become: "{{ user_config.user != ansible_user }}"

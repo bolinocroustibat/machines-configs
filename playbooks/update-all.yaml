@@ -185,15 +185,16 @@
       include_role:
         name: eza
 
-- name: Update fzf
+- name: Uninstall fzf
   hosts: all
   tags:
     - macos
     - debian
   tasks:
-    - name: Install or upgrade fzf
+    - name: Include fzf uninstall tasks
       include_role:
         name: fzf
+        tasks_from: uninstall
 
 - name: Update zoxide
   hosts: all
