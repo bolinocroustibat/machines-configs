@@ -46,11 +46,29 @@
     mode: u=rwx,g=,o= # 700 (only the user can read, write and execute)
   become: true
 
+- name: Ensure nginx systemd drop-in directory exists
+  file:
+    path: /etc/systemd/system/nginx.service.d
+    state: directory
+    mode: u=rwx,g=rx,o=rx # 755
+  become: true
+
+- name: Ensure nginx restarts on failure
+  copy:
+    dest: /etc/systemd/system/nginx.service.d/override.conf
+    content: |
+      [Service]
+      Restart=on-failure
+      RestartSec=5s
+    mode: u=rw,g=r,o=r # 644
+  become: true
+
 - name: Ensure service is started and enabled at boot
-  service:
+  systemd:
     name: nginx
     state: started
     enabled: true
+    daemon_reload: true
   become: true
 
 - name: Ensure www-data user exists
