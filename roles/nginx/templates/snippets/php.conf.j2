@@ -15,7 +15,8 @@ location ~ \.php$ {
 	fastcgi_param PATH_INFO $path_info;
 
 	fastcgi_index index.php;
-	include fastcgi.conf;
+	include fastcgi_params;
+	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 
 	# With php-fpm (or other unix sockets):
 	fastcgi_pass unix:{{ php_fpm_socket }};
