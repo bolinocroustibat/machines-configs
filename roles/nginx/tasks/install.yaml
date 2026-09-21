@@ -1,12 +1,7 @@
-- name: Gather package facts
-  package_facts:
-    manager: apt
-
 - name: Ensure Nginx official APT repository
   ansible.builtin.import_tasks: apt_sources.yaml
 
-- name: Install Nginx if not installed
-  when: '"nginx" not in ansible_facts.packages'
+- name: Install or upgrade Nginx package
   apt:
     name: nginx
     state: latest
