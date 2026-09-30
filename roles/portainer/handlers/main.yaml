@@ -3,6 +3,11 @@
     name: nginx
     state: reloaded
 
+- name: Reload UFW
+  community.general.ufw:
+    state: reloaded
+  become: true
+
 - name: Recreate Portainer container
   # Equivalent to: docker stop portainer && docker rm portainer && docker run ...
   community.docker.docker_container:

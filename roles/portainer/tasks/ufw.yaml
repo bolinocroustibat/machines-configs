@@ -1,13 +1,38 @@
-- name: Allow Portainer agent from data-bolino
-  ufw:
+# Why DOCKER-USER (not a normal UFW allow rule):
+# Docker publishes ports by writing its own iptables DNAT/FORWARD rules. Those
+# run before UFW's INPUT chain, so "ufw allow from X to 9001" does NOT protect
+# a published container port. Relying on UFW alone leaves the Portainer agent
+# (Docker socket access) reachable from the Internet — a direct compromise path.
+# Filter in DOCKER-USER instead, and allow only data-bolino.
+
+- name: Remove ineffective UFW INPUT rule for Portainer agent
+  community.general.ufw:
     rule: allow
-    port: 9001
+    port: "9001"
     proto: tcp
     from_ip: "{{ hostvars['data-bolino']['ansible_host'] }}"
-    comment: "Allow Portainer agent from data-bolino - managed by Ansible role portainer"
+    delete: true
+  become: true
   when: inventory_hostname == 'web-bolino'
+  failed_when: false
 
-- name: Reload UFW
-  ufw:
-    state: reloaded
+- name: Restrict Portainer agent port via DOCKER-USER
+  ansible.builtin.blockinfile:
+    path: /etc/ufw/after.rules
+    marker: "# {mark} ANSIBLE MANAGED BLOCK portainer_docker_user"
+    block: |
+      # Agent container listens on 9001 (--dport is post-DNAT). Host map: portainer__agent_port:9001.
+      *filter
+      :DOCKER-USER - [0:0]
+      -A DOCKER-USER -m conntrack --ctstate RELATED,ESTABLISHED -j RETURN
+      -A DOCKER-USER -s {{ hostvars['data-bolino']['ansible_host'] }}/32 -p tcp --dport 9001 -j RETURN
+      -A DOCKER-USER -p tcp --dport 9001 -j DROP
+      -A DOCKER-USER -j RETURN
+      COMMIT
+  become: true
+  when: inventory_hostname == 'web-bolino'
+  notify: Reload UFW
+
+- name: Flush handlers to apply DOCKER-USER rules immediately
+  ansible.builtin.meta: flush_handlers
   when: inventory_hostname == 'web-bolino'
