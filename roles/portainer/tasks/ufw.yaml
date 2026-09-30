@@ -1,20 +1,10 @@
 # Why DOCKER-USER (not a normal UFW allow rule):
 # Docker publishes ports by writing its own iptables DNAT/FORWARD rules. Those
-# run before UFW's INPUT chain, so "ufw allow from X to 9001" does NOT protect
-# a published container port. Relying on UFW alone leaves the Portainer agent
-# (Docker socket access) reachable from the Internet — a direct compromise path.
-# Filter in DOCKER-USER instead, and allow only data-bolino.
-
-- name: Remove ineffective UFW INPUT rule for Portainer agent
-  community.general.ufw:
-    rule: allow
-    port: "9001"
-    proto: tcp
-    from_ip: "{{ hostvars['data-bolino']['ansible_host'] }}"
-    delete: true
-  become: true
-  when: inventory_hostname == 'web-bolino'
-  failed_when: false
+# run before UFW's INPUT chain, so adding a UFW rule (e.g. "ufw allow from X to
+# 9001") has NO effect on a published container port. Relying on UFW alone leaves
+# the Portainer agent (Docker socket access) reachable from the Internet — a
+# direct compromise path. Do not add a UFW INPUT rule for this port; filter in
+# DOCKER-USER instead, and allow only data-bolino.
 
 - name: Restrict Portainer agent port via DOCKER-USER
   ansible.builtin.blockinfile:
